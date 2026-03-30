@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/Button'
 import { Icon } from '../ui/Icon'
+import { DonutChart, HBarChart } from '../ui/Charts'
 import { usePersonalization } from '../../context/PersonalizationContext'
 import { getCheckoutUrl, getSignupUrl, PLANS } from '../../lib/stripe'
 
@@ -232,28 +233,57 @@ function ResultCard({ result }: { result: QuizResult }) {
         {result.description}
       </p>
 
-      {/* Key metrics */}
-      <div className="grid grid-cols-2 gap-4 mb-8">
-        <div className="glass rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-green-400">{result.savings}</div>
-          <div className="text-xs text-text-muted mt-1">Gain estimé</div>
-        </div>
-        <div className="glass rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-text-primary">{totalPrice}€<span className="text-sm text-text-muted">/mois</span></div>
-          <div className="text-xs text-text-muted mt-1">{result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} recommandé{result.recommendedSeats > 1 ? 's' : ''}</div>
-        </div>
+      {/* Visual donut charts */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        <DonutChart
+          value={scorePercent}
+          label="Risque données"
+          sublabel={result.riskLabel}
+          color={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : '#22c55e'}
+          size={100}
+          delay={0.2}
+        />
+        <DonutChart
+          value={60}
+          label="Temps récupérable"
+          sublabel={result.savings}
+          color="#22c55e"
+          size={100}
+          delay={0.4}
+        />
+        <DonutChart
+          value={Math.round((totalPrice / 3500) * 100)}
+          label="Coût vs recrutement"
+          sublabel={`${totalPrice}€ vs 3 500€`}
+          color="#22c55e"
+          size={100}
+          delay={0.6}
+        />
       </div>
 
-      {/* Hormozi Stack — valeur vs prix */}
-      <div className="glass rounded-xl p-6 mb-8">
+      {/* Bar chart — valeur comparée */}
+      <div className="glass rounded-xl p-5 md:p-6 mb-8">
+        <h4 className="text-sm font-bold text-text-primary mb-5">Comparatif de valeur mensuelle</h4>
+        <HBarChart
+          items={[
+            { label: `Proxima (${result.recommendedSeats} poste${result.recommendedSeats > 1 ? 's' : ''})`, value: totalPrice, maxValue: 3500, color: 'bg-gradient-to-r from-green-500 to-green-400', suffix: '€' },
+            { label: 'ChatGPT Team', value: result.recommendedSeats * 25, maxValue: 3500, color: 'bg-gradient-to-r from-text-muted/40 to-text-muted/20', suffix: '€' },
+            { label: 'Recrutement', value: 3500, maxValue: 3500, color: 'bg-gradient-to-r from-red-500/60 to-red-400/40', suffix: '€' },
+          ]}
+          delay={0.3}
+        />
+      </div>
+
+      {/* Hormozi Value Stack */}
+      <div className="glass rounded-xl p-5 md:p-6 mb-8">
         <h4 className="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider">Ce que vous obtenez</h4>
         <div className="space-y-3">
           {[
             { item: 'Chat IA illimité + RAG documentaire', value: '~500€/mois' },
-            { item: 'Visioconférence IA avec transcription', value: '~200€/mois' },
-            { item: 'VM dédiée & sécurisée en Europe', value: '~300€/mois' },
+            { item: 'Visioconférence IA chiffrée', value: '~200€/mois' },
+            { item: 'VM dédiée en Europe', value: '~300€/mois' },
             { item: `${result.savings} récupérées`, value: 'Inestimable' },
-            { item: 'Conformité RGPD garantie (pas d\'amende)', value: '~4% du CA' },
+            { item: 'Conformité RGPD garantie', value: '~4% du CA' },
           ].map((line, i) => (
             <div key={i} className="flex justify-between items-center">
               <span className="text-sm text-text-secondary flex items-center gap-2">
@@ -265,13 +295,15 @@ function ResultCard({ result }: { result: QuizResult }) {
               <span className="text-xs text-text-muted line-through">{line.value}</span>
             </div>
           ))}
-          <div className="border-t border-border-subtle pt-3 mt-3 flex justify-between items-center">
-            <span className="text-sm font-bold text-text-primary">Valeur totale estimée</span>
-            <span className="text-sm text-text-muted line-through">1 000€+/mois</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-bold text-green-400">Votre prix Proxima</span>
-            <span className="text-lg font-bold text-green-400">{totalPrice}€/mois</span>
+          <div className="border-t border-border-subtle pt-3 mt-3">
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-sm font-bold text-text-primary">Valeur totale</span>
+              <span className="text-sm text-text-muted line-through">1 000€+/mois</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-bold text-green-400">Votre prix</span>
+              <span className="text-xl font-bold text-green-400">{totalPrice}€/mois</span>
+            </div>
           </div>
         </div>
       </div>
