@@ -71,12 +71,12 @@ export function Navbar() {
   }, [mobileMenuOpen])
 
   const navBg = theme === 'dark'
-    ? 'bg-[#050505]/90 backdrop-blur-xl border-b border-white/10'
-    : 'bg-white/80 backdrop-blur-xl border-b border-black/5 shadow-sm'
+    ? 'bg-bg-primary/90 backdrop-blur-xl border-b border-white/10'
+    : 'bg-white/90 backdrop-blur-xl border-b border-black/8 shadow-sm'
 
   const mobileBg = theme === 'dark'
-    ? 'bg-[#050505]/95 backdrop-blur-xl border-b border-white/10'
-    : 'bg-white/95 backdrop-blur-xl border-b border-black/5 shadow-lg'
+    ? 'bg-bg-primary/95 backdrop-blur-xl border-b border-white/10'
+    : 'bg-white/95 backdrop-blur-xl border-b border-black/8 shadow-lg'
 
   return (
     <nav

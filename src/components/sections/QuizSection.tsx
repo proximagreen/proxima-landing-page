@@ -238,7 +238,7 @@ function ResultCard({ result }: { result: QuizResult }) {
           value={scorePercent}
           label="Risque données"
           sublabel={result.riskLabel}
-          color={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : '#22c55e'}
+          color={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : 'var(--color-green-500)'}
           size={100}
           delay={0.2}
         />
@@ -246,7 +246,7 @@ function ResultCard({ result }: { result: QuizResult }) {
           value={60}
           label="Temps récupérable"
           sublabel={result.savings}
-          color="#22c55e"
+          color="var(--color-green-500)"
           size={100}
           delay={0.4}
         />
@@ -254,7 +254,7 @@ function ResultCard({ result }: { result: QuizResult }) {
           value={Math.round((totalPrice / 3500) * 100)}
           label="Coût vs recrutement"
           sublabel={`${totalPrice}€ vs 3 500€`}
-          color="#22c55e"
+          color="var(--color-green-500)"
           size={100}
           delay={0.6}
         />

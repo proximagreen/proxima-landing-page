@@ -272,9 +272,9 @@ function ValueBreakdown({ seats, pricePerSeat }: { seats: number; pricePerSeat: 
 
       {/* 3 donut charts */}
       <div className="grid grid-cols-3 gap-4 sm:gap-8 mb-10">
-        <DonutItem value={costPercent} label="du coût d'un recrutement" detail={`${totalMonthly}€ vs 3 500€`} color="#22c55e" />
-        <DonutItem value={60} label="de temps récupéré" detail="3-4h gagnées/jour" color="#22c55e" />
-        <DonutItem value={Math.round((pricePerSeat / 30) * 100) / 100 < 1 ? 100 : 0} label="de risque de fuite" detail="Isolation totale" color="#22c55e" isInverse />
+        <DonutItem value={costPercent} label="du coût d'un recrutement" detail={`${totalMonthly}€ vs 3 500€`} color="var(--color-green-500)" />
+        <DonutItem value={60} label="de temps récupéré" detail="3-4h gagnées/jour" color="var(--color-green-500)" />
+        <DonutItem value={Math.round((pricePerSeat / 30) * 100) / 100 < 1 ? 100 : 0} label="de risque de fuite" detail="Isolation totale" color="var(--color-green-500)" isInverse />
       </div>
 
       {/* Résumé en une ligne */}
