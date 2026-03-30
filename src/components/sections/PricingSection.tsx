@@ -26,7 +26,7 @@ export function PricingSection() {
   const signupUrl = getSignupUrl({ segment, company, name })
 
   return (
-    <section id="pricing" className="py-[var(--section-padding)] px-6 relative overflow-x-clip section-fade-top">
+    <section id="pricing" className="py-[var(--section-padding)] px-6 relative section-fade-top">
 
       <div className="max-w-[var(--container-max)] mx-auto relative z-10">
         <SectionHeading

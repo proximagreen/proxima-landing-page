@@ -11,7 +11,7 @@ export function SocialProofSection() {
   if (content.testimonials.length === 0) return null
 
   return (
-    <section className="py-[var(--section-padding)] px-6 bg-bg-secondary overflow-x-clip">
+    <section className="py-[var(--section-padding)] px-6 bg-bg-secondary">
       <div className="max-w-[var(--container-max)] mx-auto">
         <SectionHeading
           badge="Témoignages"

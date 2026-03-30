@@ -18,7 +18,7 @@ export function HeroSection() {
   const stripeUrl = getCheckoutUrl({ segment, company, name })
 
   return (
-    <section className="hero-section relative min-h-[100dvh] flex flex-col items-center justify-center overflow-x-clip px-4 sm:px-6 py-24 sm:py-28 md:py-32">
+    <section className="hero-section relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 py-24 sm:py-28 md:py-32">
       {/* Video background — always dark */}
       <div className="absolute inset-0 z-0">
         <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-50" poster="/images/tech-abstract.jpg">

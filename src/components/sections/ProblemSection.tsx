@@ -8,7 +8,7 @@ export function ProblemSection() {
   const content = getContent(segment)
 
   return (
-    <section className="py-[var(--section-padding)] px-4 sm:px-6 relative overflow-x-clip">
+    <section className="py-[var(--section-padding)] px-4 sm:px-6 relative">
       <div className="max-w-[var(--container-max)] mx-auto relative z-10">
         <SectionHeading
           badge="Pourquoi Proxima"

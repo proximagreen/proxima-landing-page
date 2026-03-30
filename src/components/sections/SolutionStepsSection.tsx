@@ -9,7 +9,7 @@ export function SolutionStepsSection() {
   const content = getContent(segment)
 
   return (
-    <section className="py-[var(--section-padding)] px-6 relative overflow-x-clip">
+    <section className="py-[var(--section-padding)] px-6 relative">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-green-500/[0.04] blur-[150px] rounded-full pointer-events-none" />
 
       <div className="max-w-[var(--container-max)] mx-auto relative z-10">

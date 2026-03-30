@@ -26,7 +26,7 @@ export function WhySection() {
   const content = getContent(segment)
 
   return (
-    <section className="py-[var(--section-padding)] px-6 relative overflow-x-clip">
+    <section className="py-[var(--section-padding)] px-6 relative overflow-hidden">
       {/* Organic blob background */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] opacity-30">
         <div
