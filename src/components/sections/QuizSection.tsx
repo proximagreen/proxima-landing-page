@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/Button'
-import { Icon } from '../ui/Icon'
 import { DonutChart, HBarChart } from '../ui/Charts'
 import { usePersonalization } from '../../context/PersonalizationContext'
 import { getCheckoutUrl, getSignupUrl, PLANS } from '../../lib/stripe'
