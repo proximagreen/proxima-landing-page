@@ -5,8 +5,6 @@ import { getContent } from '../../lib/content'
 import { getCheckoutUrl, getSignupUrl, PLANS } from '../../lib/stripe'
 import { SectionHeading } from '../ui/SectionHeading'
 import { Button } from '../ui/Button'
-import { AnimatedCounter } from '../ui/AnimatedCounter'
-import { Icon } from '../ui/Icon'
 
 const SEAT_OPTIONS = [1, 5, 10, 25, 50, 100]
 
@@ -37,66 +35,65 @@ export function PricingSection() {
           subtitle={content.pricing.subheadline}
         />
 
-        {/* Billing toggle */}
+        {/* Configurateur — billing + seats en un bloc visible */}
         <motion.div
-          className="flex items-center justify-center gap-4 mb-8"
+          className="glass rounded-2xl p-5 sm:p-8 max-w-xl mx-auto mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-bg-card border border-border-subtle">
-            <button
-              onClick={() => setBilling('monthly')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer ${
-                billing === 'monthly'
-                  ? 'bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.3)]'
-                  : 'text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              Mensuel
-            </button>
-            <button
-              onClick={() => setBilling('annual')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer flex items-center gap-2 ${
-                billing === 'annual'
-                  ? 'bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.3)]'
-                  : 'text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              Annuel
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                billing === 'annual'
-                  ? 'bg-black/20 text-black'
-                  : 'bg-green-500/15 text-green-400'
-              }`}>
-                -20%
-              </span>
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Seat selector */}
-        <motion.div
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-14"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <span className="text-text-secondary text-sm">Nombre de postes :</span>
-          <div className="flex flex-wrap justify-center gap-1.5 p-1 rounded-xl bg-bg-card border border-border-subtle">
-            {SEAT_OPTIONS.map((n) => (
+          {/* Billing toggle */}
+          <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-bg-card border border-border-subtle">
               <button
-                key={n}
-                onClick={() => setSeats(n)}
-                className={`px-3 md:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer ${
-                  seats === n
-                    ? 'bg-green-500 text-black shadow-[0_0_20px_rgba(34,197,94,0.3)]'
-                    : 'text-text-secondary hover:bg-bg-card-hover hover:text-text-primary'
+                onClick={() => setBilling('monthly')}
+                className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
+                  billing === 'monthly'
+                    ? 'bg-green-500 text-black'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
-                {n}
+                Mensuel
               </button>
-            ))}
+              <button
+                onClick={() => setBilling('annual')}
+                className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer flex items-center gap-2 ${
+                  billing === 'annual'
+                    ? 'bg-green-500 text-black'
+                    : 'text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                Annuel
+                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
+                  -20%
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Seat selector — gros et clair */}
+          <div className="text-center">
+            <p className="text-sm font-semibold text-text-primary mb-3">Combien de postes ?</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {SEAT_OPTIONS.map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setSeats(n)}
+                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl text-base font-bold transition-all duration-300 cursor-pointer ${
+                    seats === n
+                      ? 'bg-green-500 text-black shadow-[0_0_20px_rgba(34,197,94,0.3)] scale-110'
+                      : 'bg-bg-card border border-border-subtle text-text-secondary hover:border-green-500/40 hover:text-text-primary'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            {billing === 'annual' && annualSavings > 0 && (
+              <p className="text-green-400 text-sm font-semibold mt-4">
+                Vous économisez {annualSavings}€ par an
+              </p>
+            )}
           </div>
         </motion.div>
 
@@ -231,7 +228,7 @@ export function PricingSection() {
         </div>
 
         {/* Value breakdown */}
-        <ValueBreakdown seats={seats} pricePerSeat={activePrice} billing={billing} />
+        <ValueBreakdown seats={seats} pricePerSeat={activePrice} />
 
         {/* Trust line */}
         <motion.div
@@ -256,131 +253,72 @@ export function PricingSection() {
   )
 }
 
-/* ─── Value Breakdown ─── */
+/* ─── Value Breakdown with Donut Charts ─── */
 
-function ComparisonBar({ label, amount, maxAmount, color, delay }: {
-  label: string; amount: string; maxAmount: number; color: string; delay: number
-}) {
-  const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once: true })
-  const numericAmount = parseFloat(amount.replace(/[^\d.]/g, ''))
-  const widthPercent = (numericAmount / maxAmount) * 100
-
-  return (
-    <div ref={ref} className="space-y-2">
-      <div className="flex justify-between items-baseline">
-        <span className="text-sm text-text-secondary">{label}</span>
-        <span className="text-sm font-bold text-text-primary">{amount}</span>
-      </div>
-      <div className="h-3 rounded-full bg-bg-card overflow-hidden">
-        <motion.div
-          className={`h-full rounded-full ${color}`}
-          initial={{ width: 0 }}
-          animate={isInView ? { width: `${Math.min(widthPercent, 100)}%` } : {}}
-          transition={{ duration: 1.2, delay, ease: [0.16, 1, 0.3, 1] }}
-        />
-      </div>
-    </div>
-  )
-}
-
-function ValueBreakdown({ seats, pricePerSeat, billing }: { seats: number; pricePerSeat: number; billing: string }) {
+function ValueBreakdown({ seats, pricePerSeat }: { seats: number; pricePerSeat: number }) {
   const totalMonthly = pricePerSeat * seats
-  const dailyPerSeat = pricePerSeat / 30
+  const costPercent = Math.round((totalMonthly / 3500) * 100)
 
   return (
     <motion.div
-      className="mt-16 md:mt-20 max-w-5xl mx-auto w-full"
-      initial={{ opacity: 0, y: 40 }}
+      className="mt-14 max-w-4xl mx-auto w-full"
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
     >
-      <div className="text-center mb-12">
-        <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-green-500/[0.08] text-green-400 border border-green-500/20 mb-4">
-          Concrètement
-        </span>
-        <h3 className="text-2xl md:text-3xl font-bold text-text-primary">
-          Ce que ça représente vraiment
-        </h3>
+      <h3 className="text-xl sm:text-2xl font-bold text-text-primary text-center mb-8">
+        Concrètement, pour {seats} poste{seats > 1 ? 's' : ''}
+      </h3>
+
+      {/* 3 donut charts */}
+      <div className="grid grid-cols-3 gap-4 sm:gap-8 mb-10">
+        <DonutItem value={costPercent} label="du coût d'un recrutement" detail={`${totalMonthly}€ vs 3 500€`} color="#22c55e" />
+        <DonutItem value={60} label="de temps récupéré" detail="3-4h gagnées/jour" color="#22c55e" />
+        <DonutItem value={Math.round((pricePerSeat / 30) * 100) / 100 < 1 ? 100 : 0} label="de risque de fuite" detail="Isolation totale" color="#22c55e" isInverse />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <motion.div className="glass rounded-2xl p-6 md:p-8 text-center" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-          <div className="w-14 h-14 rounded-2xl bg-green-500/[0.08] border border-green-500/20 flex items-center justify-center mx-auto mb-4">
-            <Icon name="sparkles" className="text-green-400" size={28} />
-          </div>
-          <div className="text-3xl md:text-4xl font-bold text-green-400 mb-1 tracking-tight">
-            <AnimatedCounter target={parseFloat(dailyPerSeat.toFixed(2))} suffix="€" />
-          </div>
-          <div className="text-sm font-medium text-text-primary">par poste par jour</div>
-          <p className="text-xs text-text-muted mt-2">Moins cher qu'un café</p>
-        </motion.div>
-
-        <motion.div className="glass rounded-2xl p-6 md:p-8 text-center" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
-          <div className="w-14 h-14 rounded-2xl bg-green-500/[0.08] border border-green-500/20 flex items-center justify-center mx-auto mb-4">
-            <Icon name="search" className="text-green-400" size={28} />
-          </div>
-          <div className="text-3xl md:text-4xl font-bold text-text-primary mb-1 tracking-tight">
-            <AnimatedCounter target={3} suffix="-4h" />
-          </div>
-          <div className="text-sm font-medium text-text-primary">gagnées par jour</div>
-          <p className="text-xs text-text-muted mt-2">Recherche, rédaction, synthèse</p>
-        </motion.div>
-
-        <motion.div className="glass rounded-2xl p-6 md:p-8 text-center" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
-          <div className="w-14 h-14 rounded-2xl bg-green-500/[0.08] border border-green-500/20 flex items-center justify-center mx-auto mb-4">
-            <Icon name="chart-bar" className="text-green-400" size={28} />
-          </div>
-          <div className="text-3xl md:text-4xl font-bold text-text-primary mb-1 tracking-tight">
-            <AnimatedCounter target={50} suffix="x" />
-          </div>
-          <div className="text-sm font-medium text-text-primary">moins cher qu'un recrutement</div>
-          <p className="text-xs text-text-muted mt-2">
-            Proxima : <span className="text-green-400 font-semibold">{totalMonthly}€</span> vs 3 500€/collaborateur
-          </p>
-        </motion.div>
+      {/* Résumé en une ligne */}
+      <div className="glass rounded-xl p-4 sm:p-5 text-center">
+        <p className="text-sm sm:text-base text-text-secondary">
+          <span className="text-green-400 font-bold">Sur 12 mois</span> : Proxima coûte{' '}
+          <span className="text-text-primary font-bold">{(totalMonthly * 12).toLocaleString('fr-FR')}€</span> — un recrutement coûte{' '}
+          <span className="text-text-primary font-bold">42 000€</span>.{' '}
+          <span className="text-green-400 font-bold">Économie : {(42000 - totalMonthly * 12).toLocaleString('fr-FR')}€</span>
+        </p>
       </div>
-
-      {/* Comparison bars */}
-      <motion.div className="glass rounded-2xl p-6 md:p-10" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-        <h4 className="text-lg font-bold text-text-primary mb-1">Coût mensuel comparé</h4>
-        <p className="text-sm text-text-muted mb-8">Pour {seats} poste{seats > 1 ? 's' : ''} avec IA{billing === 'annual' ? ' (facturation annuelle)' : ''}</p>
-
-        <div className="space-y-6">
-          <ComparisonBar
-            label={`Proxima Entreprise (${seats} poste${seats > 1 ? 's' : ''})`}
-            amount={`${totalMonthly}€`}
-            maxAmount={3500}
-            color="bg-gradient-to-r from-green-500 to-green-400"
-            delay={0.1}
-          />
-          <ComparisonBar
-            label="ChatGPT Team (25$/poste/mois)"
-            amount={`${seats * 25}€`}
-            maxAmount={3500}
-            color="bg-gradient-to-r from-text-muted/40 to-text-muted/20"
-            delay={0.25}
-          />
-          <ComparisonBar
-            label="Un collaborateur supplémentaire"
-            amount="3 500€"
-            maxAmount={3500}
-            color="bg-gradient-to-r from-red-500/60 to-red-400/40"
-            delay={0.4}
-          />
-        </div>
-
-        <div className="mt-8 pt-6 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
-          <Icon name="check-badge" className="text-green-400 shrink-0" size={20} />
-          <span className="text-sm text-text-secondary">
-            <span className="text-green-400 font-semibold">Sur 12 mois</span> : Proxima coûte{' '}
-            <span className="text-text-primary font-bold">{(totalMonthly * 12).toLocaleString('fr-FR')}€</span> —
-            un collaborateur coûte <span className="text-text-primary font-bold">42 000€</span>.
-            Vous économisez <span className="text-green-400 font-bold">{(42000 - totalMonthly * 12).toLocaleString('fr-FR')}€</span>.
-          </span>
-        </div>
-      </motion.div>
     </motion.div>
+  )
+}
+
+function DonutItem({ value, label, detail, color, isInverse }: { value: number; label: string; detail: string; color: string; isInverse?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: true })
+  const displayValue = isInverse ? 0 : value
+  const size = 90
+  const strokeWidth = 6
+  const radius = (size - strokeWidth) / 2
+  const circumference = radius * 2 * Math.PI
+  const offset = circumference - (displayValue / 100) * circumference
+
+  return (
+    <div ref={ref} className="flex flex-col items-center text-center">
+      <div className="relative mb-3" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="-rotate-90">
+          <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="currentColor" strokeWidth={strokeWidth} className="text-border-subtle" />
+          <motion.circle
+            cx={size/2} cy={size/2} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round"
+            strokeDasharray={circumference}
+            initial={{ strokeDashoffset: circumference }}
+            animate={isInView ? { strokeDashoffset: offset } : {}}
+            transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-lg sm:text-xl font-bold text-text-primary">{isInverse ? '0%' : `${value}%`}</span>
+        </div>
+      </div>
+      <span className="text-xs sm:text-sm font-medium text-text-primary">{label}</span>
+      <span className="text-[10px] sm:text-xs text-text-muted mt-0.5">{detail}</span>
+    </div>
   )
 }

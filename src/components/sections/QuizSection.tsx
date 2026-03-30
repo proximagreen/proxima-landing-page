@@ -342,27 +342,32 @@ export function QuizSection() {
 
   if (!started) {
     return (
-      <section className="py-[var(--section-padding)] px-6 relative overflow-hidden">
+      <section className="py-[var(--section-padding)] px-4 sm:px-6 relative overflow-hidden">
         <div className="absolute inset-0 spotlight pointer-events-none" />
-        <div className="max-w-2xl mx-auto text-center relative z-10">
+        <div className="max-w-2xl mx-auto relative z-10">
           <motion.div
+            className="glass rounded-2xl p-8 sm:p-12 text-center border-green-500/20"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-green-500/[0.08] text-green-400 border border-green-500/20 mb-6">
+            {/* Glow behind */}
+            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 bg-green-500/10 blur-[100px] rounded-full pointer-events-none" />
+
+            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-green-500/15 text-green-400 border border-green-500/30 mb-6">
               Diagnostic gratuit — 30 secondes
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-4 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary mb-4 tracking-tight">
               Vos données sont-elles<br /><span className="text-gradient">vraiment protégées ?</span>
             </h2>
-            <p className="text-lg text-text-secondary mb-8 max-w-lg mx-auto">
-              4 questions. Résultat instantané. Découvrez votre niveau de risque et combien de temps vous perdez chaque mois.
+            <p className="text-base sm:text-lg text-text-secondary mb-8 max-w-md mx-auto">
+              4 questions. Résultat instantané. Découvrez votre niveau de risque et combien vous perdez chaque mois.
             </p>
             <Button variant="primary" size="lg" onClick={() => setStarted(true)}>
               Lancer le diagnostic
             </Button>
+            <p className="text-xs text-text-muted mt-4">Gratuit, anonyme, sans inscription</p>
           </motion.div>
         </div>
       </section>
