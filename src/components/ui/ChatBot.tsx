@@ -66,6 +66,7 @@ async function voxtralTTS(text: string): Promise<string | null> {
       body: JSON.stringify({
         model: 'voxtral-mini-tts-2603',
         input: text,
+        voice_id: '49d024dd-981b-4462-bb17-74d381eb8fd7',
         response_format: 'mp3',
       }),
     })
