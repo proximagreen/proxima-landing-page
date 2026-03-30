@@ -328,79 +328,51 @@
   filter: blur(0px);
 }
 
-/* Logo monochrome filter — white in dark mode, dark in light mode */
-.logo-monochrome {
-  filter: grayscale(100%) brightness(0) invert(1);
-}
-
-[data-theme="light"] .logo-monochrome {
-  filter: grayscale(100%) brightness(0);
-}
-
 /* ============================================
-   LIGHT MODE — additional overrides
+   LIGHT MODE — comprehensive overrides
    ============================================ */
 
-/* Green glow too intense on white — soften */
+/* Green glow — soften on white */
 [data-theme="light"] .green-glow {
-  box-shadow:
-    0 0 15px rgba(22, 163, 74, 0.15),
-    0 0 40px rgba(22, 163, 74, 0.08);
+  box-shadow: 0 0 15px rgba(22, 163, 74, 0.15), 0 0 40px rgba(22, 163, 74, 0.08);
 }
 
-/* Card glow border — darker green in light */
+/* Card glow border */
 [data-theme="light"] .card-glow::before {
-  background: linear-gradient(
-    135deg,
-    transparent 30%,
-    rgba(22, 163, 74, 0.25) 50%,
-    transparent 70%
-  );
+  background: linear-gradient(135deg, transparent 30%, rgba(22, 163, 74, 0.25) 50%, transparent 70%);
 }
 
-/* Fade edges on marquee — match white bg */
-[data-theme="light"] .from-bg-primary {
-  --tw-gradient-from: #ffffff;
-}
-
-/* Spotlight — visible on white */
+/* Spotlight */
 [data-theme="light"] .spotlight {
-  background: radial-gradient(
-    ellipse 60% 50% at 50% 50%,
-    rgba(22, 163, 74, 0.06) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(22, 163, 74, 0.06) 0%, transparent 70%);
 }
 
-/* Float orbs — hide on light mode (too visible) */
+/* Float orbs — subtler */
 [data-theme="light"] .float-orb,
 [data-theme="light"] .float-orb-reverse {
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
-/* Section fade — white gradient in light mode */
+/* Section fades — white */
 [data-theme="light"] .section-fade-top::before {
-  background: linear-gradient(to bottom, #ffffff, transparent);
+  background: linear-gradient(to bottom, var(--color-bg-primary), transparent);
 }
 [data-theme="light"] .section-fade-bottom::after {
-  background: linear-gradient(to top, #ffffff, transparent);
+  background: linear-gradient(to top, var(--color-bg-primary), transparent);
 }
 
-/* Testimonial photo border */
-[data-theme="light"] img[class*="rounded-full"][class*="border"] {
-  border-color: rgba(0, 0, 0, 0.1);
+/* Hero section — ALWAYS dark (video background) */
+.hero-section {
+  --color-text-primary: #f5f5f5;
+  --color-text-secondary: #a3a3a3;
+  --color-text-muted: #525252;
 }
 
-/* Ensure text on video hero stays white in light mode */
-[data-theme="light"] section:first-of-type {
-  color: #ffffff;
-}
-[data-theme="light"] section:first-of-type .text-text-primary,
-[data-theme="light"] section:first-of-type .text-text-secondary {
-  color: rgba(255, 255, 255, 0.9);
-}
-[data-theme="light"] section:first-of-type .text-text-muted {
-  color: rgba(255, 255, 255, 0.6);
+/* Logo PNG filter — desaturate without black boxes */
+/* Uses contrast(0) brightness(1.5) instead of brightness(0) invert(1) to avoid black bg on transparent PNGs */
+[data-theme="light"] .logo-monochrome,
+[data-theme="light"] img[style*="filter"] {
+  filter: grayscale(100%) contrast(0.8) brightness(0.4) !important;
 }
 
 /* ============================================
