@@ -1,11 +1,172 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { Icon, type IconName } from '../ui/Icon'
 
 /**
- * Product Demo — scroll-driven avec animations cinématiques
- * Inspiré des techniques Remotion : spring physics, interpolation, transitions en cascade
- * S'adapte au dark/light mode via les CSS variables
+ * Apple-style scroll demo — sticky pinned sections with cinematic reveals.
+ *
+ * Chaque cas d'usage a sa propre "scène" qui entre et sort au scroll.
+ * La zone visuelle reste fixe (sticky) pendant que le contenu change.
  */
+
+interface UseCase {
+  icon: IconName
+  badge: string
+  title: string
+  description: string
+  metrics: { value: string; label: string }[]
+  visual: 'chat' | 'search' | 'folder' | 'meet' | 'agents'
+}
+
+const USE_CASES: UseCase[] = [
+  {
+    icon: 'chat',
+    badge: 'Chat IA',
+    title: 'Analysez un contrat\nen 3 minutes',
+    description: 'Votre client vous envoie 200 pages. Proxima les lit, identifie les risques, et rédige une synthèse. En toute confidentialité.',
+    metrics: [
+      { value: '3 min', label: 'au lieu de 4h' },
+      { value: '0', label: 'données partagées' },
+    ],
+    visual: 'chat',
+  },
+  {
+    icon: 'search',
+    badge: 'Recherche IA',
+    title: 'Trouvez la jurisprudence\nen 10 secondes',
+    description: 'Plus besoin de fouiller Dalloz pendant des heures. Posez votre question, obtenez la réponse sourcée instantanément.',
+    metrics: [
+      { value: '10s', label: 'de recherche' },
+      { value: '100%', label: 'sources vérifiables' },
+    ],
+    visual: 'search',
+  },
+  {
+    icon: 'folder',
+    badge: 'Cloisonnement',
+    title: 'Un dossier par client.\nÉtanche.',
+    description: 'Les données du client A ne croisent jamais celles du client B. Chaque dossier est un environnement isolé.',
+    metrics: [
+      { value: '0%', label: 'contamination croisée' },
+      { value: '∞', label: 'dossiers possibles' },
+    ],
+    visual: 'folder',
+  },
+  {
+    icon: 'video',
+    badge: 'Proxima Meet',
+    title: 'Réunion IA chiffrée.\nTranscription automatique.',
+    description: 'Visioconférence avec transcription en temps réel, résumé auto et plan d\'action — le tout chiffré de bout en bout.',
+    metrics: [
+      { value: 'E2E', label: 'chiffrement' },
+      { value: 'Auto', label: 'compte-rendu' },
+    ],
+    visual: 'meet',
+  },
+  {
+    icon: 'sparkles',
+    badge: 'Agents IA',
+    title: 'Automatisez vos process\nles plus chronophages',
+    description: 'Veille réglementaire, extraction de données, relecture de documents — vos agents IA travaillent 24/7 pour vous.',
+    metrics: [
+      { value: '24/7', label: 'disponibilité' },
+      { value: '50x', label: 'plus rapide' },
+    ],
+    visual: 'agents',
+  },
+]
+
+// Petite illustration abstraite pour chaque cas d'usage
+function VisualBlock({ type, progress }: { type: string; progress: number }) {
+  return (
+    <div className="relative w-full aspect-[4/3] rounded-xl bg-bg-inset border border-border-card overflow-hidden">
+      {/* Dot grid */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+
+      {/* Animated bars representing data */}
+      <div className="absolute inset-0 flex items-end justify-center gap-2 p-6 pb-8">
+        {[0.3, 0.6, 0.45, 0.8, 0.55, 0.7, 0.4, 0.9].map((h, i) => (
+          <motion.div
+            key={i}
+            className="flex-1 rounded-t-md bg-gradient-to-t from-green-500/40 to-green-500/20"
+            style={{
+              height: `${h * progress * 100}%`,
+              opacity: 0.3 + progress * 0.7,
+              transition: 'height 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Central icon */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-bg-primary/80 backdrop-blur-sm border border-border-card flex items-center justify-center shadow-lg">
+          <Icon name={type as IconName} className="text-green-500" size={32} />
+        </div>
+      </div>
+
+      {/* Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-green-500/10 blur-[60px] rounded-full pointer-events-none" style={{ opacity: progress }} />
+    </div>
+  )
+}
+
+function UseCaseScene({ useCase, index, scrollYProgress }: { useCase: UseCase; index: number; scrollYProgress: ReturnType<typeof useScroll>['scrollYProgress'] }) {
+  const total = USE_CASES.length
+  const sectionSize = 0.85 / total
+  const start = 0.08 + index * sectionSize
+  const mid = start + sectionSize * 0.15
+  const peak = start + sectionSize * 0.5
+  const end = start + sectionSize * 0.85
+  const out = start + sectionSize
+
+  const opacity = useTransform(scrollYProgress, [start, mid, peak, end, out], [0, 1, 1, 1, 0])
+  const y = useTransform(scrollYProgress, [start, mid, end, out], [60, 0, 0, -40])
+  const scale = useTransform(scrollYProgress, [start, mid, end, out], [0.95, 1, 1, 0.98])
+  const visualProgress = useTransform(scrollYProgress, [start, peak], [0, 1])
+
+  return (
+    <motion.div
+      className="absolute inset-0 flex items-center justify-center px-4 sm:px-6"
+      style={{ opacity, y, scale }}
+    >
+      <div className="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-center">
+        {/* Text side */}
+        <div className={`${index % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-medium tracking-wider uppercase bg-green-500/10 text-green-500 border border-green-500/20 mb-4 sm:mb-5">
+            <Icon name={useCase.icon} size={14} className="text-green-500" />
+            {useCase.badge}
+          </span>
+
+          <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary leading-tight mb-4 whitespace-pre-line">
+            {useCase.title}
+          </h3>
+
+          <p className="text-sm sm:text-base text-text-secondary leading-relaxed mb-6">
+            {useCase.description}
+          </p>
+
+          {/* Metrics */}
+          <div className="flex gap-6 sm:gap-8">
+            {useCase.metrics.map((m, i) => (
+              <div key={i}>
+                <div className="text-2xl sm:text-3xl font-black text-green-500 tracking-tight">{m.value}</div>
+                <div className="text-[11px] sm:text-xs text-text-muted uppercase tracking-wider mt-1">{m.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Visual side */}
+        <div className={`${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
+          <motion.div style={{ opacity: useTransform(opacity, [0, 0.5], [0, 1]) }}>
+            <VisualBlock type={useCase.visual} progress={visualProgress.get()} />
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
 
 export function FrameScrollSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -14,149 +175,77 @@ export function FrameScrollSection() {
     offset: ['start start', 'end end'],
   })
 
-  // ─── Orchestration des animations au scroll ───
-  const frameOpacity = useTransform(scrollYProgress, [0, 0.06], [0, 1])
-  const frameScale = useTransform(scrollYProgress, [0, 0.08], [0.9, 1])
-  const frameY = useTransform(scrollYProgress, [0, 0.08], [60, 0])
-
-  // Features qui apparaissent en cascade
-  const feat1 = useTransform(scrollYProgress, [0.12, 0.22], [0, 1])
-  const feat2 = useTransform(scrollYProgress, [0.25, 0.35], [0, 1])
-  const feat3 = useTransform(scrollYProgress, [0.38, 0.48], [0, 1])
-  const feat4 = useTransform(scrollYProgress, [0.52, 0.62], [0, 1])
-  const feat5 = useTransform(scrollYProgress, [0.65, 0.75], [0, 1])
-
-  // Textes synchronisés
-  const texts = [
-    { start: 0.10, text: 'Chat IA confidentiel' },
-    { start: 0.25, text: 'Recherche documentaire instantanée' },
-    { start: 0.38, text: 'Cloisonnement par client' },
-    { start: 0.52, text: 'Agents IA personnalisés' },
-    { start: 0.65, text: 'Visioconférence chiffrée' },
-  ]
-
-  // Barre de progression globale
-  const progressWidth = useTransform(scrollYProgress, [0.1, 0.8], ['0%', '100%'])
-  const progressOpacity = useTransform(scrollYProgress, [0, 0.08, 0.85, 0.95], [0, 1, 1, 0])
+  // Progress indicator
+  const progressWidth = useTransform(scrollYProgress, [0.05, 0.9], ['0%', '100%'])
+  const progressOpacity = useTransform(scrollYProgress, [0, 0.05, 0.9, 1], [0, 1, 1, 0])
 
   return (
-    <section ref={containerRef} className="relative h-[250vh] md:h-[350vh]">
-      <div className="sticky top-0 h-screen flex items-center justify-center px-4 sm:px-6 overflow-hidden">
-        <div className="relative w-full max-w-5xl mx-auto">
+    <section ref={containerRef} style={{ height: `${USE_CASES.length * 100 + 50}vh` }} className="relative">
+      <div className="sticky top-0 h-screen flex flex-col">
+        {/* Section header — visible au début */}
+        <motion.div
+          className="text-center pt-20 sm:pt-24 pb-4"
+          style={{
+            opacity: useTransform(scrollYProgress, [0, 0.04, 0.06], [0, 1, 1]),
+          }}
+        >
+          <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium tracking-wider uppercase bg-green-500/10 text-green-500 border border-green-500/20 mb-2">
+            Ce que Proxima fait pour vous
+          </span>
+        </motion.div>
 
-          {/* Glow subtil */}
-          <div className="absolute inset-0 -m-16 bg-green-500/[0.04] blur-[100px] rounded-full pointer-events-none" />
-
-          {/* Titre de section */}
-          <motion.div
-            className="text-center mb-6 md:mb-8"
-            style={{ opacity: frameOpacity }}
-          >
-            <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium tracking-wider uppercase bg-green-500/10 text-green-500 border border-green-500/20 mb-3">
-              Démo produit
-            </span>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">
-              Tout ce dont vous avez besoin, en un seul endroit
-            </h2>
-          </motion.div>
-
-          {/* Carte produit principale */}
-          <motion.div
-            className="glass rounded-xl md:rounded-2xl overflow-hidden border border-border-card"
-            style={{ opacity: frameOpacity, scale: frameScale, y: frameY }}
-          >
-            {/* Feature cards grid */}
-            <div className="grid grid-cols-1 md:grid-cols-5 min-h-[300px] md:min-h-[400px]">
-
-              {/* Sidebar — liste des features */}
-              <div className="md:col-span-2 border-b md:border-b-0 md:border-r border-border-subtle p-4 sm:p-6 flex flex-col gap-2 sm:gap-3">
-                {[
-                  { opacity: feat1, icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', label: 'Chat IA confidentiel', desc: 'Analysez, rédigez, synthétisez' },
-                  { opacity: feat2, icon: 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z', label: 'Recherche documentaire', desc: 'Trouvez en secondes' },
-                  { opacity: feat3, icon: 'M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z', label: 'Dossiers cloisonnés', desc: '1 dossier = 1 client' },
-                  { opacity: feat4, icon: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z', label: 'Agents IA', desc: 'Automatisez vos process' },
-                  { opacity: feat5, icon: 'm15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25z', label: 'Proxima Meet', desc: 'Visio chiffrée bout en bout' },
-                ].map((feat, i) => (
-                  <motion.div
-                    key={i}
-                    className="flex items-center gap-3 p-2.5 sm:p-3 rounded-lg border border-transparent transition-colors"
-                    style={{
-                      opacity: feat.opacity,
-                      borderColor: useTransform(feat.opacity, [0.5, 1], ['transparent', 'var(--color-border-glow)']),
-                      backgroundColor: useTransform(feat.opacity, [0.5, 1], ['transparent', 'var(--color-bg-card)']),
-                    }}
-                  >
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
-                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d={feat.icon} />
-                      </svg>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-semibold text-text-primary truncate">{feat.label}</div>
-                      <div className="text-[10px] sm:text-xs text-text-muted truncate">{feat.desc}</div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Main area — preview dynamique */}
-              <div className="md:col-span-3 p-4 sm:p-6 flex flex-col justify-center relative bg-bg-inset">
-                {/* Dot grid background */}
-                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '20px 20px' }} />
-
-                {/* Texte dynamique au centre */}
-                <div className="relative z-10 text-center py-8 sm:py-12">
-                  {texts.map((t, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute inset-0 flex flex-col items-center justify-center px-4"
-                      style={{
-                        opacity: useTransform(
-                          scrollYProgress,
-                          [t.start - 0.02, t.start + 0.02, t.start + 0.10, t.start + 0.12],
-                          [0, 1, 1, 0]
-                        ),
-                        y: useTransform(
-                          scrollYProgress,
-                          [t.start - 0.02, t.start + 0.02, t.start + 0.10, t.start + 0.12],
-                          [20, 0, 0, -20]
-                        ),
-                      }}
-                    >
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-4 sm:mb-5">
-                        <svg className="w-7 h-7 sm:w-8 sm:h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                        </svg>
-                      </div>
-                      <p className="text-lg sm:text-xl md:text-2xl font-bold text-text-primary">{t.text}</p>
-                      <p className="text-xs sm:text-sm text-text-muted mt-2">100% confidentiel. Aucune donnée partagée.</p>
-                    </motion.div>
-                  ))}
-
-                  {/* Placeholder quand rien n'est visible */}
-                  <motion.div
-                    className="flex flex-col items-center justify-center py-4"
-                    style={{ opacity: useTransform(scrollYProgress, [0, 0.08, 0.10], [1, 1, 0]) }}
-                  >
-                    <img src="/favicon-proxima.png" alt="" className="w-10 h-10 sm:w-12 sm:h-12 mb-3 opacity-30" />
-                    <p className="text-sm text-text-muted">Scrollez pour découvrir</p>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-
-            {/* Progress bar en bas */}
-            <motion.div
-              className="h-1 bg-bg-card"
-              style={{ opacity: progressOpacity }}
-            >
-              <motion.div
-                className="h-full bg-gradient-to-r from-green-500 to-green-400"
-                style={{ width: progressWidth }}
-              />
-            </motion.div>
-          </motion.div>
+        {/* Scenes container */}
+        <div className="flex-1 relative overflow-hidden">
+          {USE_CASES.map((uc, i) => (
+            <UseCaseScene
+              key={i}
+              useCase={uc}
+              index={i}
+              scrollYProgress={scrollYProgress}
+            />
+          ))}
         </div>
+
+        {/* Progress bar bottom */}
+        <motion.div
+          className="h-1 mx-auto w-full max-w-md bg-border-subtle rounded-full mb-6 overflow-hidden"
+          style={{ opacity: progressOpacity }}
+        >
+          <motion.div
+            className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full"
+            style={{ width: progressWidth }}
+          />
+        </motion.div>
+
+        {/* Dots navigation */}
+        <motion.div
+          className="flex items-center justify-center gap-2 pb-6"
+          style={{ opacity: progressOpacity }}
+        >
+          {USE_CASES.map((_, i) => {
+            const sectionSize = 0.85 / USE_CASES.length
+            const start = 0.08 + i * sectionSize
+            const mid = start + sectionSize * 0.5
+            return (
+              <motion.div
+                key={i}
+                className="w-2 h-2 rounded-full transition-colors duration-300"
+                style={{
+                  backgroundColor: useTransform(
+                    scrollYProgress,
+                    [start, mid, start + sectionSize],
+                    ['var(--color-border-subtle)', 'var(--color-green-500)', 'var(--color-border-subtle)']
+                  ),
+                  scale: useTransform(
+                    scrollYProgress,
+                    [start, mid, start + sectionSize],
+                    [1, 1.5, 1]
+                  ),
+                }}
+              />
+            )
+          })}
+        </motion.div>
       </div>
     </section>
   )
