@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { usePersonalization } from '../../context/PersonalizationContext'
 import { getContent, resolveHeadline } from '../../lib/content'
+import { getCheckoutUrl } from '../../lib/stripe'
 import { Button } from '../ui/Button'
 import { AnimatedCounter } from '../ui/AnimatedCounter'
 
@@ -14,6 +15,7 @@ export function HeroSection() {
   const { segment, name, company } = usePersonalization()
   const content = getContent(segment)
   const headline = resolveHeadline(content, name, company)
+  const stripeUrl = getCheckoutUrl({ segment, company, name })
 
   return (
     <section className="hero-section relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 py-24 sm:py-28 md:py-32">
@@ -63,7 +65,7 @@ export function HeroSection() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 sm:mb-14"
           initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <Button variant="primary" size="lg" href="https://console.proxima.green">
+          <Button variant="primary" size="lg" href={stripeUrl}>
             {content.hero.ctaPrimary}
           </Button>
           <Button variant="secondary" size="lg" href="https://demo.proxima.green">

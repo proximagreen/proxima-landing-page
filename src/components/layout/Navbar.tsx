@@ -117,8 +117,8 @@ export function Navbar() {
         <div className="flex items-center gap-3 z-50">
           <ThemeToggle />
           <div className="hidden sm:block">
-            <Button variant="primary" size="sm" href="https://console.proxima.green" className="whitespace-nowrap">
-              Ma console
+            <Button variant="primary" size="sm" href="#pricing" className="whitespace-nowrap">
+              Souscrire
             </Button>
           </div>
 
@@ -169,8 +169,8 @@ export function Navbar() {
               </div>
 
               <div className="pt-4 border-t border-border-subtle sm:hidden">
-                <Button variant="primary" className="w-full justify-center" href="https://console.proxima.green" onClick={() => setMobileMenuOpen(false)}>
-                  Ma console
+                <Button variant="primary" className="w-full justify-center" href="#pricing" onClick={() => setMobileMenuOpen(false)}>
+                  Souscrire
                 </Button>
               </div>
             </div>

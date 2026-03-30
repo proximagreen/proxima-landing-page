@@ -2,14 +2,14 @@ import { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { usePersonalization } from '../../context/PersonalizationContext'
 import { getContent } from '../../lib/content'
-import { PLANS } from '../../lib/stripe'
+import { getCheckoutUrl, getSignupUrl, PLANS } from '../../lib/stripe'
 import { SectionHeading } from '../ui/SectionHeading'
 import { Button } from '../ui/Button'
 
 const SEAT_OPTIONS = [1, 5, 10, 25, 50, 100]
 
 export function PricingSection() {
-  const { segment, plan: defaultPlan, seats: defaultSeats } = usePersonalization()
+  const { segment, name, company, plan: defaultPlan, seats: defaultSeats } = usePersonalization()
   const content = getContent(segment)
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
   const [seats, setSeats] = useState(defaultSeats)
@@ -21,6 +21,9 @@ export function PricingSection() {
   const activePrice = billing === 'annual' ? annualMonthlyPrice : monthlyPrice
   const totalPrice = activePrice * seats
   const annualSavings = (monthlyPrice - annualMonthlyPrice) * seats * 12
+
+  const stripeUrl = getCheckoutUrl({ segment, company, name, seats })
+  const signupUrl = getSignupUrl({ segment, company, name })
 
   return (
     <section id="pricing" className="py-[var(--section-padding)] px-6 relative section-fade-top">
@@ -135,8 +138,8 @@ export function PricingSection() {
               ))}
             </ul>
 
-            <Button variant="secondary" className="w-full mt-auto" href="https://demo.proxima.green">
-              Tester la demo
+            <Button variant="secondary" className="w-full mt-auto" href={signupUrl}>
+              Essayer gratuitement
             </Button>
             
             <div className="flex flex-wrap items-center justify-center gap-4 mt-6 opacity-60">
@@ -210,8 +213,8 @@ export function PricingSection() {
               ))}
             </ul>
 
-            <Button variant="primary" className="w-full mt-auto" href="https://console.proxima.green">
-              Activer mon espace ({totalPrice}€/mois)
+            <Button variant="primary" className="w-full mt-auto" href={stripeUrl}>
+              Souscrire ({totalPrice}€/mois)
             </Button>
             
             <div className="flex flex-wrap items-center justify-center gap-4 mt-6 opacity-60">

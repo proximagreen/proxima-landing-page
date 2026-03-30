@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/Button'
 import { DonutChart, HBarChart, ScoreGauge } from '../ui/Charts'
-import { PLANS } from '../../lib/stripe'
+import { usePersonalization } from '../../context/PersonalizationContext'
+import { getCheckoutUrl, getSignupUrl, PLANS } from '../../lib/stripe'
 
 /* ─── Quiz Data ─── */
 
@@ -181,8 +182,12 @@ function QuestionCard({ question, onAnswer }: { question: QuizQuestion; onAnswer
 }
 
 function ResultCard({ result }: { result: QuizResult }) {
+  const { segment, company, name } = usePersonalization()
   const proPrice = PLANS.pro.price
   const totalPrice = proPrice * result.recommendedSeats
+
+  const stripeUrl = getCheckoutUrl({ segment, company, name, seats: result.recommendedSeats })
+  const signupUrl = getSignupUrl({ segment, company, name })
 
   const scorePercent = Math.round((result.score / 12) * 100)
 
@@ -283,16 +288,16 @@ function ResultCard({ result }: { result: QuizResult }) {
 
       {/* CTAs */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <Button variant="primary" size="lg" className="flex-1 justify-center" href="https://console.proxima.green">
-          Acceder a ma console
+        <Button variant="primary" size="lg" className="flex-1 justify-center" href={stripeUrl}>
+          Souscrire, {totalPrice}€/mois
         </Button>
-        <Button variant="secondary" size="lg" className="flex-1 justify-center" href="https://demo.proxima.green">
-          Voir la demo
+        <Button variant="secondary" size="lg" className="flex-1 justify-center" href={signupUrl}>
+          Essai gratuit d'abord
         </Button>
       </div>
 
       <p className="text-center text-xs text-text-muted mt-4">
-        Deploiement instantane. Support inclus. Sans engagement.
+        Sans engagement. Annulation en 1 clic. Paiement securise par Stripe.
       </p>
     </motion.div>
   )

@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion'
 import { usePersonalization } from '../../context/PersonalizationContext'
+import { getCheckoutUrl, getSignupUrl } from '../../lib/stripe'
 import { Button } from '../ui/Button'
 
 export function FinalCTASection() {
-  const { company } = usePersonalization()
+  const { segment, company, name } = usePersonalization()
+  const stripeUrl = getCheckoutUrl({ segment, company, name })
+  const signupUrl = getSignupUrl({ segment, company, name })
 
   return (
     <section className="py-[var(--section-padding)] px-6 relative overflow-hidden section-fade-top">
@@ -30,13 +33,13 @@ export function FinalCTASection() {
             }
           </p>
 
-          {/* Double CTA : console + demo */}
+          {/* Double CTA : Stripe + essai */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button variant="primary" size="lg" href="https://console.proxima.green">
-              Acceder a ma console
+            <Button variant="primary" size="lg" href={stripeUrl}>
+              Souscrire maintenant
             </Button>
-            <Button variant="secondary" size="lg" href="https://demo.proxima.green">
-              Voir la demo
+            <Button variant="secondary" size="lg" href={signupUrl}>
+              Essai gratuit d'abord
             </Button>
           </div>
 

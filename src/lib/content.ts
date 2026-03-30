@@ -129,8 +129,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
       subheadline: 'Chat IA, recherche juridique, visio chiffree, cloisonnement par dossier. Tout est deploye, souverain, et pret pour votre equipe.',
-      ctaPrimary: 'Accéder à ma console',
-      ctaSecondary: 'Voir la démo',
+      ctaPrimary: 'Souscrire maintenant',
+      ctaSecondary: 'Voir la demo',
     },
     problems: [
       { stat: '3-4h/jour', text: 'recuperees grace a l\'IA sur la recherche jurisprudentielle', icon: 'clock', color: '#22c55e', gauge: 45 },
@@ -167,8 +167,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       headline: 'Votre IA souveraine\nest prête.\nAccélérez votre pratique.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
       subheadline: 'Chat IA confidentiel, analyse documentaire, visio chiffree. Compatible HDS, deploye en Europe, pret pour votre equipe.',
-      ctaPrimary: 'Accéder à ma console',
-      ctaSecondary: 'Voir la démo',
+      ctaPrimary: 'Souscrire maintenant',
+      ctaSecondary: 'Voir la demo',
     },
     problems: [
       { stat: '10h/sem', text: 'recuperees sur les taches administratives repetitives', icon: 'clock', color: '#22c55e', gauge: 55 },
@@ -204,8 +204,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       headline: 'Votre IA cloisonnée\nest prête.\nLivrez plus vite.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
       subheadline: 'Chat IA, analyse de documents, visio chiffree. Chaque mission cloisonnee, chaque donnee souveraine. Pret pour votre equipe.',
-      ctaPrimary: 'Accéder à ma console',
-      ctaSecondary: 'Voir la démo',
+      ctaPrimary: 'Souscrire maintenant',
+      ctaSecondary: 'Voir la demo',
     },
     problems: [
       { stat: '2x', text: 'plus rapide sur la production de livrables et rapports', icon: 'clock', color: '#22c55e', gauge: 60 },
@@ -239,8 +239,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
       headlinePersonalized: '{name}, bienvenue.\nVotre espace Proxima\nest prêt',
       subheadline: 'Chat IA, recherche web, visio chiffree, cloisonnement par client. Tout est deploye sur un cloud souverain europeen, pret pour votre equipe.',
-      ctaPrimary: 'Accéder à ma console',
-      ctaSecondary: 'Voir la démo',
+      ctaPrimary: 'Souscrire maintenant',
+      ctaSecondary: 'Voir la demo',
     },
     problems: [
       { stat: '3h/jour', text: 'recuperees sur les taches repetitives grace a l\'IA', icon: 'clock', color: '#22c55e', gauge: 40 },
