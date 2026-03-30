@@ -354,7 +354,7 @@ export function QuizSection() {
   }
 
   return (
-    <section className="py-[var(--section-padding)] px-6 relative">
+    <section className="py-[var(--section-padding)] px-6 relative overflow-hidden">
       <div className="max-w-2xl mx-auto relative z-10">
         {/* Progress */}
         {!isComplete && (
