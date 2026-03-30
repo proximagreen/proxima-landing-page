@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/Button'
-import { DonutChart, HBarChart } from '../ui/Charts'
+import { DonutChart, HBarChart, ScoreGauge } from '../ui/Charts'
 import { usePersonalization } from '../../context/PersonalizationContext'
 import { getCheckoutUrl, getSignupUrl, PLANS } from '../../lib/stripe'
 
@@ -197,31 +197,14 @@ function ResultCard({ result }: { result: QuizResult }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Score gauge */}
+      {/* Score gauge (Chart.js Doughnut) */}
       <div className="text-center mb-8">
-        <div className="inline-flex flex-col items-center">
-          <div className="relative w-32 h-32 mb-4">
-            <svg className="w-32 h-32 -rotate-90" viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" strokeWidth="6" className="text-border-subtle" />
-              <motion.circle
-                cx="60" cy="60" r="50" fill="none" strokeWidth="6" strokeLinecap="round"
-                className={result.riskLevel === 'critical' ? 'text-red-500' : result.riskLevel === 'high' ? 'text-orange-500' : result.riskLevel === 'medium' ? 'text-amber-500' : 'text-green-500'}
-                strokeDasharray={`${scorePercent * 3.14} 314`}
-                initial={{ strokeDasharray: '0 314' }}
-                animate={{ strokeDasharray: `${scorePercent * 3.14} 314` }}
-                transition={{ duration: 1.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                stroke="currentColor"
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className={`text-3xl font-bold ${result.riskColor}`}>{result.score}</span>
-              <span className="text-[10px] text-text-muted uppercase tracking-wider">/12</span>
-            </div>
-          </div>
-          <span className={`text-sm font-bold ${result.riskColor} uppercase tracking-wider`}>
-            Risque {result.riskLabel}
-          </span>
-        </div>
+        <ScoreGauge
+          score={result.score}
+          maxScore={12}
+          riskColor={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : '#22c55e'}
+          riskLabel={result.riskLabel}
+        />
       </div>
 
       {/* Headline */}
@@ -232,44 +215,40 @@ function ResultCard({ result }: { result: QuizResult }) {
         {result.description}
       </p>
 
-      {/* Visual donut charts */}
+      {/* Visual donut charts (Chart.js) */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         <DonutChart
           value={scorePercent}
           label="Risque données"
           sublabel={result.riskLabel}
-          color={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : 'var(--color-green-500)'}
+          color={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : '#22c55e'}
           size={100}
-          delay={0.2}
         />
         <DonutChart
           value={60}
           label="Temps récupérable"
           sublabel={result.savings}
-          color="var(--color-green-500)"
+          color="#22c55e"
           size={100}
-          delay={0.4}
         />
         <DonutChart
           value={Math.round((totalPrice / 3500) * 100)}
           label="Coût vs recrutement"
           sublabel={`${totalPrice}€ vs 3 500€`}
-          color="var(--color-green-500)"
+          color="#22c55e"
           size={100}
-          delay={0.6}
         />
       </div>
 
       {/* Bar chart — valeur comparée */}
       <div className="glass rounded-xl p-5 md:p-6 mb-8">
-        <h4 className="text-sm font-bold text-text-primary mb-5">Comparatif de valeur mensuelle</h4>
         <HBarChart
+          title="Comparatif de valeur mensuelle"
           items={[
-            { label: `Proxima (${result.recommendedSeats} poste${result.recommendedSeats > 1 ? 's' : ''})`, value: totalPrice, maxValue: 3500, color: 'bg-gradient-to-r from-green-500 to-green-400', suffix: '€' },
-            { label: 'ChatGPT Team', value: result.recommendedSeats * 25, maxValue: 3500, color: 'bg-gradient-to-r from-text-muted/40 to-text-muted/20', suffix: '€' },
-            { label: 'Recrutement', value: 3500, maxValue: 3500, color: 'bg-gradient-to-r from-red-500/60 to-red-400/40', suffix: '€' },
+            { label: `Proxima (${result.recommendedSeats} poste${result.recommendedSeats > 1 ? 's' : ''})`, value: totalPrice, color: '#22c55e', suffix: '€' },
+            { label: 'ChatGPT Team', value: result.recommendedSeats * 25, color: 'rgba(255,255,255,0.2)', suffix: '€' },
+            { label: 'Recrutement', value: 3500, color: '#ef4444', suffix: '€' },
           ]}
-          delay={0.3}
         />
       </div>
 
@@ -310,7 +289,7 @@ function ResultCard({ result }: { result: QuizResult }) {
       {/* CTAs */}
       <div className="flex flex-col sm:flex-row gap-3">
         <Button variant="primary" size="lg" className="flex-1 justify-center" href={stripeUrl}>
-          Démarrer maintenant — {totalPrice}€/mois
+          Démarrer maintenant, {totalPrice}€/mois
         </Button>
         <Button variant="secondary" size="lg" className="flex-1 justify-center" href={signupUrl}>
           Essai gratuit d'abord
@@ -356,7 +335,7 @@ export function QuizSection() {
             <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 bg-green-500/10 blur-[100px] rounded-full pointer-events-none" />
 
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-green-500/15 text-green-400 border border-green-500/30 mb-6">
-              Diagnostic gratuit — 30 secondes
+              Diagnostic gratuit, 30 secondes
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary mb-4 tracking-tight">
               Vos données sont-elles<br /><span className="text-gradient">vraiment protégées ?</span>

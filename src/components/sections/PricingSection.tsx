@@ -49,7 +49,7 @@ export function PricingSection() {
                 onClick={() => setBilling('monthly')}
                 className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
                   billing === 'monthly'
-                    ? 'bg-green-500 text-black'
+                    ? 'bg-green-500 text-white'
                     : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
@@ -59,7 +59,7 @@ export function PricingSection() {
                 onClick={() => setBilling('annual')}
                 className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer flex items-center gap-2 ${
                   billing === 'annual'
-                    ? 'bg-green-500 text-black'
+                    ? 'bg-green-500 text-white'
                     : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
@@ -81,7 +81,7 @@ export function PricingSection() {
                   onClick={() => setSeats(n)}
                   className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl text-base font-bold transition-all duration-300 cursor-pointer ${
                     seats === n
-                      ? 'bg-green-500 text-black shadow-[0_0_20px_rgba(34,197,94,0.3)] scale-110'
+                      ? 'bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.3)] scale-110'
                       : 'bg-bg-card border border-border-subtle text-text-secondary hover:border-green-500/40 hover:text-text-primary'
                   }`}
                 >
@@ -281,7 +281,7 @@ function ValueBreakdown({ seats, pricePerSeat }: { seats: number; pricePerSeat: 
       <div className="glass rounded-xl p-4 sm:p-5 text-center">
         <p className="text-sm sm:text-base text-text-secondary">
           <span className="text-green-400 font-bold">Sur 12 mois</span> : Proxima coûte{' '}
-          <span className="text-text-primary font-bold">{(totalMonthly * 12).toLocaleString('fr-FR')}€</span> — un recrutement coûte{' '}
+          <span className="text-text-primary font-bold">{(totalMonthly * 12).toLocaleString('fr-FR')}€</span>. Un recrutement coûte{' '}
           <span className="text-text-primary font-bold">42 000€</span>.{' '}
           <span className="text-green-400 font-bold">Économie : {(42000 - totalMonthly * 12).toLocaleString('fr-FR')}€</span>
         </p>

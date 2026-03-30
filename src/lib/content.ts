@@ -73,11 +73,11 @@ interface SegmentContent {
 }
 
 const SHARED_FEATURES: Feature[] = [
-  { icon: 'chat', title: 'Chat IA confidentiel', description: 'Analysez des contrats, rédigez des rapports, synthétisez des dossiers — sans jamais exposer les données de vos clients.' },
-  { icon: 'search', title: 'Recherche Web IA', description: 'Veille concurrentielle, recherche réglementaire, benchmarks — l\'IA cherche pour vous, sans tracking ni fuite.' },
+  { icon: 'chat', title: 'Chat IA confidentiel', description: 'Analysez des contrats, rédigez des rapports, synthétisez des dossiers. Sans jamais exposer les données de vos clients.' },
+  { icon: 'search', title: 'Recherche Web IA', description: 'Veille concurrentielle, recherche réglementaire, benchmarks. L\'IA cherche pour vous, sans tracking ni fuite.' },
   { icon: 'folder', title: 'Dossiers cloisonnés', description: 'Un dossier par client, par mission, par projet. Cloisonnement total. Aucune contamination croisée.' },
   { icon: 'document', title: 'RAG documentaire', description: 'Interrogez vos documents internes en langage naturel. L\'IA trouve la réponse dans vos fichiers en secondes.' },
-  { icon: 'video', title: 'Proxima Meet', description: 'Visioconférence IA intégrée. Transcription, résumé et actions — dans un environnement chiffré de bout en bout.' },
+  { icon: 'video', title: 'Proxima Meet', description: 'Visioconférence IA intégrée. Transcription, résumé et actions, dans un environnement chiffré de bout en bout.' },
 ]
 
 const SHARED_WHY_GREEN: WhyPoint[] = [
@@ -96,7 +96,7 @@ const SHARED_WHY_PRIVATE: WhyPoint[] = [
 
 const SHARED_SOLUTION_STEPS: SolutionStep[] = [
   { step: 1, title: 'Connectez votre équipe', description: 'Créez votre espace en 30 secondes. Invitez vos collaborateurs. Aucune installation, aucune config serveur.', icon: 'sparkles' },
-  { step: 2, title: 'Travaillez en confiance', description: 'Chat IA, analyse de documents, visio — dans un environnement où les données de vos clients restent les vôtres.', icon: 'shield' },
+  { step: 2, title: 'Travaillez en confiance', description: 'Chat IA, analyse de documents, visio. Dans un environnement où les données de vos clients restent les vôtres.', icon: 'shield' },
   { step: 3, title: 'Délivrez plus, plus vite', description: 'Réduisez vos temps de production, augmentez votre capacité et démarquez-vous par la qualité de vos livrables.', icon: 'chart-bar' },
 ]
 
@@ -128,7 +128,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Vos clients vous confient\nleurs secrets.\nProtégez-les avec l\'IA.',
       headlinePersonalized: '{name}, {company}\nmérite une IA à la hauteur\ndu secret professionnel',
-      subheadline: 'L\'IA confidentielle qui accélère votre cabinet sans jamais compromettre la confiance de vos clients. Recherche, rédaction, analyse — en toute souveraineté.',
+      subheadline: 'L\'IA confidentielle qui accélère votre cabinet sans jamais compromettre la confiance de vos clients. Recherche, rédaction, analyse en toute souveraineté.',
       ctaPrimary: 'Essayer gratuitement',
       ctaSecondary: 'Voir les tarifs',
     },
@@ -150,7 +150,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       { text: 'Conforme aux exigences du secret professionnel des avocats (art. 66-5)' },
     ],
     testimonials: [
-      { name: 'Me Sophie Laurent', role: 'Avocate PI, Associée', company: 'Laurent & Associés', quote: 'On analysait un portefeuille de brevets en 2 jours. Avec Proxima, c\'est fait en 3 heures — et mes clients n\'ont jamais été aussi bien protégés.', avatar: 'SL', photo: '/images/testimonial-2.jpg' },
+      { name: 'Me Sophie Laurent', role: 'Avocate PI, Associée', company: 'Laurent & Associés', quote: 'On analysait un portefeuille de brevets en 2 jours. Avec Proxima, c\'est fait en 3 heures, et mes clients n\'ont jamais été aussi bien protégés.', avatar: 'SL', photo: '/images/testimonial-2.jpg' },
       { name: 'Me Pierre Dubois', role: 'Avocat Droit des Affaires', company: 'Cabinet Dubois', quote: 'Enfin une IA que je peux utiliser devant mes clients sans rougir. Le cloisonnement des dossiers, c\'est ce qui a tout changé.', avatar: 'PD', photo: '/images/testimonial-1.jpg' },
     ],
     pricing: {
@@ -203,7 +203,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Vos mandats exigent\nla confidentialité absolue.\nVotre IA doit suivre.',
       headlinePersonalized: '{name}, {company}\nmérite une IA\nà la hauteur de ses engagements',
-      subheadline: 'Analysez, auditez, conseillez — avec une IA qui cloisonne chaque mission et accélère vos livrables sans compromettre la confiance de vos clients.',
+      subheadline: 'Analysez, auditez, conseillez avec une IA qui cloisonne chaque mission et accélère vos livrables sans compromettre la confiance de vos clients.',
       ctaPrimary: 'Essayer gratuitement',
       ctaSecondary: 'Voir les tarifs',
     },
@@ -238,7 +238,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'L\'IA confidentielle\nqui vous rend\nplus compétitif',
       headlinePersonalized: '{name}, bienvenue.\nDécouvrez l\'IA souveraine\nqui change tout',
-      subheadline: 'Avocats PI, CGP, cabinets de conseil, auditeurs — vous gérez des données sensibles. Proxima vous donne la puissance de l\'IA sans jamais compromettre la confiance de vos clients.',
+      subheadline: 'Avocats PI, CGP, cabinets de conseil, auditeurs : vous gérez des données sensibles. Proxima vous donne la puissance de l\'IA sans jamais compromettre la confiance de vos clients.',
       ctaPrimary: 'Essayer gratuitement',
       ctaSecondary: 'Voir les tarifs',
     },

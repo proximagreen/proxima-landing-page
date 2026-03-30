@@ -56,7 +56,7 @@ const USE_CASES: UseCase[] = [
     icon: 'video',
     badge: 'Proxima Meet',
     title: 'Réunion IA chiffrée.\nTranscription automatique.',
-    description: 'Visioconférence avec transcription en temps réel, résumé auto et plan d\'action — le tout chiffré de bout en bout.',
+    description: 'Visioconférence avec transcription en temps réel, résumé auto et plan d\'action. Le tout chiffré de bout en bout.',
     metrics: [
       { value: 'E2E', label: 'chiffrement' },
       { value: 'Auto', label: 'compte-rendu' },
@@ -67,7 +67,7 @@ const USE_CASES: UseCase[] = [
     icon: 'sparkles',
     badge: 'Agents IA',
     title: 'Automatisez vos process\nles plus chronophages',
-    description: 'Veille réglementaire, extraction de données, relecture de documents — vos agents IA travaillent 24/7 pour vous.',
+    description: 'Veille réglementaire, extraction de données, relecture de documents. Vos agents IA travaillent 24/7 pour vous.',
     metrics: [
       { value: '24/7', label: 'disponibilité' },
       { value: '50x', label: 'plus rapide' },
@@ -89,16 +89,16 @@ function VisualBlock({ type }: { type: string }) {
           <div className="bg-bg-card border border-border-card rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%]">
             <p className="text-xs text-text-primary font-medium mb-1.5">3 clauses identifiées :</p>
             <div className="space-y-1">
-              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-400" /><span className="text-[11px] text-text-secondary">Art. 12 — Non-concurrence 24 mois (risque élevé)</span></div>
-              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-amber-400" /><span className="text-[11px] text-text-secondary">Art. 8 — Exclusivité territoriale</span></div>
-              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" /><span className="text-[11px] text-text-secondary">Art. 15 — Clause standard conforme</span></div>
+              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-400" /><span className="text-[11px] text-text-secondary">Art. 12 : Non-concurrence 24 mois (risque élevé)</span></div>
+              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-amber-400" /><span className="text-[11px] text-text-secondary">Art. 8 : Exclusivité territoriale</span></div>
+              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" /><span className="text-[11px] text-text-secondary">Art. 15 : Clause standard conforme</span></div>
             </div>
           </div>
         </div>
         {/* Input bar */}
         <div className="flex items-center gap-2 bg-bg-card border border-border-card rounded-full px-3 py-2 mt-2">
           <span className="text-[10px] text-text-muted flex-1">Posez votre question...</span>
-          <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"><svg className="w-3 h-3 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg></div>
+          <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg></div>
         </div>
       </div>
     ),
@@ -123,9 +123,9 @@ function VisualBlock({ type }: { type: string }) {
       <div className="space-y-2">
         <div className="flex items-center gap-2 mb-3"><Icon name="folder" size={16} className="text-green-500" /><span className="text-xs font-semibold text-text-primary">Dossiers clients</span></div>
         {[
-          { name: 'Cabinet Laurent — M&A', docs: 47, color: 'border-l-blue-400' },
-          { name: 'SCI Montparnasse — Bail', docs: 23, color: 'border-l-amber-400' },
-          { name: 'TechCorp — Brevets', docs: 112, color: 'border-l-purple-400' },
+          { name: 'Cabinet Laurent, M&A', docs: 47, color: 'border-l-blue-400' },
+          { name: 'SCI Montparnasse, Bail', docs: 23, color: 'border-l-amber-400' },
+          { name: 'TechCorp, Brevets', docs: 112, color: 'border-l-purple-400' },
         ].map((f, i) => (
           <div key={i} className={`bg-bg-card border border-border-card border-l-2 ${f.color} rounded-lg p-3 flex justify-between items-center`}>
             <div><span className="text-xs font-medium text-text-primary block">{f.name}</span><span className="text-[10px] text-text-muted">{f.docs} documents</span></div>
@@ -168,8 +168,12 @@ function VisualBlock({ type }: { type: string }) {
   }
 
   return (
-    <div className="w-full rounded-xl bg-bg-inset border border-border-card overflow-hidden p-4 sm:p-5">
-      {mockups[type] || mockups.chat}
+    <div className="relative group">
+      {/* Glow effect behind the card */}
+      <div className="absolute -inset-3 bg-green-500/[0.07] blur-2xl rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      <div className="relative w-full rounded-xl bg-bg-inset border border-border-card overflow-hidden p-4 sm:p-5 shadow-[0_0_40px_rgba(34,197,94,0.05)]">
+        {mockups[type] || mockups.chat}
+      </div>
     </div>
   )
 }
@@ -211,7 +215,7 @@ function UseCaseScene({ useCase, index, scrollYProgress }: { useCase: UseCase; i
           {/* Metrics */}
           <div className="flex gap-6 sm:gap-8">
             {useCase.metrics.map((m, i) => (
-              <div key={i}>
+              <div key={i} className="relative px-4 py-3 rounded-xl bg-green-500/[0.05] border border-green-500/10">
                 <div className="text-2xl sm:text-3xl font-black text-green-500 tracking-tight">{m.value}</div>
                 <div className="text-[11px] sm:text-xs text-text-muted uppercase tracking-wider mt-1">{m.label}</div>
               </div>
@@ -243,15 +247,23 @@ export function FrameScrollSection() {
 
   return (
     <section ref={containerRef} style={{ height: `${USE_CASES.length * 150 + 80}vh` }} className="relative">
-      <div className="sticky top-0 h-screen flex flex-col">
-        {/* Section header — visible au début */}
+      {/* Background radial glow */}
+      <div className="sticky top-0 h-screen">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/[0.03] rounded-full blur-[120px]" />
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-bg-primary to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-bg-primary to-transparent" />
+        </div>
+      </div>
+      <div className="sticky top-0 h-screen flex flex-col" style={{ marginTop: '-100vh' }}>
+        {/* Section header */}
         <motion.div
           className="text-center pt-20 sm:pt-24 pb-4"
           style={{
             opacity: useTransform(scrollYProgress, [0, 0.04, 0.06], [0, 1, 1]),
           }}
         >
-          <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium tracking-wider uppercase bg-green-500/10 text-green-500 border border-green-500/20 mb-2">
+          <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium tracking-wider uppercase bg-green-500/10 text-green-500 border border-green-500/20 mb-2 shadow-[0_0_20px_rgba(34,197,94,0.15)]">
             Ce que Proxima fait pour vous
           </span>
         </motion.div>

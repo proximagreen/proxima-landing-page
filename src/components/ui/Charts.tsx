@@ -1,106 +1,199 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
+import { useInView } from 'framer-motion'
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+} from 'chart.js'
+import { Doughnut, Bar } from 'react-chartjs-2'
 
-/* ─── Donut Chart ─── */
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement)
+
+/* ─── Donut Chart (Chart.js) ─── */
 
 interface DonutChartProps {
   value: number       // 0-100
   size?: number
-  strokeWidth?: number
   color?: string
   label: string
   sublabel?: string
-  delay?: number
 }
 
-export function DonutChart({ value, size = 120, strokeWidth = 8, color = 'var(--color-green-500)', label, sublabel, delay = 0 }: DonutChartProps) {
+export function DonutChart({ value, size = 120, color = '#22c55e', label, sublabel }: DonutChartProps) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true })
-  const radius = (size - strokeWidth) / 2
-  const circumference = radius * 2 * Math.PI
-  const offset = circumference - (value / 100) * circumference
+  const [animated, setAnimated] = useState(false)
+
+  useEffect(() => {
+    if (isInView && !animated) setAnimated(true)
+  }, [isInView, animated])
+
+  const displayValue = animated ? value : 0
 
   return (
     <div ref={ref} className="flex flex-col items-center">
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg width={size} height={size} className="-rotate-90">
-          {/* Background circle */}
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={strokeWidth}
-            className="text-border-subtle"
-          />
-          {/* Value arc */}
-          <motion.circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            initial={{ strokeDashoffset: circumference }}
-            animate={isInView ? { strokeDashoffset: offset } : {}}
-            transition={{ duration: 1.5, delay, ease: [0.16, 1, 0.3, 1] }}
-          />
-        </svg>
+      <div style={{ width: size, height: size }} className="relative">
+        <Doughnut
+          data={{
+            datasets: [{
+              data: [displayValue, 100 - displayValue],
+              backgroundColor: [color, 'rgba(255,255,255,0.05)'],
+              borderWidth: 0,
+              borderRadius: 6,
+            }],
+          }}
+          options={{
+            cutout: '75%',
+            responsive: true,
+            maintainAspectRatio: true,
+            animation: { duration: 1200, easing: 'easeOutQuart' },
+            plugins: { tooltip: { enabled: false }, legend: { display: false } },
+          }}
+        />
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-bold text-text-primary">{value}%</span>
+          <span className="text-xl sm:text-2xl font-bold text-text-primary">{value}%</span>
         </div>
       </div>
-      <span className="text-sm font-medium text-text-primary mt-3">{label}</span>
-      {sublabel && <span className="text-xs text-text-muted mt-0.5">{sublabel}</span>}
+      <span className="text-xs sm:text-sm font-medium text-text-primary mt-3 text-center">{label}</span>
+      {sublabel && <span className="text-[10px] sm:text-xs text-text-muted mt-0.5 text-center">{sublabel}</span>}
     </div>
   )
 }
 
-/* ─── Horizontal Bar Chart ─── */
+/* ─── Horizontal Bar Chart (Chart.js) ─── */
 
-interface BarItem {
+interface BarChartItem {
   label: string
   value: number
-  maxValue: number
   color: string
   suffix?: string
 }
 
 interface HBarChartProps {
-  items: BarItem[]
-  delay?: number
+  items: BarChartItem[]
+  title?: string
 }
 
-export function HBarChart({ items, delay = 0 }: HBarChartProps) {
+export function HBarChart({ items, title }: HBarChartProps) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true })
+  const [animated, setAnimated] = useState(false)
+
+  useEffect(() => {
+    if (isInView && !animated) setAnimated(true)
+  }, [isInView, animated])
 
   return (
-    <div ref={ref} className="space-y-4">
-      {items.map((item, i) => {
-        const percent = Math.min((item.value / item.maxValue) * 100, 100)
-        return (
-          <div key={i} className="space-y-1.5">
-            <div className="flex justify-between items-baseline">
-              <span className="text-sm text-text-secondary">{item.label}</span>
-              <span className="text-sm font-bold text-text-primary">
-                {item.value.toLocaleString('fr-FR')}{item.suffix || ''}
-              </span>
-            </div>
-            <div className="h-3 rounded-full bg-bg-card overflow-hidden">
-              <motion.div
-                className={`h-full rounded-full ${item.color}`}
-                initial={{ width: 0 }}
-                animate={isInView ? { width: `${percent}%` } : {}}
-                transition={{ duration: 1.2, delay: delay + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-              />
-            </div>
-          </div>
-        )
-      })}
+    <div ref={ref}>
+      {title && <h4 className="text-sm font-bold text-text-primary mb-4">{title}</h4>}
+      <div style={{ height: items.length * 52 + 20 }}>
+        <Bar
+          data={{
+            labels: items.map(i => i.label),
+            datasets: [{
+              data: animated ? items.map(i => i.value) : items.map(() => 0),
+              backgroundColor: items.map(i => i.color),
+              borderRadius: 6,
+              borderSkipped: false,
+              barThickness: 28,
+            }],
+          }}
+          options={{
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 1200, easing: 'easeOutQuart' },
+            scales: {
+              x: {
+                display: false,
+                max: Math.max(...items.map(i => i.value)) * 1.15,
+              },
+              y: {
+                display: true,
+                grid: { display: false },
+                ticks: {
+                  color: 'rgba(255,255,255,0.5)',
+                  font: { size: 11 },
+                },
+                border: { display: false },
+              },
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                titleFont: { size: 12 },
+                bodyFont: { size: 12 },
+                padding: 10,
+                cornerRadius: 8,
+                callbacks: {
+                  label: (ctx) => {
+                    const item = items[ctx.dataIndex]
+                    return ` ${ctx.parsed.x.toLocaleString('fr-FR')}${item.suffix || ''}`
+                  },
+                },
+              },
+            },
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
+/* ─── Radar / Score Gauge (Chart.js Doughnut variant) ─── */
+
+interface ScoreGaugeProps {
+  score: number
+  maxScore: number
+  riskColor: string
+  riskLabel: string
+}
+
+export function ScoreGauge({ score, maxScore, riskColor, riskLabel }: ScoreGaugeProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: true })
+  const [animated, setAnimated] = useState(false)
+  const percent = Math.round((score / maxScore) * 100)
+
+  useEffect(() => {
+    if (isInView && !animated) setAnimated(true)
+  }, [isInView, animated])
+
+  return (
+    <div ref={ref} className="inline-flex flex-col items-center">
+      <div className="relative w-36 h-36 sm:w-40 sm:h-40 mb-4">
+        <Doughnut
+          data={{
+            datasets: [{
+              data: animated ? [percent, 100 - percent] : [0, 100],
+              backgroundColor: [riskColor, 'rgba(255,255,255,0.05)'],
+              borderWidth: 0,
+              borderRadius: 8,
+            }],
+          }}
+          options={{
+            cutout: '78%',
+            rotation: -90,
+            circumference: 360,
+            responsive: true,
+            maintainAspectRatio: true,
+            animation: { duration: 1800, easing: 'easeOutQuart' },
+            plugins: { tooltip: { enabled: false }, legend: { display: false } },
+          }}
+        />
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-4xl font-bold" style={{ color: riskColor }}>{score}</span>
+          <span className="text-[10px] text-text-muted uppercase tracking-wider">/{maxScore}</span>
+        </div>
+      </div>
+      <span className="text-sm font-bold uppercase tracking-wider" style={{ color: riskColor }}>
+        Risque {riskLabel}
+      </span>
     </div>
   )
 }

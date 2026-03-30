@@ -64,7 +64,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
         >
           <Button variant="primary" size="lg" href="#pricing">
-            Commencer maintenant — Gratuit
+            Commencer maintenant
           </Button>
           <span className="text-xs sm:text-sm text-white/50">Démarrage immédiat, aucune carte requise</span>
         </motion.div>

@@ -80,10 +80,12 @@ export function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-500 backdrop-blur-xl ${
         scrolled || mobileMenuOpen
           ? navBg
-          : 'bg-transparent border-b border-transparent'
+          : theme === 'dark'
+            ? 'bg-bg-primary/60 border-b border-white/5'
+            : 'bg-white/60 border-b border-black/5'
       }`}
     >
       <div className="max-w-[var(--container-max)] mx-auto flex items-center justify-between">

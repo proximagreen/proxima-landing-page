@@ -46,7 +46,7 @@ export function SocialProofSection() {
                 )}
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-text-primary truncate">{testimonial.name}</p>
-                  <p className="text-xs text-text-muted truncate">{testimonial.role} — {testimonial.company}</p>
+                  <p className="text-xs text-text-muted truncate">{testimonial.role}, {testimonial.company}</p>
                 </div>
               </div>
             </GlassCard>

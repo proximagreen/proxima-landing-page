@@ -17,11 +17,11 @@ const ROW1: LogoItem[] = [
   { name: 'Station F', src: '/logos/station-f.png' },
   { name: 'Telecom Paris', src: '/logos/telecom-incubateur.png' },
   { name: 'NVIDIA Inception', src: '/logos/nvidia-inception.png' },
-  { name: 'VINCI', text: 'VINCI' },
+  { name: 'VINCI', src: '/logos/vinci.png' },
   { name: 'The Shift Project', src: '/logos/shift-project.png' },
-  { name: 'LOUIS VUITTON', text: 'LOUIS VUITTON' },
+  { name: 'LOUIS VUITTON', src: '/logos/louis-vuitton.png' },
   { name: 'Telecom Paris', src: '/logos/telecom-paris.png' },
-  { name: 'ESSEC', text: 'ESSEC' },
+  { name: 'ESSEC', src: '/logos/essec.png' },
   { name: 'Magis', src: '/logos/magis.png' },
 ]
 

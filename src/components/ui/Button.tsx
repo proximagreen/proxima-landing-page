@@ -14,7 +14,7 @@ export function Button({ children, variant = 'primary', size = 'md', href, onCli
   const classes = clsx(
     'inline-flex items-center justify-center font-semibold rounded-full transition-all duration-300 cursor-pointer relative overflow-hidden group',
     {
-      'bg-green-500 text-black shadow-[0_4px_14px_0_rgba(34,197,94,0.39)] hover:shadow-[0_6px_20px_rgba(34,197,94,0.23),0_0_80px_rgba(34,197,94,0.2)] hover:-translate-y-[1px] font-heading': variant === 'primary',
+      'bg-green-500 text-white shadow-[0_4px_14px_0_rgba(34,197,94,0.39)] hover:shadow-[0_6px_20px_rgba(34,197,94,0.23),0_0_80px_rgba(34,197,94,0.2)] hover:-translate-y-[1px] font-heading': variant === 'primary',
       'border border-border-card text-text-primary hover:border-green-500/40 hover:text-green-500 hover:shadow-[0_0_20px_rgba(34,197,94,0.1)] backdrop-blur-sm bg-bg-card/30': variant === 'secondary',
       'text-text-secondary hover:text-green-400': variant === 'ghost',
       'px-5 py-2.5 text-sm': size === 'sm',

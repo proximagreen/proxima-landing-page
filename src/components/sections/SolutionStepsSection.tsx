@@ -38,7 +38,7 @@ export function SolutionStepsSection() {
                 <div className="w-20 h-20 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
                   <Icon name={step.icon} className="text-green-400" size={32} />
                 </div>
-                <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-green-500 text-black text-sm font-bold flex items-center justify-center">
+                <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-green-500 text-white text-sm font-bold flex items-center justify-center">
                   {step.step}
                 </div>
               </div>
