@@ -133,7 +133,7 @@ export function HBarChart({ items, title }: HBarChartProps) {
                 callbacks: {
                   label: (ctx) => {
                     const item = items[ctx.dataIndex]
-                    return ` ${ctx.parsed.x.toLocaleString('fr-FR')}${item.suffix || ''}`
+                    return ` ${(ctx.parsed.x ?? 0).toLocaleString('fr-FR')}${item.suffix || ''}`
                   },
                 },
               },
