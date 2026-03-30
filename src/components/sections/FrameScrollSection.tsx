@@ -1,47 +1,11 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
-const SCROLL_TEXTS = [
-  { progress: 0.1, text: 'Votre espace de travail IA, prêt en 30 secondes' },
-  { progress: 0.3, text: 'Chat intelligent, recherche documentaire, visioconférence' },
-  { progress: 0.5, text: 'Vos données ne quittent jamais votre cloud souverain' },
-  { progress: 0.7, text: 'Une interface pensée pour la productivité' },
-  { progress: 0.9, text: 'Proxima Chat + Meet + Agents — tout en un' },
-]
-
-function ScrollText({ progress, item }: { progress: ReturnType<typeof useScroll>['scrollYProgress']; item: typeof SCROLL_TEXTS[0] }) {
-  const opacity = useTransform(
-    progress,
-    [
-      Math.max(0, item.progress - 0.08),
-      item.progress,
-      Math.min(1, item.progress + 0.08),
-      Math.min(1, item.progress + 0.16),
-    ],
-    [0, 1, 1, 0]
-  )
-
-  const y = useTransform(
-    progress,
-    [
-      Math.max(0, item.progress - 0.08),
-      item.progress,
-      Math.min(1, item.progress + 0.08),
-    ],
-    [20, 0, -20]
-  )
-
-  return (
-    <motion.div
-      className="absolute left-0 right-0 bottom-[-80px] md:bottom-[-90px] text-center px-4"
-      style={{ opacity, y }}
-    >
-      <p className="text-lg md:text-2xl lg:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-text-primary via-green-400 to-text-secondary tracking-tight">
-        {item.text}
-      </p>
-    </motion.div>
-  )
-}
+/**
+ * Product Demo — scroll-driven avec animations cinématiques
+ * Inspiré des techniques Remotion : spring physics, interpolation, transitions en cascade
+ * S'adapte au dark/light mode via les CSS variables
+ */
 
 export function FrameScrollSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -50,176 +14,149 @@ export function FrameScrollSection() {
     offset: ['start start', 'end end'],
   })
 
-  // Frame entrance animation
-  const frameOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1])
-  const frameScale = useTransform(scrollYProgress, [0, 0.1], [0.95, 1])
+  // ─── Orchestration des animations au scroll ───
+  const frameOpacity = useTransform(scrollYProgress, [0, 0.06], [0, 1])
+  const frameScale = useTransform(scrollYProgress, [0, 0.08], [0.9, 1])
+  const frameY = useTransform(scrollYProgress, [0, 0.08], [60, 0])
 
-  // UI state animations inside the mockup
-  const chatBubble1Opacity = useTransform(scrollYProgress, [0.15, 0.25], [0, 1])
-  const chatBubble1Y = useTransform(scrollYProgress, [0.15, 0.25], [20, 0])
+  // Features qui apparaissent en cascade
+  const feat1 = useTransform(scrollYProgress, [0.12, 0.22], [0, 1])
+  const feat2 = useTransform(scrollYProgress, [0.25, 0.35], [0, 1])
+  const feat3 = useTransform(scrollYProgress, [0.38, 0.48], [0, 1])
+  const feat4 = useTransform(scrollYProgress, [0.52, 0.62], [0, 1])
+  const feat5 = useTransform(scrollYProgress, [0.65, 0.75], [0, 1])
 
-  const chatBubble2Opacity = useTransform(scrollYProgress, [0.25, 0.35], [0, 1])
-  const chatBubble2Y = useTransform(scrollYProgress, [0.25, 0.35], [20, 0])
+  // Textes synchronisés
+  const texts = [
+    { start: 0.10, text: 'Chat IA confidentiel' },
+    { start: 0.25, text: 'Recherche documentaire instantanée' },
+    { start: 0.38, text: 'Cloisonnement par client' },
+    { start: 0.52, text: 'Agents IA personnalisés' },
+    { start: 0.65, text: 'Visioconférence chiffrée' },
+  ]
 
-  const agentPanelX = useTransform(scrollYProgress, [0.4, 0.5], [100, 0])
-  const agentPanelOpacity = useTransform(scrollYProgress, [0.4, 0.5], [0, 1])
+  // Barre de progression globale
+  const progressWidth = useTransform(scrollYProgress, [0.1, 0.8], ['0%', '100%'])
+  const progressOpacity = useTransform(scrollYProgress, [0, 0.08, 0.85, 0.95], [0, 1, 1, 0])
 
   return (
-    <section ref={containerRef} className="relative h-[250vh] md:h-[400vh] bg-bg-primary">
-      <div className="sticky top-0 h-screen flex items-center justify-center">
-        <div className="relative w-full max-w-6xl mx-auto px-4 md:px-8">
+    <section ref={containerRef} className="relative h-[250vh] md:h-[350vh]">
+      <div className="sticky top-0 h-screen flex items-center justify-center px-4 sm:px-6 overflow-hidden">
+        <div className="relative w-full max-w-5xl mx-auto">
 
-          {/* Multi-layered glow behind the frame */}
-          <div className="absolute inset-0 -m-20 md:-m-32 bg-green-500/[0.06] blur-[100px] md:blur-[120px] rounded-full float-orb pointer-events-none" />
-          <div className="absolute inset-0 -m-10 md:-m-16 bg-emerald-500/[0.03] blur-[60px] md:blur-[80px] rounded-full float-orb-reverse pointer-events-none" />
+          {/* Glow subtil */}
+          <div className="absolute inset-0 -m-16 bg-green-500/[0.04] blur-[100px] rounded-full pointer-events-none" />
 
-          {/* Browser frame */}
+          {/* Titre de section */}
           <motion.div
-            className="relative rounded-xl md:rounded-2xl overflow-hidden border border-border-card bg-[#0a0a0a] aspect-[16/10] md:aspect-video flex flex-col"
-            style={{
-              opacity: frameOpacity,
-              scale: frameScale,
-              boxShadow: '0 25px 80px -12px rgba(0, 0, 0, 0.6), 0 0 60px rgba(34, 197, 94, 0.06)',
-            }}
+            className="text-center mb-6 md:mb-8"
+            style={{ opacity: frameOpacity }}
           >
-            {/* Browser top navigation bar */}
-            <div className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 bg-[#111] border-b border-white/5 backdrop-blur-md">
-              <div className="flex gap-1.5 md:gap-2 shrink-0">
-                <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-white/20" />
-                <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-white/20" />
-                <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-white/20" />
-              </div>
-              <div className="flex-1 max-w-2xl mx-auto flex justify-center">
-                <div className="w-full max-w-xs md:max-w-sm flex items-center gap-2 px-3 md:px-4 py-1 md:py-1.5 rounded-md bg-[#1a1a1a] border border-white/5 text-[10px] md:text-xs text-white/40">
-                  <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-green-500/60 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  workspace.proxima.green
-                </div>
-              </div>
-            </div>
-
-            {/* Dashboard Mockup Content */}
-            <div className="flex flex-1 overflow-hidden relative">
-              {/* Sidebar */}
-              <div className="hidden md:flex flex-col w-64 border-r border-white/5 bg-[#0d0d0d] p-4">
-                <div className="flex items-center gap-2.5 mb-8 px-2">
-                  <img src="/favicon-proxima.png" alt="Proxima" width={20} height={20} className="w-5 h-5" />
-                  <span className="font-semibold text-white/90 text-sm tracking-tight">Proxima Space</span>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="px-3 py-2 rounded-lg bg-green-500/10 text-green-400 text-sm font-medium border border-green-500/20 flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                    Chat IA
-                  </div>
-                  <div className="px-3 py-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 text-sm font-medium transition-colors flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    Documents
-                  </div>
-                  <div className="px-3 py-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 text-sm font-medium transition-colors flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                    Proxima Meet
-                  </div>
-                </div>
-              </div>
-
-              {/* Main Chat Area */}
-              <div className="flex-1 flex flex-col relative bg-[#0a0a0ae6]">
-                {/* Background dots */}
-                <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-
-                <div className="flex-1 p-4 md:p-6 flex flex-col gap-4 md:gap-6 justify-end pb-20 md:pb-24 z-10 w-full max-w-3xl mx-auto">
-                  {/* User Message */}
-                  <motion.div
-                    className="self-end max-w-[85%] md:max-w-md bg-green-500/15 border border-green-500/30 text-green-50 text-xs md:text-sm p-3 md:p-4 rounded-2xl rounded-tr-sm shadow-sm"
-                    style={{ opacity: chatBubble1Opacity, y: chatBubble1Y }}
-                  >
-                    Analyse ce document et identifie les 3 risques principaux avant la réunion de 14h.
-                  </motion.div>
-
-                  {/* AI Response */}
-                  <motion.div
-                    className="self-start max-w-[90%] md:max-w-xl bg-white/5 border border-white/10 text-white text-xs md:text-sm p-4 md:p-5 rounded-2xl rounded-tl-sm shadow-sm flex gap-3 md:gap-4"
-                    style={{ opacity: chatBubble2Opacity, y: chatBubble2Y }}
-                  >
-                    <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 border border-green-500/30">
-                      <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                    </div>
-                    <div>
-                      <p className="mb-2 md:mb-3 font-medium text-white/90">Voici les risques majeurs identifiés :</p>
-                      <div className="space-y-2 md:space-y-3">
-                        <div className="bg-black/30 rounded-lg p-2 md:p-3 border border-white/5">
-                          <span className="text-rose-400 font-medium">1. Faille d'authentification</span>
-                          <div className="w-3/4 h-1.5 md:h-2 bg-white/10 rounded mt-1.5 md:mt-2" />
-                        </div>
-                        <div className="bg-black/30 rounded-lg p-2 md:p-3 border border-white/5">
-                          <span className="text-amber-400 font-medium">2. Données non chiffrées au repos</span>
-                          <div className="w-4/5 h-1.5 md:h-2 bg-white/10 rounded mt-1.5 md:mt-2" />
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Input Bar */}
-                <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 w-[92%] md:w-[90%] max-w-2xl bg-[#151515] border border-white/10 rounded-full p-1.5 md:p-2 flex items-center shadow-lg z-20">
-                  <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center text-white/30 ml-1">
-                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
-                  </div>
-                  <div className="flex-1 mx-3 md:mx-4 text-xs md:text-sm text-white/25">
-                    Tapez un message...
-                  </div>
-                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-500 text-black flex items-center justify-center shadow-[0_0_15px_rgba(34,197,94,0.4)]">
-                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                  </div>
-                </div>
-              </div>
-
-              {/* Slide-in Agent Panel */}
-              <motion.div
-                className="hidden lg:block w-72 bg-[#0d0d0d] border-l border-white/5 absolute right-0 top-0 bottom-0 shadow-2xl z-30"
-                style={{ x: agentPanelX, opacity: agentPanelOpacity }}
-              >
-                <div className="p-4 border-b border-white/5 bg-[#111]">
-                  <h4 className="text-sm font-semibold text-white">Agents Actifs</h4>
-                </div>
-                <div className="p-4 space-y-3">
-                  <div className="p-3 rounded-lg border border-green-500/30 bg-green-500/5 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-green-500" />
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="text-xs font-bold text-green-400">Agent Sécurité</span>
-                      <span className="flex h-2 w-2 rounded-full bg-green-500" />
-                    </div>
-                    <p className="text-[11px] text-white/50">Analyse en cours...</p>
-                  </div>
-                  <div className="p-3 rounded-lg border border-white/10 bg-white/5">
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="text-xs font-bold text-white/80">Agent Juridique</span>
-                    </div>
-                    <p className="text-[11px] text-white/30">En veille</p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
+            <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium tracking-wider uppercase bg-green-500/10 text-green-500 border border-green-500/20 mb-3">
+              Démo produit
+            </span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">
+              Tout ce dont vous avez besoin, en un seul endroit
+            </h2>
           </motion.div>
 
-          {/* Scroll texts overlaid at bottom */}
-          {SCROLL_TEXTS.map((item, i) => (
-            <ScrollText key={i} progress={scrollYProgress} item={item} />
-          ))}
-        </div>
-
-        {/* Scroll progress indicator */}
-        <motion.div
-          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-[3px] h-24 rounded-full bg-border-subtle overflow-hidden"
-          style={{ opacity: useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]) }}
-        >
+          {/* Carte produit principale */}
           <motion.div
-            className="w-full bg-green-500 rounded-full origin-top"
-            style={{ height: useTransform(scrollYProgress, [0, 1], ['0%', '100%']) }}
-          />
-        </motion.div>
+            className="glass rounded-xl md:rounded-2xl overflow-hidden border border-border-card"
+            style={{ opacity: frameOpacity, scale: frameScale, y: frameY }}
+          >
+            {/* Feature cards grid */}
+            <div className="grid grid-cols-1 md:grid-cols-5 min-h-[300px] md:min-h-[400px]">
+
+              {/* Sidebar — liste des features */}
+              <div className="md:col-span-2 border-b md:border-b-0 md:border-r border-border-subtle p-4 sm:p-6 flex flex-col gap-2 sm:gap-3">
+                {[
+                  { opacity: feat1, icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', label: 'Chat IA confidentiel', desc: 'Analysez, rédigez, synthétisez' },
+                  { opacity: feat2, icon: 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z', label: 'Recherche documentaire', desc: 'Trouvez en secondes' },
+                  { opacity: feat3, icon: 'M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z', label: 'Dossiers cloisonnés', desc: '1 dossier = 1 client' },
+                  { opacity: feat4, icon: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z', label: 'Agents IA', desc: 'Automatisez vos process' },
+                  { opacity: feat5, icon: 'm15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25z', label: 'Proxima Meet', desc: 'Visio chiffrée bout en bout' },
+                ].map((feat, i) => (
+                  <motion.div
+                    key={i}
+                    className="flex items-center gap-3 p-2.5 sm:p-3 rounded-lg border border-transparent transition-colors"
+                    style={{
+                      opacity: feat.opacity,
+                      borderColor: useTransform(feat.opacity, [0.5, 1], ['transparent', 'var(--color-border-glow)']),
+                      backgroundColor: useTransform(feat.opacity, [0.5, 1], ['transparent', 'var(--color-bg-card)']),
+                    }}
+                  >
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d={feat.icon} />
+                      </svg>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-semibold text-text-primary truncate">{feat.label}</div>
+                      <div className="text-[10px] sm:text-xs text-text-muted truncate">{feat.desc}</div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Main area — preview dynamique */}
+              <div className="md:col-span-3 p-4 sm:p-6 flex flex-col justify-center relative bg-bg-inset">
+                {/* Dot grid background */}
+                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '20px 20px' }} />
+
+                {/* Texte dynamique au centre */}
+                <div className="relative z-10 text-center py-8 sm:py-12">
+                  {texts.map((t, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute inset-0 flex flex-col items-center justify-center px-4"
+                      style={{
+                        opacity: useTransform(
+                          scrollYProgress,
+                          [t.start - 0.02, t.start + 0.02, t.start + 0.10, t.start + 0.12],
+                          [0, 1, 1, 0]
+                        ),
+                        y: useTransform(
+                          scrollYProgress,
+                          [t.start - 0.02, t.start + 0.02, t.start + 0.10, t.start + 0.12],
+                          [20, 0, 0, -20]
+                        ),
+                      }}
+                    >
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-4 sm:mb-5">
+                        <svg className="w-7 h-7 sm:w-8 sm:h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                        </svg>
+                      </div>
+                      <p className="text-lg sm:text-xl md:text-2xl font-bold text-text-primary">{t.text}</p>
+                      <p className="text-xs sm:text-sm text-text-muted mt-2">100% confidentiel. Aucune donnée partagée.</p>
+                    </motion.div>
+                  ))}
+
+                  {/* Placeholder quand rien n'est visible */}
+                  <motion.div
+                    className="flex flex-col items-center justify-center py-4"
+                    style={{ opacity: useTransform(scrollYProgress, [0, 0.08, 0.10], [1, 1, 0]) }}
+                  >
+                    <img src="/favicon-proxima.png" alt="" className="w-10 h-10 sm:w-12 sm:h-12 mb-3 opacity-30" />
+                    <p className="text-sm text-text-muted">Scrollez pour découvrir</p>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+
+            {/* Progress bar en bas */}
+            <motion.div
+              className="h-1 bg-bg-card"
+              style={{ opacity: progressOpacity }}
+            >
+              <motion.div
+                className="h-full bg-gradient-to-r from-green-500 to-green-400"
+                style={{ width: progressWidth }}
+              />
+            </motion.div>
+          </motion.div>
+        </div>
       </div>
     </section>
   )
