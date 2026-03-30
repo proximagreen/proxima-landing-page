@@ -29,8 +29,6 @@ export function PricingSection() {
 
   return (
     <section id="pricing" className="py-[var(--section-padding)] px-6 relative section-fade-top">
-      {/* Background */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-green-500/[0.06] blur-[150px] rounded-full pointer-events-none" />
 
       <div className="max-w-[var(--container-max)] mx-auto relative z-10">
         <SectionHeading
@@ -146,6 +144,14 @@ export function PricingSection() {
             <Button variant="secondary" className="w-full mt-auto" href={signupUrl}>
               Essayer gratuitement
             </Button>
+            
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-6 opacity-60">
+              {['RGPD', 'ISO 27001', 'HDS', 'SOC 2'].map((cert) => (
+                <span key={cert} className="text-[10px] md:text-xs font-bold text-text-muted tracking-[0.1em] uppercase">
+                  {cert}
+                </span>
+              ))}
+            </div>
           </motion.div>
 
           {/* Pro */}
@@ -213,6 +219,14 @@ export function PricingSection() {
             <Button variant="primary" className="w-full mt-auto" href={stripeUrl}>
               Choisir Entreprise — {totalPrice}€/mois
             </Button>
+            
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-6 opacity-60">
+              {['RGPD', 'ISO 27001', 'HDS', 'SOC 2'].map((cert) => (
+                <span key={cert} className="text-[10px] md:text-xs font-bold text-text-muted tracking-[0.1em] uppercase">
+                  {cert}
+                </span>
+              ))}
+            </div>
           </motion.div>
         </div>
 

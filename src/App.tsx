@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { useLenis } from './hooks/useLenis'
 import { Navbar } from './components/layout/Navbar'
 import { Footer } from './components/layout/Footer'
+import { CustomCursor } from './components/ui/CustomCursor'
 import { HeroSection } from './components/sections/HeroSection'
 import { ProblemSection } from './components/sections/ProblemSection'
 import { SolutionStepsSection } from './components/sections/SolutionStepsSection'
@@ -36,6 +37,7 @@ function App() {
   return (
     <ThemeProvider>
     <PersonalizationProvider>
+      <CustomCursor />
       <div className="scroll-progress" />
       <Navbar />
       <main>

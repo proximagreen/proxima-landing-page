@@ -2,13 +2,13 @@
 @import "lenis/dist/lenis.css";
 
 @theme {
-  /* Colors - Dark theme (default) */
-  --color-bg-primary: #050505;
-  --color-bg-secondary: #0a0a0a;
-  --color-bg-tertiary: #111111;
-  --color-bg-card: rgba(255, 255, 255, 0.03);
-  --color-bg-card-hover: rgba(255, 255, 255, 0.06);
-  --color-bg-inset: #050505;
+  /* Colors - Dark theme (Material standard elevation) */
+  --color-bg-primary: #121212;
+  --color-bg-secondary: #18181b;
+  --color-bg-tertiary: #27272a;
+  --color-bg-card: rgba(255, 255, 255, 0.05);
+  --color-bg-card-hover: rgba(255, 255, 255, 0.09);
+  --color-bg-inset: #09090b;
 
   --color-border-subtle: rgba(255, 255, 255, 0.06);
   --color-border-card: rgba(255, 255, 255, 0.10);
@@ -25,6 +25,7 @@
 
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Outfit', system-ui, -apple-system, sans-serif;
 
   /* Custom tokens */
   --section-padding: 80px;
@@ -79,6 +80,16 @@
     overflow-x: hidden;
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Hide native cursor on non-touch devices (custom cursor takes over) */
+  @media (pointer: fine) {
+    * { cursor: none !important; }
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
   }
 
   #root {

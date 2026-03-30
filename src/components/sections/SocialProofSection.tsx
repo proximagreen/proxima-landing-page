@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { usePersonalization } from '../../context/PersonalizationContext'
 import { getContent } from '../../lib/content'
 import { SectionHeading } from '../ui/SectionHeading'
@@ -53,20 +52,7 @@ export function SocialProofSection() {
           ))}
         </div>
 
-        {/* Trust logos placeholder */}
-        <motion.div
-          className="mt-24 pt-12 border-t border-white/5 flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-30"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.3 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          {['RGPD', 'ISO 27001', 'HDS', 'SOC 2'].map((cert) => (
-            <span key={cert} className="text-sm md:text-base font-bold text-text-muted tracking-[0.2em] uppercase">
-              {cert}
-            </span>
-          ))}
-        </motion.div>
+
       </div>
     </section>
   )
