@@ -217,7 +217,7 @@ export function PricingSection() {
             </ul>
 
             <Button variant="primary" className="w-full mt-auto" href={stripeUrl}>
-              Choisir Entreprise — {totalPrice}€/mois
+              S'inscrire ({totalPrice}€/mois)
             </Button>
             
             <div className="flex flex-wrap items-center justify-center gap-4 mt-6 opacity-60">

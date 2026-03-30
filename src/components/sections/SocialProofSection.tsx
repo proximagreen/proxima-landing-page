@@ -2,6 +2,7 @@ import { usePersonalization } from '../../context/PersonalizationContext'
 import { getContent } from '../../lib/content'
 import { SectionHeading } from '../ui/SectionHeading'
 import { GlassCard } from '../ui/GlassCard'
+import { LogoBanner } from '../ui/LogoBanner'
 
 export function SocialProofSection() {
   const { segment } = usePersonalization()
@@ -52,7 +53,8 @@ export function SocialProofSection() {
           ))}
         </div>
 
-
+        {/* Logo banner + certifications */}
+        <LogoBanner />
       </div>
     </section>
   )
