@@ -15,13 +15,16 @@ type Mode = 'text' | 'voice'
 const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || ''
 const MODEL = import.meta.env.VITE_OPENROUTER_MODEL || 'mistralai/voxtral-small-24b-2507'
 
-const SYSTEM_PROMPT = `Tu es l'assistant IA de Proxima (proxima.green), une plateforme d'IA confidentielle, souveraine et europeenne pour les professionnels (avocats, consultants, auditeurs, sante).
-Tu reponds de maniere concise, professionnelle et chaleureuse. Tu connais les fonctionnalites : Chat IA, Proxima Meet (visio chiffree), Agents IA, RAG documentaire, cloisonnement par dossier, hebergement europeen conforme RGPD.
-Prix : 9€/poste/mois tout inclus. Reponds en francais. 3 phrases max par reponse.`
+const SYSTEM_PROMPT = `Tu es l'assistant IA de Proxima (proxima.green), la plateforme d'IA confidentielle et souveraine pour les professionnels.
+Fonctionnalites : Chat IA illimite, Proxima Meet (visio chiffree E2E avec transcription), Agents IA automatises, RAG documentaire, cloisonnement total par dossier/client, hebergement 100% europeen conforme RGPD.
+Prix : 9 euros par poste par mois, tout inclus (deploiement, support prioritaire, mises a jour). Essai gratuit disponible.
+Tu reponds en francais, de maniere concise (3 phrases max), professionnelle et chaleureuse. Tu orientes vers la souscription quand c'est pertinent.`
 
 /* ─── API Call ─── */
 
 async function chatCompletion(messages: Message[]): Promise<string> {
+  if (!API_KEY) return 'Le service de chat est temporairement indisponible. Contactez-nous a contact@proxima.green.'
+
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -44,7 +47,7 @@ async function chatCompletion(messages: Message[]): Promise<string> {
   if (!res.ok) throw new Error(`API error: ${res.status}`)
 
   const data = await res.json()
-  return data.choices?.[0]?.message?.content || 'Desolee, je n\'ai pas pu repondre.'
+  return data.choices?.[0]?.message?.content || 'Desole, je n\'ai pas pu repondre. Reessayez.'
 }
 
 /* ─── Voice Recognition Hook ─── */
@@ -52,6 +55,11 @@ async function chatCompletion(messages: Message[]): Promise<string> {
 function useVoiceRecognition(onResult: (text: string) => void) {
   const recognitionRef = useRef<SpeechRecognition | null>(null)
   const [isListening, setIsListening] = useState(false)
+  const [isSupported, setIsSupported] = useState(true)
+
+  useEffect(() => {
+    setIsSupported(!!(window.SpeechRecognition || window.webkitSpeechRecognition))
+  }, [])
 
   const start = useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -81,7 +89,7 @@ function useVoiceRecognition(onResult: (text: string) => void) {
     setIsListening(false)
   }, [])
 
-  return { isListening, start, stop }
+  return { isListening, isSupported, start, stop }
 }
 
 /* ─── Voice Synthesis ─── */
@@ -118,7 +126,7 @@ function VoicePulse({ isListening }: { isListening: boolean }) {
           />
         </>
       )}
-      <div className={`relative z-10 w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-300 ${isListening ? 'bg-green-500' : 'bg-bg-card border border-border-card'}`}>
+      <div className={`relative z-10 w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-300 ${isListening ? 'bg-green-500 shadow-[0_0_30px_rgba(34,197,94,0.4)]' : 'bg-bg-card border border-border-card'}`}>
         <svg className={`w-7 h-7 transition-colors ${isListening ? 'text-white' : 'text-green-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
         </svg>
@@ -136,6 +144,7 @@ export function ChatBot() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isLoading) return
@@ -152,19 +161,39 @@ export function ChatBot() {
 
       if (mode === 'voice') speak(reply)
     } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Erreur de connexion. Reessayez.' }])
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Erreur de connexion. Reessayez dans un instant.' }])
     } finally {
       setIsLoading(false)
     }
   }, [messages, isLoading, mode])
 
-  const { isListening, start: startVoice, stop: stopVoice } = useVoiceRecognition(sendMessage)
+  const { isListening, isSupported: voiceSupported, start: startVoice, stop: stopVoice } = useVoiceRecognition(sendMessage)
 
+  // Auto-scroll on new message
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+      scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
     }
   }, [messages, isLoading])
+
+  // Auto-focus input on open
+  useEffect(() => {
+    if (isOpen && mode === 'text') {
+      setTimeout(() => inputRef.current?.focus(), 100)
+    }
+  }, [isOpen, mode])
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsOpen(false) }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
+
+  // If voice not supported, force text mode
+  useEffect(() => {
+    if (!voiceSupported && mode === 'voice') setMode('text')
+  }, [voiceSupported, mode])
 
   return (
     <>
@@ -177,10 +206,10 @@ export function ChatBot() {
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full bg-green-500 text-white shadow-[0_4px_20px_rgba(34,197,94,0.4)] flex items-center justify-center cursor-pointer hover:shadow-[0_6px_30px_rgba(34,197,94,0.5)] hover:-translate-y-0.5 transition-all duration-300"
+            className="fixed bottom-6 right-5 sm:bottom-8 sm:right-6 z-[9999] w-14 h-14 sm:w-[60px] sm:h-[60px] rounded-full bg-green-500 text-white shadow-[0_4px_24px_rgba(34,197,94,0.45)] flex items-center justify-center cursor-pointer hover:shadow-[0_6px_32px_rgba(34,197,94,0.55)] hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
             aria-label="Ouvrir le chat Proxima"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </motion.button>
@@ -190,145 +219,188 @@ export function ChatBot() {
       {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] sm:w-[380px] h-[min(75vh,580px)] rounded-2xl overflow-hidden flex flex-col shadow-[0_8px_60px_rgba(0,0,0,0.4)] border border-border-card"
-            style={{ background: 'var(--color-bg-primary)' }}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border-card bg-bg-card/50 backdrop-blur-xl shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center">
-                  <img src="/favicon-proxima.png" alt="Proxima" className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-text-primary leading-tight">Proxima</h3>
-                  <span className="text-[10px] text-green-500 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    En ligne
-                  </span>
-                </div>
-              </div>
+          <>
+            {/* Backdrop mobile */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 z-[9998] sm:hidden"
+              onClick={() => setIsOpen(false)}
+            />
 
-              <div className="flex items-center gap-2">
-                {/* Mode toggle */}
-                <div className="flex items-center bg-bg-card rounded-lg border border-border-card p-0.5">
-                  <button
-                    onClick={() => setMode('text')}
-                    className={`px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-all cursor-pointer ${mode === 'text' ? 'bg-green-500 text-white' : 'text-text-muted hover:text-text-primary'}`}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
-                  </button>
-                  <button
-                    onClick={() => setMode('voice')}
-                    className={`px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-all cursor-pointer ${mode === 'voice' ? 'bg-green-500 text-white' : 'text-text-muted hover:text-text-primary'}`}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" /></svg>
-                  </button>
-                </div>
-
-                {/* Close */}
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-bg-card transition-colors cursor-pointer"
-                  aria-label="Fermer"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Messages area */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3 scrollbar-thin">
-              {/* Welcome message */}
-              {messages.length === 0 && (
-                <div className="text-center py-6">
-                  <div className="w-12 h-12 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-4">
-                    <img src="/favicon-proxima.png" alt="Proxima" className="w-7 h-7" />
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 24, scale: 0.96 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+              className="fixed z-[9999] overflow-hidden flex flex-col shadow-[0_8px_60px_rgba(0,0,0,0.5)] border border-border-card rounded-2xl
+                bottom-0 left-0 right-0 h-[85dvh] rounded-b-none
+                sm:bottom-5 sm:right-5 sm:left-auto sm:w-[380px] sm:h-[560px] sm:rounded-2xl"
+              style={{ background: 'var(--color-bg-primary)' }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border-card bg-bg-card/50 backdrop-blur-xl shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center">
+                    <img src="/favicon-proxima.png" alt="Proxima" className="w-5 h-5" />
                   </div>
-                  <p className="text-sm text-text-primary font-medium mb-1">Bonjour !</p>
-                  <p className="text-xs text-text-muted max-w-[240px] mx-auto">
-                    Je suis l'assistant Proxima. Posez-moi vos questions sur notre service d'IA confidentielle.
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-2 mt-4">
-                    {['Quels sont vos tarifs ?', 'Comment fonctionne le cloisonnement ?', 'Est-ce conforme RGPD ?'].map((q) => (
+                  <div>
+                    <h3 className="text-sm font-semibold text-text-primary leading-tight">Proxima IA</h3>
+                    <span className="text-[10px] text-green-500 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      En ligne
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* Mode toggle */}
+                  <div className="flex items-center bg-bg-card rounded-lg border border-border-card p-0.5">
+                    <button
+                      onClick={() => setMode('text')}
+                      className={`px-2.5 py-1.5 rounded-md transition-all cursor-pointer ${mode === 'text' ? 'bg-green-500 text-white shadow-sm' : 'text-text-muted hover:text-text-primary'}`}
+                      aria-label="Mode texte"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
+                    </button>
+                    {voiceSupported && (
                       <button
-                        key={q}
-                        onClick={() => sendMessage(q)}
-                        className="px-3 py-1.5 rounded-full text-[11px] text-green-500 border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 transition-colors cursor-pointer"
+                        onClick={() => setMode('voice')}
+                        className={`px-2.5 py-1.5 rounded-md transition-all cursor-pointer ${mode === 'voice' ? 'bg-green-500 text-white shadow-sm' : 'text-text-muted hover:text-text-primary'}`}
+                        aria-label="Mode vocal"
                       >
-                        {q}
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" /></svg>
                       </button>
-                    ))}
+                    )}
                   </div>
-                </div>
-              )}
 
-              {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                    msg.role === 'user'
-                      ? 'bg-green-500 text-white rounded-br-sm'
-                      : 'bg-bg-card border border-border-card text-text-primary rounded-bl-sm'
-                  }`}>
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-bg-card border border-border-card rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">
-                    <motion.div className="w-2 h-2 rounded-full bg-green-500" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0 }} />
-                    <motion.div className="w-2 h-2 rounded-full bg-green-500" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.2 }} />
-                    <motion.div className="w-2 h-2 rounded-full bg-green-500" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.4 }} />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Input area */}
-            <div className="shrink-0 border-t border-border-card px-3 py-3 bg-bg-card/30 backdrop-blur-xl">
-              {mode === 'text' ? (
-                <form
-                  onSubmit={(e) => { e.preventDefault(); sendMessage(input) }}
-                  className="flex items-center gap-2"
-                >
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Posez votre question..."
-                    className="flex-1 bg-bg-card border border-border-card rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-green-500/40 transition-colors"
-                    disabled={isLoading}
-                  />
+                  {/* Close */}
                   <button
-                    type="submit"
-                    disabled={!input.trim() || isLoading}
-                    className="w-10 h-10 rounded-xl bg-green-500 text-white flex items-center justify-center shrink-0 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-green-600 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-bg-card transition-colors cursor-pointer"
+                    aria-label="Fermer"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
-                </form>
-              ) : (
-                <div className="flex flex-col items-center py-2">
-                  <button
-                    onClick={isListening ? stopVoice : startVoice}
-                    disabled={isLoading}
-                    className="cursor-pointer disabled:opacity-40"
-                  >
-                    <VoicePulse isListening={isListening} />
-                  </button>
-                  <p className="text-[11px] text-text-muted mt-2">
-                    {isListening ? 'Ecoute en cours...' : isLoading ? 'Reflexion...' : 'Appuyez pour parler'}
-                  </p>
                 </div>
-              )}
-            </div>
-          </motion.div>
+              </div>
+
+              {/* Messages area */}
+              <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3 overscroll-contain">
+                {/* Welcome */}
+                {messages.length === 0 && (
+                  <div className="text-center py-8">
+                    <div className="w-14 h-14 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-5">
+                      <img src="/favicon-proxima.png" alt="Proxima" className="w-8 h-8" />
+                    </div>
+                    <p className="text-base text-text-primary font-semibold mb-1">Bonjour !</p>
+                    <p className="text-sm text-text-muted max-w-[260px] mx-auto leading-relaxed">
+                      Je suis l'assistant Proxima. Comment puis-je vous aider ?
+                    </p>
+                    <div className="flex flex-col gap-2 mt-6 max-w-[280px] mx-auto">
+                      {[
+                        'Quels sont vos tarifs ?',
+                        'Comment fonctionne le cloisonnement ?',
+                        'Est-ce conforme RGPD ?',
+                      ].map((q) => (
+                        <button
+                          key={q}
+                          onClick={() => sendMessage(q)}
+                          className="w-full px-4 py-2.5 rounded-xl text-xs text-left text-text-secondary border border-border-card bg-bg-card hover:border-green-500/30 hover:text-green-500 transition-all cursor-pointer"
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {messages.map((msg, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start gap-2'}`}
+                  >
+                    {msg.role === 'assistant' && (
+                      <div className="w-6 h-6 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center shrink-0 mt-1">
+                        <img src="/favicon-proxima.png" alt="" className="w-3.5 h-3.5" />
+                      </div>
+                    )}
+                    <div className={`max-w-[78%] px-3.5 py-2.5 text-[13px] leading-relaxed ${
+                      msg.role === 'user'
+                        ? 'bg-green-500 text-white rounded-2xl rounded-br-md'
+                        : 'bg-bg-card border border-border-card text-text-primary rounded-2xl rounded-bl-md'
+                    }`}>
+                      {msg.content}
+                    </div>
+                  </motion.div>
+                ))}
+
+                {isLoading && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex justify-start gap-2"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center shrink-0 mt-1">
+                      <img src="/favicon-proxima.png" alt="" className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="bg-bg-card border border-border-card rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
+                      <motion.div className="w-1.5 h-1.5 rounded-full bg-green-500" animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} />
+                      <motion.div className="w-1.5 h-1.5 rounded-full bg-green-500" animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.15 }} />
+                      <motion.div className="w-1.5 h-1.5 rounded-full bg-green-500" animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.3 }} />
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Input area */}
+              <div className="shrink-0 border-t border-border-card px-3 py-3 bg-bg-card/30 backdrop-blur-xl pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]">
+                {mode === 'text' ? (
+                  <form
+                    onSubmit={(e) => { e.preventDefault(); sendMessage(input) }}
+                    className="flex items-center gap-2"
+                  >
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="Posez votre question..."
+                      className="flex-1 bg-bg-card border border-border-card rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-green-500/40 focus:ring-1 focus:ring-green-500/20 transition-all"
+                      disabled={isLoading}
+                      autoComplete="off"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!input.trim() || isLoading}
+                      className="w-10 h-10 rounded-xl bg-green-500 text-white flex items-center justify-center shrink-0 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer hover:bg-green-600 active:scale-95 transition-all"
+                      aria-label="Envoyer"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
+                    </button>
+                  </form>
+                ) : (
+                  <div className="flex flex-col items-center py-3">
+                    <button
+                      onClick={isListening ? stopVoice : startVoice}
+                      disabled={isLoading}
+                      className="cursor-pointer disabled:opacity-30"
+                      aria-label={isListening ? 'Arreter l\'ecoute' : 'Commencer a parler'}
+                    >
+                      <VoicePulse isListening={isListening} />
+                    </button>
+                    <p className="text-xs text-text-muted mt-2 font-medium">
+                      {isListening ? 'Je vous ecoute...' : isLoading ? 'Reflexion en cours...' : 'Appuyez pour parler'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
