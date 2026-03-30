@@ -321,7 +321,7 @@ export function QuizSection() {
 
   if (!started) {
     return (
-      <section className="py-[var(--section-padding)] px-4 sm:px-6 relative overflow-hidden">
+      <section className="py-[var(--section-padding)] px-4 sm:px-6 relative overflow-x-clip">
         <div className="absolute inset-0 spotlight pointer-events-none" />
         <div className="max-w-2xl mx-auto relative z-10">
           <motion.div
@@ -354,7 +354,7 @@ export function QuizSection() {
   }
 
   return (
-    <section className="py-[var(--section-padding)] px-6 relative overflow-hidden">
+    <section className="py-[var(--section-padding)] px-6 relative overflow-x-clip">
       <div className="max-w-2xl mx-auto relative z-10">
         {/* Progress */}
         {!isComplete && (

@@ -153,7 +153,7 @@ export function FrameScrollVideo() {
   })
 
   return (
-    <section ref={containerRef} className="relative overflow-hidden h-[250vh] md:h-[400vh] section-fade-top bg-bg-primary">
+    <section ref={containerRef} className="relative overflow-x-clip h-[250vh] md:h-[400vh] section-fade-top bg-bg-primary">
       <div className="sticky top-0 h-screen flex items-center justify-center">
         <div className="relative w-full max-w-6xl mx-auto px-4 md:px-8">
           {/* Glow behind canvas */}

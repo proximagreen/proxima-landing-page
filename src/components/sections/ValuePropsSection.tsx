@@ -30,7 +30,7 @@ export function ValuePropsSection() {
   const content = getContent(segment)
 
   return (
-    <section className="py-[var(--section-padding)] px-6 relative overflow-hidden">
+    <section className="py-[var(--section-padding)] px-6 relative overflow-x-clip">
       <div className="max-w-[var(--container-max)] mx-auto relative z-10">
         <SectionHeading
           badge="Nos engagements"

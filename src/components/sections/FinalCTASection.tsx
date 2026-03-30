@@ -9,7 +9,7 @@ export function FinalCTASection() {
   const signupUrl = getSignupUrl({ segment, company, name })
 
   return (
-    <section className="py-[var(--section-padding)] px-6 relative overflow-hidden section-fade-top">
+    <section className="py-[var(--section-padding)] px-6 relative overflow-x-clip section-fade-top">
       {/* Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/[0.08] blur-[150px] rounded-full pointer-events-none float-orb" />
 
