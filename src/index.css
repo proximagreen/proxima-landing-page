@@ -328,6 +328,15 @@
   filter: blur(0px);
 }
 
+/* Logo monochrome filter — white in dark mode, dark in light mode */
+.logo-monochrome {
+  filter: grayscale(100%) brightness(0) invert(1);
+}
+
+[data-theme="light"] .logo-monochrome {
+  filter: grayscale(100%) brightness(0);
+}
+
 /* ============================================
    CSS SCROLL-DRIVEN ANIMATIONS (native, 0 JS)
    Awwwards-level 2026 — progressive enhancement
