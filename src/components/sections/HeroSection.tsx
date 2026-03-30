@@ -32,7 +32,7 @@ export function HeroSection() {
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-green-400 border border-green-500/30 bg-green-500/15 mb-6 sm:mb-8 backdrop-blur-sm">
             <span className="relative w-2 h-2 rounded-full bg-green-400 pulse-dot" />
-            IA Confidentielle &bull; Souveraine &bull; Compétitive
+            Votre espace est prêt &bull; Souverain &bull; Sécurisé
           </span>
         </motion.div>
 
@@ -44,7 +44,7 @@ export function HeroSection() {
             <span key={i} className="block">
               {line.split(' ').map((word, j) => {
                 const lower = word.toLowerCase().replace(/['']/g, '')
-                const isGreen = lower.includes('ia') || lower.includes('confidentielle') || lower.includes('compétitif') || lower.includes('secrets') || lower.includes('protégez-les')
+                const isGreen = lower.includes('ia') || lower.includes('confidentielle') || lower.includes('prête.') || lower.includes('l\'action.') || lower.includes('prêt') || lower.includes('cloisonnée')
                 return <span key={j} className={isGreen ? 'text-gradient' : ''}>{word} </span>
               })}
             </span>
@@ -60,13 +60,15 @@ export function HeroSection() {
 
         {/* CTA centré */}
         <motion.div
-          className="flex flex-col items-center gap-3 mb-10 sm:mb-14"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 sm:mb-14"
           initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <Button variant="primary" size="lg" href="#pricing">
-            Commencer maintenant
+          <Button variant="primary" size="lg" href="https://console.proxima.green">
+            {content.hero.ctaPrimary}
           </Button>
-          <span className="text-xs sm:text-sm text-white/50">Démarrage immédiat, aucune carte requise</span>
+          <Button variant="secondary" size="lg" href="https://demo.proxima.green">
+            {content.hero.ctaSecondary}
+          </Button>
         </motion.div>
 
         {/* Stats */}

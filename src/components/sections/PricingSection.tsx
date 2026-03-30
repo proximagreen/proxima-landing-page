@@ -2,14 +2,14 @@ import { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { usePersonalization } from '../../context/PersonalizationContext'
 import { getContent } from '../../lib/content'
-import { getCheckoutUrl, getSignupUrl, PLANS } from '../../lib/stripe'
+import { PLANS } from '../../lib/stripe'
 import { SectionHeading } from '../ui/SectionHeading'
 import { Button } from '../ui/Button'
 
 const SEAT_OPTIONS = [1, 5, 10, 25, 50, 100]
 
 export function PricingSection() {
-  const { segment, name, company, plan: defaultPlan, seats: defaultSeats } = usePersonalization()
+  const { segment, plan: defaultPlan, seats: defaultSeats } = usePersonalization()
   const content = getContent(segment)
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
   const [seats, setSeats] = useState(defaultSeats)
@@ -21,9 +21,6 @@ export function PricingSection() {
   const activePrice = billing === 'annual' ? annualMonthlyPrice : monthlyPrice
   const totalPrice = activePrice * seats
   const annualSavings = (monthlyPrice - annualMonthlyPrice) * seats * 12
-
-  const stripeUrl = getCheckoutUrl({ segment, company, name, seats })
-  const signupUrl = getSignupUrl({ segment, company, name })
 
   return (
     <section id="pricing" className="py-[var(--section-padding)] px-6 relative section-fade-top">
@@ -138,8 +135,8 @@ export function PricingSection() {
               ))}
             </ul>
 
-            <Button variant="secondary" className="w-full mt-auto" href={signupUrl}>
-              Essayer gratuitement
+            <Button variant="secondary" className="w-full mt-auto" href="https://demo.proxima.green">
+              Tester la demo
             </Button>
             
             <div className="flex flex-wrap items-center justify-center gap-4 mt-6 opacity-60">
@@ -170,7 +167,7 @@ export function PricingSection() {
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-green-500/10 blur-[60px] rounded-full pointer-events-none" />
 
             {/* Badge */}
-            <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-black shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+            <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.3)]">
               Recommandé
             </div>
 
@@ -213,8 +210,8 @@ export function PricingSection() {
               ))}
             </ul>
 
-            <Button variant="primary" className="w-full mt-auto" href={stripeUrl}>
-              S'inscrire ({totalPrice}€/mois)
+            <Button variant="primary" className="w-full mt-auto" href="https://console.proxima.green">
+              Activer mon espace ({totalPrice}€/mois)
             </Button>
             
             <div className="flex flex-wrap items-center justify-center gap-4 mt-6 opacity-60">

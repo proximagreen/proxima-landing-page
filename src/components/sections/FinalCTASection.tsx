@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion'
 import { usePersonalization } from '../../context/PersonalizationContext'
 import { Button } from '../ui/Button'
-import { getSignupUrl } from '../../lib/stripe'
 
 export function FinalCTASection() {
-  const { segment, company, name } = usePersonalization()
-  const signupUrl = getSignupUrl({ segment, company, name })
+  const { company } = usePersonalization()
 
   return (
     <section className="py-[var(--section-padding)] px-6 relative overflow-hidden section-fade-top">
@@ -22,22 +20,27 @@ export function FinalCTASection() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-6 leading-[1.1] tracking-[-0.02em]">
-            Imaginez lundi matin.<br />
-            <span className="text-gradient">Tout a changé.</span>
+            Votre equipe est prête.<br />
+            <span className="text-gradient">On y va ?</span>
           </h2>
           <p className="text-lg text-text-secondary mb-10 max-w-lg mx-auto leading-relaxed">
             {company
-              ? `${company}, vos équipes produisent plus vite, vos clients sont mieux protégés, votre rentabilité augmente.`
-              : 'Vos rapports sont livrés 2x plus vite. Vos données sont chiffrées. Vous avez pris 3 nouveaux mandats ce mois-ci.'
+              ? `${company}, votre espace Proxima est configure et pret. Connectez vos equipes et commencez a delivrer plus vite.`
+              : 'Votre espace est deploye, securise, et souverain. Il ne reste plus qu\'a connecter vos equipes.'
             }
           </p>
 
-          {/* Single dominant CTA */}
-          <Button variant="primary" size="lg" href={signupUrl}>
-            Essayer gratuitement
-          </Button>
+          {/* Double CTA : console + demo */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button variant="primary" size="lg" href="https://console.proxima.green">
+              Acceder a ma console
+            </Button>
+            <Button variant="secondary" size="lg" href="https://demo.proxima.green">
+              Voir la demo
+            </Button>
+          </div>
 
-          {/* Risk reversal — reduce perceived risk to zero */}
+          {/* Ce qui est inclus */}
           <motion.div
             className="mt-10 glass rounded-xl p-6 max-w-md mx-auto text-left"
             initial={{ opacity: 0 }}
@@ -45,13 +48,13 @@ export function FinalCTASection() {
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
           >
-            <h4 className="text-sm font-bold text-text-primary mb-4">Zéro risque. Concrètement :</h4>
+            <h4 className="text-sm font-bold text-text-primary mb-4">Inclus dans votre service :</h4>
             <ul className="space-y-3">
               {[
-                'Gratuit pour commencer, sans carte bancaire',
-                'Annulation en 1 clic, sans justification',
-                'Vos données supprimées sur demande',
-                'Hébergement 100% européen, conforme RGPD',
+                'Deploiement sur cloud souverain dedie',
+                'Support prioritaire et accompagnement',
+                'Mises a jour et nouvelles fonctionnalites',
+                'Hebergement 100% europeen, conforme RGPD',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm text-text-secondary">
                   <svg className="w-4 h-4 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

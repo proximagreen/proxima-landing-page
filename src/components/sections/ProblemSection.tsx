@@ -11,9 +11,9 @@ export function ProblemSection() {
     <section className="py-[var(--section-padding)] px-4 sm:px-6 relative">
       <div className="max-w-[var(--container-max)] mx-auto relative z-10">
         <SectionHeading
-          badge="Le problème"
-          title={'Utiliser ChatGPT avec des\ndonnées clients, c\'est un risque'}
-          subtitle="Ne pas utiliser l'IA, c'est prendre du retard. Voici ce que ça coûte."
+          badge="Pourquoi Proxima"
+          title={'Ce que vous gagnez\nen passant a l\'IA souveraine'}
+          subtitle="Les chiffres parlent d'eux-memes."
         />
 
         {/* Stat cards — compactes */}
@@ -80,8 +80,8 @@ export function ProblemSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          La question n'est pas <span className="text-text-primary font-semibold">si</span> vous devez utiliser l'IA.
-          C'est <span className="text-green-400 font-semibold">laquelle</span>.
+          Votre espace est <span className="text-green-400 font-semibold">pret</span>.
+          Il ne reste qu'a <span className="text-text-primary font-semibold">connecter votre equipe</span>.
         </motion.p>
       </div>
     </section>

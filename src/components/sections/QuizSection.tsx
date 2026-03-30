@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/Button'
 import { DonutChart, HBarChart, ScoreGauge } from '../ui/Charts'
-import { usePersonalization } from '../../context/PersonalizationContext'
-import { getCheckoutUrl, getSignupUrl, PLANS } from '../../lib/stripe'
+import { PLANS } from '../../lib/stripe'
 
 /* ─── Quiz Data ─── */
 
@@ -23,46 +22,46 @@ interface QuizQuestion {
 const QUESTIONS: QuizQuestion[] = [
   {
     id: 'tools',
-    question: 'Comment utilisez-vous l\'IA aujourd\'hui ?',
-    subtext: 'Soyez honnête, pas de jugement.',
+    question: 'Quel est votre usage IA actuel ?',
+    subtext: 'Pour adapter votre espace Proxima.',
     options: [
-      { label: 'On n\'utilise pas d\'IA', value: 2, detail: 'Vos concurrents ont probablement déjà commencé.' },
-      { label: 'ChatGPT / Copilot grand public', value: 3, detail: 'Vos données clients transitent par des serveurs américains.' },
-      { label: 'Une solution IA interne ou européenne', value: 1, detail: 'Bonne base. Voyons si elle est vraiment sécurisée.' },
-      { label: 'On interdit l\'IA par précaution', value: 2, detail: 'Prudent, mais vos équipes perdent du temps chaque jour.' },
+      { label: 'Pas encore d\'IA en place', value: 2, detail: 'Proxima sera votre premier outil. On vous accompagne.' },
+      { label: 'ChatGPT / Copilot grand public', value: 3, detail: 'Proxima reprend le meme usage, avec la souverainete en plus.' },
+      { label: 'Une solution IA interne ou europeenne', value: 1, detail: 'Proxima peut completer ou remplacer votre stack.' },
+      { label: 'On limite l\'IA par precaution', value: 2, detail: 'Proxima leve les freins : vos donnees restent chez vous.' },
     ],
   },
   {
     id: 'data',
-    question: 'Quel type de données manipulez-vous ?',
-    subtext: 'Cochez ce qui se rapproche le plus.',
+    question: 'Quel type de donnees traitez-vous ?',
+    subtext: 'Pour configurer le bon niveau de cloisonnement.',
     options: [
-      { label: 'Contrats, dossiers clients, propriété intellectuelle', value: 3, detail: 'Données ultra-sensibles. Une fuite = dommage irréparable.' },
-      { label: 'Données financières, audits, rapports', value: 3, detail: 'Soumis au secret professionnel et aux réglementations.' },
-      { label: 'Documents internes, process, knowledge base', value: 1, detail: 'Moins critique, mais toujours confidentiel.' },
-      { label: 'Données de santé ou données réglementées', value: 3, detail: 'Obligations HDS et RGPD renforcées.' },
+      { label: 'Contrats, dossiers clients, PI', value: 3, detail: 'Cloisonnement par dossier active par defaut.' },
+      { label: 'Donnees financieres, audits, rapports', value: 3, detail: 'Isolation par mission, conformite RGPD garantie.' },
+      { label: 'Documents internes, process, knowledge base', value: 1, detail: 'RAG documentaire ideal pour ce cas d\'usage.' },
+      { label: 'Donnees de sante ou reglementees', value: 3, detail: 'Hebergement compatible HDS disponible.' },
     ],
   },
   {
     id: 'time',
-    question: 'Combien de temps passez-vous sur des tâches répétitives ?',
-    subtext: 'Recherche, rédaction, synthèse, mise en forme...',
+    question: 'Combien de temps sur les taches repetitives ?',
+    subtext: 'Pour estimer votre gain avec Proxima.',
     options: [
-      { label: 'Moins d\'1 heure par jour', value: 0, detail: 'Vous êtes efficace. L\'IA peut quand même vous aider.' },
-      { label: '1 à 3 heures par jour', value: 2, detail: 'C\'est 25 à 75 heures par mois. L\'IA en récupère 60%.' },
-      { label: '3 à 5 heures par jour', value: 3, detail: 'C\'est plus de 100 heures/mois. L\'IA change tout.' },
-      { label: 'Toute la journée, c\'est mon quotidien', value: 3, detail: 'L\'IA pourrait vous libérer 50% de votre temps.' },
+      { label: 'Moins d\'1 heure par jour', value: 0, detail: 'L\'IA vous fera gagner en qualite plus qu\'en temps.' },
+      { label: '1 a 3 heures par jour', value: 2, detail: 'Proxima peut recuperer 60% de ce temps.' },
+      { label: '3 a 5 heures par jour', value: 3, detail: 'Plus de 100h/mois recuperables. Impact structurel.' },
+      { label: 'Toute la journee', value: 3, detail: 'L\'IA peut liberer 50% de votre journee.' },
     ],
   },
   {
     id: 'team',
-    question: 'Combien de personnes dans votre équipe ?',
-    subtext: 'Pour estimer votre gain potentiel.',
+    question: 'Combien de postes a configurer ?',
+    subtext: 'Pour dimensionner votre espace.',
     options: [
-      { label: 'Juste moi', value: 1, detail: '1 poste. ROI immédiat.' },
-      { label: '2 à 5 personnes', value: 2, detail: 'L\'effet multiplicateur commence ici.' },
-      { label: '6 à 20 personnes', value: 2, detail: 'Le gain de productivité devient structurel.' },
-      { label: 'Plus de 20 personnes', value: 3, detail: 'L\'IA à cette échelle = avantage concurrentiel massif.' },
+      { label: 'Juste moi', value: 1, detail: '1 poste. Deploiement instantane.' },
+      { label: '2 a 5 personnes', value: 2, detail: 'Configuration equipe en quelques minutes.' },
+      { label: '6 a 20 personnes', value: 2, detail: 'VM dediee recommandee pour cette taille.' },
+      { label: 'Plus de 20 personnes', value: 3, detail: 'On configure un environnement sur mesure.' },
     ],
   },
 ]
@@ -93,36 +92,36 @@ function calculateResult(answers: Record<string, number>): QuizResult {
 
   if (score >= 9) {
     return {
-      score, riskLevel: 'critical', riskLabel: 'Critique', riskColor: 'text-red-400',
-      headline: 'Vos données sont exposées. Chaque jour compte.',
-      description: `Votre équipe perd environ ${monthlySavingsHours} heures/mois sur des tâches automatisables, et vos données sensibles transitent probablement par des serveurs non souverains. Le risque est réel et immédiat.`,
-      savings: `${monthlySavingsHours}h/mois récupérables`,
+      score, riskLevel: 'critical', riskLabel: 'Maximal', riskColor: 'text-green-400',
+      headline: 'Proxima est fait pour vous.',
+      description: `Votre equipe peut recuperer environ ${monthlySavingsHours} heures/mois. Avec vos donnees sensibles, le cloisonnement souverain de Proxima est exactement ce qu'il vous faut.`,
+      savings: `${monthlySavingsHours}h/mois recuperables`,
       recommendedSeats,
     }
   }
   if (score >= 6) {
     return {
-      score, riskLevel: 'high', riskLabel: 'Élevé', riskColor: 'text-orange-400',
-      headline: 'Vous prenez des risques inutiles.',
-      description: `Votre équipe pourrait récupérer environ ${monthlySavingsHours} heures/mois. Et vos données méritent mieux qu'un outil grand public. La bonne nouvelle : la transition prend 30 secondes.`,
-      savings: `${monthlySavingsHours}h/mois récupérables`,
+      score, riskLevel: 'high', riskLabel: 'Élevé', riskColor: 'text-green-400',
+      headline: 'Un impact immediat pour votre equipe.',
+      description: `Environ ${monthlySavingsHours} heures/mois recuperables. Proxima securise vos donnees et accelere vos livrables des le premier jour.`,
+      savings: `${monthlySavingsHours}h/mois recuperables`,
       recommendedSeats,
     }
   }
   if (score >= 3) {
     return {
-      score, riskLevel: 'medium', riskLabel: 'Modéré', riskColor: 'text-amber-400',
-      headline: 'Vous êtes sur la bonne voie, mais vous pouvez faire mieux.',
-      description: `Avec une IA souveraine, votre équipe gagnerait environ ${monthlySavingsHours} heures/mois tout en renforçant la confidentialité de vos données clients.`,
-      savings: `${monthlySavingsHours}h/mois récupérables`,
+      score, riskLevel: 'medium', riskLabel: 'Modéré', riskColor: 'text-green-400',
+      headline: 'Proxima va amplifier votre productivite.',
+      description: `Votre equipe gagnerait environ ${monthlySavingsHours} heures/mois avec l'IA souveraine. Le deploiement prend 30 secondes.`,
+      savings: `${monthlySavingsHours}h/mois recuperables`,
       recommendedSeats,
     }
   }
   return {
-    score, riskLevel: 'low', riskLabel: 'Faible', riskColor: 'text-green-400',
-    headline: 'Bien joué, vous êtes en avance.',
-    description: `Votre posture est solide. Proxima pourrait quand même vous faire gagner ${monthlySavingsHours} heures/mois et renforcer votre conformité.`,
-    savings: `${monthlySavingsHours}h/mois récupérables`,
+    score, riskLevel: 'low', riskLabel: 'Optimise', riskColor: 'text-green-400',
+    headline: 'Vous etes deja bien equipe.',
+    description: `Proxima peut quand meme vous faire gagner ${monthlySavingsHours} heures/mois et renforcer votre conformite. Testez la demo.`,
+    savings: `${monthlySavingsHours}h/mois recuperables`,
     recommendedSeats,
   }
 }
@@ -182,12 +181,8 @@ function QuestionCard({ question, onAnswer }: { question: QuizQuestion; onAnswer
 }
 
 function ResultCard({ result }: { result: QuizResult }) {
-  const { segment, company, name } = usePersonalization()
   const proPrice = PLANS.pro.price
   const totalPrice = proPrice * result.recommendedSeats
-
-  const stripeUrl = getCheckoutUrl({ segment, company, name, seats: result.recommendedSeats })
-  const signupUrl = getSignupUrl({ segment, company, name })
 
   const scorePercent = Math.round((result.score / 12) * 100)
 
@@ -288,16 +283,16 @@ function ResultCard({ result }: { result: QuizResult }) {
 
       {/* CTAs */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <Button variant="primary" size="lg" className="flex-1 justify-center" href={stripeUrl}>
-          Démarrer maintenant, {totalPrice}€/mois
+        <Button variant="primary" size="lg" className="flex-1 justify-center" href="https://console.proxima.green">
+          Acceder a ma console
         </Button>
-        <Button variant="secondary" size="lg" className="flex-1 justify-center" href={signupUrl}>
-          Essai gratuit d'abord
+        <Button variant="secondary" size="lg" className="flex-1 justify-center" href="https://demo.proxima.green">
+          Voir la demo
         </Button>
       </div>
 
       <p className="text-center text-xs text-text-muted mt-4">
-        Sans engagement. Annulation en 1 clic. Paiement sécurisé par Stripe.
+        Deploiement instantane. Support inclus. Sans engagement.
       </p>
     </motion.div>
   )
@@ -335,18 +330,18 @@ export function QuizSection() {
             <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 bg-green-500/10 blur-[100px] rounded-full pointer-events-none" />
 
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-green-500/15 text-green-400 border border-green-500/30 mb-6">
-              Diagnostic gratuit, 30 secondes
+              Configurateur, 30 secondes
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary mb-4 tracking-tight">
-              Vos données sont-elles<br /><span className="text-gradient">vraiment protégées ?</span>
+              Quel est <span className="text-gradient">votre gain potentiel</span> ?
             </h2>
             <p className="text-base sm:text-lg text-text-secondary mb-8 max-w-md mx-auto">
-              4 questions. Résultat instantané. Découvrez votre niveau de risque et combien vous perdez chaque mois.
+              4 questions pour estimer le temps recupere et dimensionner votre espace Proxima.
             </p>
             <Button variant="primary" size="lg" onClick={() => setStarted(true)}>
-              Lancer le diagnostic
+              Estimer mon gain
             </Button>
-            <p className="text-xs text-text-muted mt-4">Gratuit, anonyme, sans inscription</p>
+            <p className="text-xs text-text-muted mt-4">Resultat instantane, sans inscription</p>
           </motion.div>
         </div>
       </section>

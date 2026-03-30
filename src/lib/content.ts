@@ -95,9 +95,9 @@ const SHARED_WHY_PRIVATE: WhyPoint[] = [
 ]
 
 const SHARED_SOLUTION_STEPS: SolutionStep[] = [
-  { step: 1, title: 'Connectez votre équipe', description: 'Créez votre espace en 30 secondes. Invitez vos collaborateurs. Aucune installation, aucune config serveur.', icon: 'sparkles' },
-  { step: 2, title: 'Travaillez en confiance', description: 'Chat IA, analyse de documents, visio. Dans un environnement où les données de vos clients restent les vôtres.', icon: 'shield' },
-  { step: 3, title: 'Délivrez plus, plus vite', description: 'Réduisez vos temps de production, augmentez votre capacité et démarquez-vous par la qualité de vos livrables.', icon: 'chart-bar' },
+  { step: 1, title: 'On configure votre espace', description: 'Votre instance Proxima est deployee sur un cloud souverain dedie. Vos equipes sont invitees en quelques clics.', icon: 'sparkles' },
+  { step: 2, title: 'Votre equipe est operationnelle', description: 'Chat IA, analyse de documents, visio chiffree. Tout fonctionne dans un environnement cloisonne par client.', icon: 'shield' },
+  { step: 3, title: 'On vous accompagne', description: 'Support prioritaire, formations, optimisation continue. Votre succes est notre metrique.', icon: 'chart-bar' },
 ]
 
 const SHARED_FAQS: FAQ[] = [
@@ -126,16 +126,16 @@ const SHARED_FAQS: FAQ[] = [
 export const CONTENT: Record<Segment, SegmentContent> = {
   legal: {
     hero: {
-      headline: 'Vos clients vous confient\nleurs secrets.\nProtégez-les avec l\'IA.',
-      headlinePersonalized: '{name}, {company}\nmérite une IA à la hauteur\ndu secret professionnel',
-      subheadline: 'L\'IA confidentielle qui accélère votre cabinet sans jamais compromettre la confiance de vos clients. Recherche, rédaction, analyse en toute souveraineté.',
-      ctaPrimary: 'Essayer gratuitement',
-      ctaSecondary: 'Voir les tarifs',
+      headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
+      headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
+      subheadline: 'Chat IA, recherche juridique, visio chiffree, cloisonnement par dossier. Tout est deploye, souverain, et pret pour votre equipe.',
+      ctaPrimary: 'Accéder à ma console',
+      ctaSecondary: 'Voir la démo',
     },
     problems: [
-      { stat: '3-4h/jour', text: 'perdues en recherche jurisprudentielle répétitive', icon: 'clock', color: '#f59e0b', gauge: 45 },
-      { stat: '4,45 M€', text: 'coût moyen d\'une fuite de données (IBM 2024)', icon: 'leak', color: '#ef4444', gauge: 85 },
-      { stat: '72%', text: 'des avocats utilisent ChatGPT sans garantie de confidentialité', icon: 'warning', color: '#f97316', gauge: 72 },
+      { stat: '3-4h/jour', text: 'recuperees grace a l\'IA sur la recherche jurisprudentielle', icon: 'clock', color: '#22c55e', gauge: 45 },
+      { stat: '100%', text: 'de vos donnees restent en Europe, hors Cloud Act', icon: 'leak', color: '#22c55e', gauge: 100 },
+      { stat: '30s', text: 'pour deployer votre espace et connecter votre equipe', icon: 'warning', color: '#22c55e', gauge: 30 },
     ],
     solutionSteps: SHARED_SOLUTION_STEPS,
     valueProps: [
@@ -154,8 +154,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       { name: 'Me Pierre Dubois', role: 'Avocat Droit des Affaires', company: 'Cabinet Dubois', quote: 'Enfin une IA que je peux utiliser devant mes clients sans rougir. Le cloisonnement des dossiers, c\'est ce qui a tout changé.', avatar: 'PD', photo: '/images/testimonial-1.jpg' },
     ],
     pricing: {
-      headline: 'Un investissement rentable dès le premier mois',
-      subheadline: 'Comparez : 3h gagnées par jour × vos honoraires. Le calcul est vite fait.',
+      headline: 'Un service tout inclus, sans surprise',
+      subheadline: 'Deploiement, support, mises a jour. Tout est compris.',
     },
     faqs: [
       ...SHARED_FAQS,
@@ -164,16 +164,16 @@ export const CONTENT: Record<Segment, SegmentContent> = {
   },
   health: {
     hero: {
-      headline: 'Vos patients comptent\nsur votre discrétion.\nVotre IA aussi.',
-      headlinePersonalized: '{name}, {company}\nmérite une IA qui protège\nle secret médical',
-      subheadline: 'IA souveraine, confidentielle, compatible HDS. Accélérez votre pratique sans jamais compromettre les données de vos patients.',
-      ctaPrimary: 'Essayer gratuitement',
-      ctaSecondary: 'Voir les tarifs',
+      headline: 'Votre IA souveraine\nest prête.\nAccélérez votre pratique.',
+      headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
+      subheadline: 'Chat IA confidentiel, analyse documentaire, visio chiffree. Compatible HDS, deploye en Europe, pret pour votre equipe.',
+      ctaPrimary: 'Accéder à ma console',
+      ctaSecondary: 'Voir la démo',
     },
     problems: [
-      { stat: '67%', text: 'des professionnels de santé veulent utiliser l\'IA mais craignent pour les données patients', icon: 'warning', color: '#f97316', gauge: 67 },
-      { stat: '4,45 M€', text: 'coût moyen d\'une fuite de données de santé (IBM 2024)', icon: 'leak', color: '#ef4444', gauge: 85 },
-      { stat: '10h/sem', text: 'passées en tâches administratives qui pourraient être automatisées', icon: 'clock', color: '#f59e0b', gauge: 55 },
+      { stat: '10h/sem', text: 'recuperees sur les taches administratives repetitives', icon: 'clock', color: '#22c55e', gauge: 55 },
+      { stat: '100%', text: 'compatible HDS, donnees hebergees en Europe', icon: 'leak', color: '#22c55e', gauge: 100 },
+      { stat: '30s', text: 'pour deployer et connecter votre equipe', icon: 'warning', color: '#22c55e', gauge: 30 },
     ],
     solutionSteps: SHARED_SOLUTION_STEPS,
     valueProps: [
@@ -191,8 +191,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       { name: 'Dr. Marie Chen', role: 'Médecin généraliste', company: 'Cabinet médical Bastille', quote: 'Proxima m\'aide à synthétiser les dernières études en minutes. Mes patients bénéficient d\'un meilleur suivi, et leurs données restent protégées.', avatar: 'MC', photo: '/images/testimonial-2.jpg' },
     ],
     pricing: {
-      headline: 'Modernisez votre pratique en toute sérénité',
-      subheadline: 'Choisissez le nombre de postes pour votre établissement',
+      headline: 'Un service adapte a votre etablissement',
+      subheadline: 'Deploiement, support, conformite HDS. Tout est inclus.',
     },
     faqs: [
       ...SHARED_FAQS,
@@ -201,16 +201,16 @@ export const CONTENT: Record<Segment, SegmentContent> = {
   },
   audit: {
     hero: {
-      headline: 'Vos mandats exigent\nla confidentialité absolue.\nVotre IA doit suivre.',
-      headlinePersonalized: '{name}, {company}\nmérite une IA\nà la hauteur de ses engagements',
-      subheadline: 'Analysez, auditez, conseillez avec une IA qui cloisonne chaque mission et accélère vos livrables sans compromettre la confiance de vos clients.',
-      ctaPrimary: 'Essayer gratuitement',
-      ctaSecondary: 'Voir les tarifs',
+      headline: 'Votre IA cloisonnée\nest prête.\nLivrez plus vite.',
+      headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
+      subheadline: 'Chat IA, analyse de documents, visio chiffree. Chaque mission cloisonnee, chaque donnee souveraine. Pret pour votre equipe.',
+      ctaPrimary: 'Accéder à ma console',
+      ctaSecondary: 'Voir la démo',
     },
     problems: [
-      { stat: '60%', text: 'du temps d\'un consultant passe en production de livrables, pas en conseil à valeur ajoutée', icon: 'clock', color: '#f59e0b', gauge: 60 },
-      { stat: '4,45 M€', text: 'coût moyen d\'une fuite de données (IBM 2024)', icon: 'leak', color: '#ef4444', gauge: 85 },
-      { stat: '0', text: 'outil IA grand public qui garantit le cloisonnement entre missions clients', icon: 'warning', color: '#f97316', gauge: 100 },
+      { stat: '2x', text: 'plus rapide sur la production de livrables et rapports', icon: 'clock', color: '#22c55e', gauge: 60 },
+      { stat: '100%', text: 'cloisonnement par mission, aucune contamination croisee', icon: 'leak', color: '#22c55e', gauge: 100 },
+      { stat: '30s', text: 'pour deployer et connecter votre equipe', icon: 'warning', color: '#22c55e', gauge: 30 },
     ],
     solutionSteps: SHARED_SOLUTION_STEPS,
     valueProps: [
@@ -226,8 +226,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       { name: 'Camille Moreau', role: 'Associée CGP', company: 'Patrimoine & Stratégie', quote: 'Mes analyses patrimoniales sont plus rapides et plus complètes. Proxima me permet de prendre plus de clients sans sacrifier la qualité.', avatar: 'CM', photo: '/images/testimonial-2.jpg' },
     ],
     pricing: {
-      headline: 'Plus de mandats, même équipe, meilleure marge',
-      subheadline: 'Le ROI se mesure dès le premier mois d\'utilisation',
+      headline: 'Un service cle en main pour votre equipe',
+      subheadline: 'Deploiement, cloisonnement, support. Tout est inclus.',
     },
     faqs: [
       ...SHARED_FAQS,
@@ -236,16 +236,16 @@ export const CONTENT: Record<Segment, SegmentContent> = {
   },
   general: {
     hero: {
-      headline: 'L\'IA confidentielle\nqui vous rend\nplus compétitif',
-      headlinePersonalized: '{name}, bienvenue.\nDécouvrez l\'IA souveraine\nqui change tout',
-      subheadline: 'Avocats PI, CGP, cabinets de conseil, auditeurs : vous gérez des données sensibles. Proxima vous donne la puissance de l\'IA sans jamais compromettre la confiance de vos clients.',
-      ctaPrimary: 'Essayer gratuitement',
-      ctaSecondary: 'Voir les tarifs',
+      headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
+      headlinePersonalized: '{name}, bienvenue.\nVotre espace Proxima\nest prêt',
+      subheadline: 'Chat IA, recherche web, visio chiffree, cloisonnement par client. Tout est deploye sur un cloud souverain europeen, pret pour votre equipe.',
+      ctaPrimary: 'Accéder à ma console',
+      ctaSecondary: 'Voir la démo',
     },
     problems: [
-      { stat: '87%', text: 'des professionnels veulent utiliser l\'IA mais ne font pas confiance aux outils grand public', icon: 'warning', color: '#f97316', gauge: 87 },
-      { stat: '4,45 M€', text: 'coût moyen d\'une fuite de données client (IBM 2024)', icon: 'leak', color: '#ef4444', gauge: 85 },
-      { stat: '3h/jour', text: 'perdues en tâches répétitives que l\'IA pourrait traiter en minutes', icon: 'clock', color: '#f59e0b', gauge: 40 },
+      { stat: '3h/jour', text: 'recuperees sur les taches repetitives grace a l\'IA', icon: 'clock', color: '#22c55e', gauge: 40 },
+      { stat: '100%', text: 'souverain, europeen, conforme RGPD', icon: 'leak', color: '#22c55e', gauge: 100 },
+      { stat: '30s', text: 'pour deployer et connecter votre equipe', icon: 'warning', color: '#22c55e', gauge: 30 },
     ],
     solutionSteps: SHARED_SOLUTION_STEPS,
     valueProps: [
@@ -261,8 +261,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       { name: 'Marc Lefèvre', role: 'DPO & CTO', company: 'DataPriv', quote: 'La seule IA que notre DPO a validée sans réserve. On l\'utilise sur tous nos audits de conformité.', avatar: 'ML', photo: '/images/testimonial-1.jpg' },
     ],
     pricing: {
-      headline: 'Investissez dans votre avantage concurrentiel',
-      subheadline: 'Le temps gagné × votre taux horaire = ROI dès le premier mois',
+      headline: 'Un service complet, un prix simple',
+      subheadline: 'Deploiement, support prioritaire, mises a jour. Tout est inclus.',
     },
     faqs: SHARED_FAQS,
   },

@@ -32,30 +32,30 @@ export interface Plan {
 export const PLANS: Record<string, Plan> = {
   free: {
     id: 'free',
-    name: 'Découverte',
+    name: 'Demo',
     price: 0,
-    description: 'Pour tester Proxima',
+    description: 'Testez Proxima en conditions reelles',
     features: [
-      'Chat IA (usage limité)',
-      'Recherche web',
+      'Chat IA (usage limite)',
+      'Recherche web IA',
       '1 dossier de conversation',
-      'Interface épurée',
+      'Interface complete',
     ],
-    stripeLink: '', // Pas de paiement, redirection vers signup
+    stripeLink: '', // Redirection vers demo
   },
   pro: {
     id: 'pro',
-    name: 'Proxima Entreprise',
+    name: 'Service complet',
     price: 9,
-    description: 'Pour les équipes professionnelles',
+    description: 'Tout inclus pour votre equipe',
     features: [
-      'Chat IA illimité',
+      'Chat IA illimite',
       'Proxima Meet (visio IA)',
-      'Agents IA personnalisés',
+      'Agents IA personnalises',
       'RAG documentaire',
-      'Dossiers illimités',
-      'VM dédiée & sécurisée',
-      'Support prioritaire',
+      'Dossiers illimites',
+      'VM dediee & securisee',
+      'Support prioritaire & accompagnement',
     ],
     recommended: true,
     // REMPLACER par le vrai Payment Link Stripe :
