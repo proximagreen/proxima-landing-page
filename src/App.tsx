@@ -4,6 +4,7 @@ import { useLenis } from './hooks/useLenis'
 import { Navbar } from './components/layout/Navbar'
 import { Footer } from './components/layout/Footer'
 import { CustomCursor } from './components/ui/CustomCursor'
+import { ChatBot } from './components/ui/ChatBot'
 import { HeroSection } from './components/sections/HeroSection'
 import { ProblemSection } from './components/sections/ProblemSection'
 import { SolutionStepsSection } from './components/sections/SolutionStepsSection'
@@ -51,6 +52,7 @@ function App() {
         <FinalCTASection />
       </main>
       <Footer />
+      <ChatBot />
     </PersonalizationProvider>
     </ThemeProvider>
   )
