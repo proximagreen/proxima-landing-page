@@ -12,12 +12,12 @@
 
   --color-border-subtle: rgba(255, 255, 255, 0.06);
   --color-border-card: rgba(255, 255, 255, 0.10);
-  --color-border-glow: rgba(34, 197, 94, 0.3);
+  --color-border-glow: rgba(0, 60, 28, 0.4);
 
-  --color-green-400: #4ade80;
-  --color-green-500: #22c55e;
-  --color-green-600: #16a34a;
-  --color-green-glow: rgba(34, 197, 94, 0.15);
+  --color-green-400: #00804A;
+  --color-green-500: #006B3A;
+  --color-green-600: #003C1C;
+  --color-green-glow: rgba(0, 60, 28, 0.15);
 
   --color-text-primary: #f5f5f5;
   --color-text-secondary: #a3a3a3;
@@ -52,12 +52,12 @@
 
   --color-border-subtle: rgba(0, 0, 0, 0.06);
   --color-border-card: rgba(0, 0, 0, 0.08);
-  --color-border-glow: rgba(22, 163, 74, 0.35);
+  --color-border-glow: rgba(0, 60, 28, 0.25);
 
-  --color-green-400: #16a34a;
-  --color-green-500: #15803d;
-  --color-green-600: #166534;
-  --color-green-glow: rgba(22, 163, 74, 0.12);
+  --color-green-400: #005C2E;
+  --color-green-500: #003C1C;
+  --color-green-600: #002914;
+  --color-green-glow: rgba(0, 60, 28, 0.10);
 
   --color-text-primary: #111827;
   --color-text-secondary: #4b5563;
@@ -90,11 +90,6 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Hide native cursor on non-touch devices (custom cursor takes over) */
-  @media (pointer: fine) {
-    * { cursor: none !important; }
-  }
-
   h1, h2, h3, h4, h5, h6, .font-heading {
     font-family: var(--font-heading);
     letter-spacing: -0.02em;
@@ -119,7 +114,7 @@
   }
 
   ::selection {
-    background-color: rgba(34, 197, 94, 0.3);
+    background-color: rgba(0, 60, 28, 0.3);
     color: #fff;
   }
 
@@ -174,7 +169,7 @@
   .glass-hover:hover {
     border-color: var(--color-border-glow);
     box-shadow:
-      0 0 30px rgba(34, 197, 94, 0.08),
+      0 0 30px rgba(0, 60, 28, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
 
@@ -185,7 +180,7 @@
       rgba(255, 255, 255, 0.6) 100%
     );
     box-shadow:
-      0 4px 20px rgba(22, 163, 74, 0.08),
+      0 4px 20px rgba(0, 60, 28, 0.08),
       0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
@@ -203,7 +198,7 @@
     background: linear-gradient(
       135deg,
       transparent 30%,
-      rgba(34, 197, 94, 0.2) 50%,
+      rgba(0, 60, 28, 0.2) 50%,
       transparent 70%
     );
     -webkit-mask:
@@ -251,9 +246,9 @@
    ============================================ */
 @utility green-glow {
   box-shadow:
-    0 0 20px rgba(34, 197, 94, 0.3),
-    0 0 60px rgba(34, 197, 94, 0.15),
-    0 0 120px rgba(34, 197, 94, 0.05);
+    0 0 20px rgba(0, 60, 28, 0.3),
+    0 0 60px rgba(0, 60, 28, 0.15),
+    0 0 120px rgba(0, 60, 28, 0.05);
 }
 
 @utility text-gradient {
@@ -270,8 +265,8 @@
 
 @utility animated-grid {
   background-image:
-    linear-gradient(rgba(34, 197, 94, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 197, 94, 0.08) 1px, transparent 1px);
+    linear-gradient(rgba(0, 60, 28, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 60, 28, 0.08) 1px, transparent 1px);
   background-size: 60px 60px;
   animation: grid-shimmer 8s ease-in-out infinite;
 }
@@ -291,7 +286,7 @@
 @utility spotlight {
   background: radial-gradient(
     ellipse 60% 50% at 50% 50%,
-    rgba(34, 197, 94, 0.08) 0%,
+    rgba(0, 60, 28, 0.08) 0%,
     transparent 70%
   );
 }
@@ -342,17 +337,17 @@
 
 /* Green glow — soften on white */
 [data-theme="light"] .green-glow {
-  box-shadow: 0 0 15px rgba(22, 163, 74, 0.15), 0 0 40px rgba(22, 163, 74, 0.08);
+  box-shadow: 0 0 15px rgba(0, 60, 28, 0.15), 0 0 40px rgba(0, 60, 28, 0.08);
 }
 
 /* Card glow border */
 [data-theme="light"] .card-glow::before {
-  background: linear-gradient(135deg, transparent 30%, rgba(22, 163, 74, 0.25) 50%, transparent 70%);
+  background: linear-gradient(135deg, transparent 30%, rgba(0, 60, 28, 0.25) 50%, transparent 70%);
 }
 
 /* Spotlight */
 [data-theme="light"] .spotlight {
-  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(22, 163, 74, 0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0, 60, 28, 0.06) 0%, transparent 70%);
 }
 
 /* Float orbs — subtler */
@@ -369,12 +364,6 @@
   background: linear-gradient(to top, var(--color-bg-primary), transparent);
 }
 
-/* Hero section — ALWAYS dark (video background) */
-.hero-section {
-  --color-text-primary: #f5f5f5;
-  --color-text-secondary: #a3a3a3;
-  --color-text-muted: #525252;
-}
 
 /* Logo PNG filter — desaturate without black boxes */
 /* Uses contrast(0) brightness(1.5) instead of brightness(0) invert(1) to avoid black bg on transparent PNGs */

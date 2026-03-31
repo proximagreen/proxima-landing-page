@@ -9,20 +9,20 @@ const FOOTER_LINKS = {
     { label: 'Tarifs', href: '#pricing' },
   ],
   securite: [
-    { label: 'Souverainete', href: '#' },
+    { label: 'Souveraineté', href: '#' },
     { label: 'RGPD', href: '#' },
     { label: 'Cloisonnement', href: '#' },
-    { label: 'Hebergement Europe', href: '#' },
+    { label: 'Hébergement Europe', href: '#' },
   ],
   entreprise: [
-    { label: 'A propos', href: '#' },
+    { label: 'À propos', href: '#' },
     { label: 'Contact', href: 'mailto:contact@proxima.green' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/proximagreen/' },
     { label: 'Console', href: 'https://console.proxima.green' },
   ],
   legal: [
-    { label: 'Mentions legales', href: '#' },
-    { label: 'Politique de confidentialite', href: '#' },
+    { label: 'Mentions légales', href: '#' },
+    { label: 'Politique de confidentialité', href: '#' },
     { label: 'CGV', href: '#' },
   ],
 }
@@ -42,10 +42,10 @@ export function Footer() {
               <span className="text-lg font-bold text-text-primary">Proxima</span>
             </a>
             <p className="text-sm text-text-muted leading-relaxed mb-6 max-w-xs">
-              L'IA confidentielle, souveraine et responsable pour les professionnels qui gerent des donnees sensibles.
+              L'IA confidentielle, souveraine et responsable pour les professionnels qui gèrent des données sensibles.
             </p>
             <Button variant="primary" size="sm" href="#pricing">
-              Souscrire
+              Accéder à mon espace
             </Button>
           </div>
 
@@ -62,7 +62,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-text-primary mb-4">Securite</h4>
+            <h4 className="text-sm font-semibold text-text-primary mb-4">Sécurité</h4>
             <ul className="space-y-2.5">
               {FOOTER_LINKS.securite.map((link) => (
                 <li key={link.label}>
@@ -89,7 +89,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-text-primary mb-4">Legal</h4>
+            <h4 className="text-sm font-semibold text-text-primary mb-4">Légal</h4>
             <ul className="space-y-2.5">
               {FOOTER_LINKS.legal.map((link) => (
                 <li key={link.label}>
@@ -104,9 +104,9 @@ export function Footer() {
         <div className="border-t border-border-subtle py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <p className="text-xs text-text-muted/60">
-              &copy; {new Date().getFullYear()} Proxima. Tous droits reserves.
+              &copy; {new Date().getFullYear()} Proxima. Tous droits réservés.
             </p>
-            <span className="text-xs text-text-muted/40">Construit a Paris</span>
+            <span className="text-xs text-text-muted/40">Construit à Paris</span>
           </div>
 
           {/* Certifications */}

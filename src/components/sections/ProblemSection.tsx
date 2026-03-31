@@ -12,8 +12,8 @@ export function ProblemSection() {
       <div className="max-w-[var(--container-max)] mx-auto relative z-10">
         <SectionHeading
           badge="Pourquoi Proxima"
-          title={'Ce que vous gagnez\nen passant a l\'IA souveraine'}
-          subtitle="Les chiffres parlent d'eux-memes."
+          title={'Ce que vous gagnez\nen passant à l\'IA souveraine'}
+          subtitle="Les chiffres parlent d'eux-mêmes."
         />
 
         {/* Stat cards — compactes */}
@@ -80,8 +80,8 @@ export function ProblemSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          Votre espace est <span className="text-green-400 font-semibold">pret</span>.
-          Il ne reste qu'a <span className="text-text-primary font-semibold">connecter votre equipe</span>.
+          Votre espace est <span className="text-green-500 font-semibold">prêt</span>.
+          Il ne reste qu'à <span className="text-text-primary font-semibold">connecter votre équipe</span>.
         </motion.p>
       </div>
     </section>

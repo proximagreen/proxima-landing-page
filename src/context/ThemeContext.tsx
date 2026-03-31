@@ -14,9 +14,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('proxima-theme') as Theme | null
       if (stored) return stored
-      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+      return 'light'
     }
-    return 'dark'
+    return 'light'
   })
 
   useEffect(() => {

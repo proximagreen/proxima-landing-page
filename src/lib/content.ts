@@ -95,9 +95,9 @@ const SHARED_WHY_PRIVATE: WhyPoint[] = [
 ]
 
 const SHARED_SOLUTION_STEPS: SolutionStep[] = [
-  { step: 1, title: 'On configure votre espace', description: 'Votre instance Proxima est deployee sur un cloud souverain dedie. Vos equipes sont invitees en quelques clics.', icon: 'sparkles' },
-  { step: 2, title: 'Votre equipe est operationnelle', description: 'Chat IA, analyse de documents, visio chiffree. Tout fonctionne dans un environnement cloisonne par client.', icon: 'shield' },
-  { step: 3, title: 'On vous accompagne', description: 'Support prioritaire, formations, optimisation continue. Votre succes est notre metrique.', icon: 'chart-bar' },
+  { step: 1, title: 'On configure votre espace', description: 'Votre instance Proxima est déployée sur un cloud souverain dédié. Vos équipes sont invitées en quelques clics.', icon: 'sparkles' },
+  { step: 2, title: 'Votre équipe est opérationnelle', description: 'Chat IA, analyse de documents, visio chiffrée. Tout fonctionne dans un environnement cloisonné par client.', icon: 'shield' },
+  { step: 3, title: 'On vous accompagne', description: 'Support prioritaire, formations, optimisation continue. Votre succès est notre métrique.', icon: 'chart-bar' },
 ]
 
 const SHARED_FAQS: FAQ[] = [
@@ -128,14 +128,14 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
-      subheadline: 'Chat IA, recherche juridique, visio chiffree, cloisonnement par dossier. Tout est deploye, souverain, et pret pour votre equipe.',
-      ctaPrimary: 'Souscrire maintenant',
-      ctaSecondary: 'Voir la demo',
+      subheadline: 'Chat IA, recherche juridique, visio chiffrée, cloisonnement par dossier. Tout est déployé, souverain, et prêt pour votre équipe.',
+      ctaPrimary: 'Accéder à mon espace',
+      ctaSecondary: '',
     },
     problems: [
-      { stat: '3-4h/jour', text: 'recuperees grace a l\'IA sur la recherche jurisprudentielle', icon: 'clock', color: '#22c55e', gauge: 45 },
-      { stat: '100%', text: 'de vos donnees restent en Europe, hors Cloud Act', icon: 'leak', color: '#22c55e', gauge: 100 },
-      { stat: '30s', text: 'pour deployer votre espace et connecter votre equipe', icon: 'warning', color: '#22c55e', gauge: 30 },
+      { stat: '3-4h/jour', text: 'récupérées grâce à l\'IA sur la recherche jurisprudentielle', icon: 'clock', color: 'var(--color-green-500)', gauge: 45 },
+      { stat: '100%', text: 'de vos données restent en Europe, hors Cloud Act', icon: 'leak', color: 'var(--color-green-500)', gauge: 100 },
+      { stat: '30s', text: 'pour déployer votre espace et connecter votre équipe', icon: 'warning', color: 'var(--color-green-500)', gauge: 30 },
     ],
     solutionSteps: SHARED_SOLUTION_STEPS,
     valueProps: [
@@ -154,8 +154,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       { name: 'Me Pierre Dubois', role: 'Avocat Droit des Affaires', company: 'Cabinet Dubois', quote: 'Enfin une IA que je peux utiliser devant mes clients sans rougir. Le cloisonnement des dossiers, c\'est ce qui a tout changé.', avatar: 'PD', photo: '/images/testimonial-1.jpg' },
     ],
     pricing: {
-      headline: 'Un service tout inclus, sans surprise',
-      subheadline: 'Deploiement, support, mises a jour. Tout est compris.',
+      headline: 'Un accès tout inclus, sans surprise',
+      subheadline: 'Déploiement, support, mises à jour. Tout est compris.',
     },
     faqs: [
       ...SHARED_FAQS,
@@ -166,14 +166,14 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Votre IA souveraine\nest prête.\nAccélérez votre pratique.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
-      subheadline: 'Chat IA confidentiel, analyse documentaire, visio chiffree. Compatible HDS, deploye en Europe, pret pour votre equipe.',
-      ctaPrimary: 'Souscrire maintenant',
-      ctaSecondary: 'Voir la demo',
+      subheadline: 'Chat IA confidentiel, analyse documentaire, visio chiffrée. Compatible HDS, déployé en Europe, prêt pour votre équipe.',
+      ctaPrimary: 'Accéder à mon espace',
+      ctaSecondary: '',
     },
     problems: [
-      { stat: '10h/sem', text: 'recuperees sur les taches administratives repetitives', icon: 'clock', color: '#22c55e', gauge: 55 },
-      { stat: '100%', text: 'compatible HDS, donnees hebergees en Europe', icon: 'leak', color: '#22c55e', gauge: 100 },
-      { stat: '30s', text: 'pour deployer et connecter votre equipe', icon: 'warning', color: '#22c55e', gauge: 30 },
+      { stat: '10h/sem', text: 'récupérées sur les tâches administratives répétitives', icon: 'clock', color: 'var(--color-green-500)', gauge: 55 },
+      { stat: '100%', text: 'compatible HDS, données hébergées en Europe', icon: 'leak', color: 'var(--color-green-500)', gauge: 100 },
+      { stat: '30s', text: 'pour déployer et connecter votre équipe', icon: 'warning', color: 'var(--color-green-500)', gauge: 30 },
     ],
     solutionSteps: SHARED_SOLUTION_STEPS,
     valueProps: [
@@ -191,8 +191,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       { name: 'Dr. Marie Chen', role: 'Médecin généraliste', company: 'Cabinet médical Bastille', quote: 'Proxima m\'aide à synthétiser les dernières études en minutes. Mes patients bénéficient d\'un meilleur suivi, et leurs données restent protégées.', avatar: 'MC', photo: '/images/testimonial-2.jpg' },
     ],
     pricing: {
-      headline: 'Un service adapte a votre etablissement',
-      subheadline: 'Deploiement, support, conformite HDS. Tout est inclus.',
+      headline: 'Un accès adapté à votre établissement',
+      subheadline: 'Déploiement, support, conformité HDS. Tout est inclus.',
     },
     faqs: [
       ...SHARED_FAQS,
@@ -203,14 +203,14 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Votre IA cloisonnée\nest prête.\nLivrez plus vite.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
-      subheadline: 'Chat IA, analyse de documents, visio chiffree. Chaque mission cloisonnee, chaque donnee souveraine. Pret pour votre equipe.',
-      ctaPrimary: 'Souscrire maintenant',
-      ctaSecondary: 'Voir la demo',
+      subheadline: 'Chat IA, analyse de documents, visio chiffrée. Chaque mission cloisonnée, chaque donnée souveraine. Prêt pour votre équipe.',
+      ctaPrimary: 'Accéder à mon espace',
+      ctaSecondary: '',
     },
     problems: [
-      { stat: '2x', text: 'plus rapide sur la production de livrables et rapports', icon: 'clock', color: '#22c55e', gauge: 60 },
-      { stat: '100%', text: 'cloisonnement par mission, aucune contamination croisee', icon: 'leak', color: '#22c55e', gauge: 100 },
-      { stat: '30s', text: 'pour deployer et connecter votre equipe', icon: 'warning', color: '#22c55e', gauge: 30 },
+      { stat: '2x', text: 'plus rapide sur la production de livrables et rapports', icon: 'clock', color: 'var(--color-green-500)', gauge: 60 },
+      { stat: '100%', text: 'cloisonnement par mission, aucune contamination croisée', icon: 'leak', color: 'var(--color-green-500)', gauge: 100 },
+      { stat: '30s', text: 'pour déployer et connecter votre équipe', icon: 'warning', color: 'var(--color-green-500)', gauge: 30 },
     ],
     solutionSteps: SHARED_SOLUTION_STEPS,
     valueProps: [
@@ -226,8 +226,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       { name: 'Camille Moreau', role: 'Associée CGP', company: 'Patrimoine & Stratégie', quote: 'Mes analyses patrimoniales sont plus rapides et plus complètes. Proxima me permet de prendre plus de clients sans sacrifier la qualité.', avatar: 'CM', photo: '/images/testimonial-2.jpg' },
     ],
     pricing: {
-      headline: 'Un service cle en main pour votre equipe',
-      subheadline: 'Deploiement, cloisonnement, support. Tout est inclus.',
+      headline: 'Un accès clé en main pour votre équipe',
+      subheadline: 'Déploiement, cloisonnement, support. Tout est inclus.',
     },
     faqs: [
       ...SHARED_FAQS,
@@ -238,14 +238,14 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
       headlinePersonalized: '{name}, bienvenue.\nVotre espace Proxima\nest prêt',
-      subheadline: 'Chat IA, recherche web, visio chiffree, cloisonnement par client. Tout est deploye sur un cloud souverain europeen, pret pour votre equipe.',
-      ctaPrimary: 'Souscrire maintenant',
-      ctaSecondary: 'Voir la demo',
+      subheadline: 'Chat IA, recherche web, visio chiffrée, cloisonnement par client. Tout est déployé sur un cloud souverain européen, prêt pour votre équipe.',
+      ctaPrimary: 'Accéder à mon espace',
+      ctaSecondary: '',
     },
     problems: [
-      { stat: '3h/jour', text: 'recuperees sur les taches repetitives grace a l\'IA', icon: 'clock', color: '#22c55e', gauge: 40 },
-      { stat: '100%', text: 'souverain, europeen, conforme RGPD', icon: 'leak', color: '#22c55e', gauge: 100 },
-      { stat: '30s', text: 'pour deployer et connecter votre equipe', icon: 'warning', color: '#22c55e', gauge: 30 },
+      { stat: '3h/jour', text: 'récupérées sur les tâches répétitives grâce à l\'IA', icon: 'clock', color: 'var(--color-green-500)', gauge: 40 },
+      { stat: '100%', text: 'souverain, européen, conforme RGPD', icon: 'leak', color: 'var(--color-green-500)', gauge: 100 },
+      { stat: '30s', text: 'pour déployer et connecter votre équipe', icon: 'warning', color: 'var(--color-green-500)', gauge: 30 },
     ],
     solutionSteps: SHARED_SOLUTION_STEPS,
     valueProps: [
@@ -261,8 +261,8 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       { name: 'Marc Lefèvre', role: 'DPO & CTO', company: 'DataPriv', quote: 'La seule IA que notre DPO a validée sans réserve. On l\'utilise sur tous nos audits de conformité.', avatar: 'ML', photo: '/images/testimonial-1.jpg' },
     ],
     pricing: {
-      headline: 'Un service complet, un prix simple',
-      subheadline: 'Deploiement, support prioritaire, mises a jour. Tout est inclus.',
+      headline: 'Un accès complet, un prix simple',
+      subheadline: 'Déploiement, support prioritaire, mises à jour. Tout est inclus.',
     },
     faqs: SHARED_FAQS,
   },
