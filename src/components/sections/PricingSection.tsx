@@ -23,7 +23,7 @@ const PRODUCTS = [
   {
     id: 'meet',
     name: 'Proxima Meet',
-    price: 20,
+    price: 10,
     description: 'Visioconférence IA chiffrée',
     features: [
       'Visio chiffrée de bout en bout',
@@ -57,19 +57,15 @@ const PACKAGE = {
 export function PricingSection() {
   const { segment, name, company } = usePersonalization()
   const content = getContent(segment)
-  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
   const [seats, setSeats] = useState(5)
   const [includeMeet, setIncludeMeet] = useState(true)
 
   const chatPrice = PRODUCTS[0].price as number
   const meetPrice = PRODUCTS[1].price as number
   const pricePerSeat = includeMeet ? PACKAGE.price : chatPrice
-  const annualPricePerSeat = Math.round(pricePerSeat * 0.8)
-  const activePrice = billing === 'annual' ? annualPricePerSeat : pricePerSeat
-  const totalPrice = activePrice * seats
-  const annualSavings = (pricePerSeat - annualPricePerSeat) * seats * 12
+  const totalPrice = pricePerSeat * seats
 
-  const stripeUrl = getCheckoutUrl({ segment, company, name, seats })
+  const stripeUrl = getCheckoutUrl({ segment, company, name, seats, plan: includeMeet ? 'pro' : 'chat' })
 
   const handleSeatsChange = (value: string) => {
     const n = parseInt(value, 10)
@@ -153,7 +149,7 @@ export function PricingSection() {
             <span className="text-text-muted">/utilisateur/mois</span>
           </div>
           <p className="text-xs text-green-500 font-medium mt-2">
-            Économisez {chatPrice + meetPrice - PACKAGE.price}€/utilisateur vs séparé
+            Tout inclus -- Chat + Visio IA
           </p>
         </motion.div>
 
@@ -183,35 +179,6 @@ export function PricingSection() {
                 includeMeet ? 'left-6' : 'left-1'
               }`} />
             </button>
-          </div>
-
-          {/* Billing toggle */}
-          <div className="flex items-center justify-center mb-6">
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-bg-card border border-border-subtle">
-              <button
-                onClick={() => setBilling('monthly')}
-                className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
-                  billing === 'monthly'
-                    ? 'bg-green-500 text-white'
-                    : 'text-text-secondary hover:text-text-primary'
-                }`}
-              >
-                Mensuel
-              </button>
-              <button
-                onClick={() => setBilling('annual')}
-                className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer flex items-center gap-2 ${
-                  billing === 'annual'
-                    ? 'bg-green-500 text-white'
-                    : 'text-text-secondary hover:text-text-primary'
-                }`}
-              >
-                Annuel
-                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-green-500/20 text-green-500 border border-green-500/30">
-                  -20%
-                </span>
-              </button>
-            </div>
           </div>
 
           {/* Seat input — custom number */}
@@ -248,21 +215,15 @@ export function PricingSection() {
               <span className="text-sm text-text-secondary">
                 {includeMeet ? 'Chat + Meet' : 'Proxima Chat'} x {seats} licence{seats > 1 ? 's' : ''}
               </span>
-              <span className="text-sm text-text-secondary">{activePrice}€ x {seats}</span>
+              <span className="text-sm text-text-secondary">{pricePerSeat}€ x {seats}</span>
             </div>
-            {billing === 'annual' && (
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-green-500 font-medium">Économie annuelle</span>
-                <span className="text-sm text-green-500 font-medium">-{annualSavings}€</span>
-              </div>
-            )}
             <div className="flex justify-between items-center mt-3 pt-3 border-t border-border-subtle">
               <span className="text-lg font-bold text-text-primary">Total</span>
               <span className="text-3xl font-bold text-text-primary">{totalPrice}€<span className="text-sm font-normal text-text-muted">/mois</span></span>
             </div>
           </div>
 
-          <Button variant="primary" className="w-full mt-6" href={stripeUrl}>
+          <Button variant="primary" className="w-full mt-6" onClick={() => window.open(stripeUrl, '_blank')}>
             Accéder à mon espace ({totalPrice}€/mois)
           </Button>
         </motion.div>

@@ -285,7 +285,7 @@ function DesktopScrollSection() {
   const progressOpacity = useTransform(scrollYProgress, [0, 0.05, 0.9, 1], [0, 1, 1, 0])
 
   return (
-    <section ref={containerRef} style={{ height: `${USE_CASES.length * 150 + 80}vh` }} className="relative hidden md:block">
+    <section ref={containerRef} style={{ height: `${USE_CASES.length * 80 + 40}vh` }} className="relative hidden md:block">
       <div className="sticky top-0 h-screen">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/[0.03] rounded-full blur-[120px]" />

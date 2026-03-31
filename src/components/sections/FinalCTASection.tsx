@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion'
 import { usePersonalization } from '../../context/PersonalizationContext'
-import { getCheckoutUrl } from '../../lib/stripe'
 import { Button } from '../ui/Button'
 
 export function FinalCTASection() {
-  const { segment, company, name } = usePersonalization()
-  const stripeUrl = getCheckoutUrl({ segment, company, name })
+  const { company } = usePersonalization()
 
   return (
     <section className="py-[var(--section-padding)] px-6 relative overflow-hidden section-fade-top">
@@ -31,7 +29,7 @@ export function FinalCTASection() {
           </p>
 
           <div className="flex items-center justify-center">
-            <Button variant="primary" size="lg" href={stripeUrl}>
+            <Button variant="primary" size="lg" href="#configurateur">
               Accéder à mon espace
             </Button>
           </div>

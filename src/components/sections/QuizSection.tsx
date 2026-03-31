@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/Button'
 import { DonutChart, HBarChart, ScoreGauge } from '../ui/Charts'
-import { usePersonalization } from '../../context/PersonalizationContext'
-import { getCheckoutUrl, PLANS } from '../../lib/stripe'
+import { PLANS } from '../../lib/stripe'
 
 /* ─── Quiz Data ─── */
 
@@ -182,11 +181,8 @@ function QuestionCard({ question, onAnswer }: { question: QuizQuestion; onAnswer
 }
 
 function ResultCard({ result }: { result: QuizResult }) {
-  const { segment, company, name } = usePersonalization()
   const proPrice = PLANS.pro.price
   const totalPrice = proPrice * result.recommendedSeats
-
-  const stripeUrl = getCheckoutUrl({ segment, company, name, seats: result.recommendedSeats })
 
   const scorePercent = Math.round((result.score / 12) * 100)
 
@@ -287,8 +283,8 @@ function ResultCard({ result }: { result: QuizResult }) {
 
       {/* CTA */}
       <div className="flex justify-center">
-        <Button variant="primary" size="lg" className="justify-center" href={stripeUrl}>
-          Accéder à mon espace ({totalPrice}€/mois)
+        <Button variant="primary" size="lg" className="justify-center" href="#configurateur">
+          Configurer mon accès ({totalPrice}€/mois)
         </Button>
       </div>
 

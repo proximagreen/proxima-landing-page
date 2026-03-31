@@ -41,25 +41,36 @@ export const PLANS: Record<string, Plan> = {
       '1 dossier de conversation',
       'Interface complète',
     ],
-    stripeLink: '', // Redirection vers demo
+    stripeLink: '',
+  },
+  chat: {
+    id: 'chat',
+    name: 'Proxima Chat',
+    price: 35,
+    description: 'Chat IA souverain pour votre équipe',
+    features: [
+      'Chat IA illimité',
+      'RAG documentaire',
+      'Dossiers cloisonnés',
+      'VM dédiée & sécurisée',
+      'Support prioritaire',
+    ],
+    stripeLink: import.meta.env.VITE_STRIPE_CHAT_LINK || '',
   },
   pro: {
     id: 'pro',
-    name: 'Accès complet',
-    price: 35,
-    description: 'Tout inclus pour votre équipe',
+    name: 'Proxima Pro Entreprise',
+    price: 45,
+    description: 'Chat + Meet pour votre équipe',
     features: [
       'Chat IA illimité',
       'Proxima Meet (visio IA)',
-      'Agents IA personnalisés',
       'RAG documentaire',
       'Dossiers illimités',
       'VM dédiée & sécurisée',
       'Support prioritaire & accompagnement',
     ],
     recommended: true,
-    // REMPLACER par le vrai Payment Link Stripe :
-    // Créer sur https://dashboard.stripe.com/payment-links
     stripeLink: import.meta.env.VITE_STRIPE_PRO_LINK || '',
   },
 }
@@ -72,14 +83,15 @@ interface CheckoutParams {
   name?: string | null
   email?: string | null
   seats?: number
+  plan?: 'chat' | 'pro'
 }
 
 /**
- * Génère l'URL de checkout Stripe pour le plan Pro.
+ * Génère l'URL de checkout Stripe.
  * Utilise un Payment Link avec paramètres query.
  */
 export function getCheckoutUrl(params: CheckoutParams): string {
-  const plan = PLANS.pro
+  const plan = PLANS[params.plan || 'pro']
   if (!plan.stripeLink) {
     // Fallback : redirige vers le signup si pas de Payment Link configuré
     return getSignupUrl(params)
