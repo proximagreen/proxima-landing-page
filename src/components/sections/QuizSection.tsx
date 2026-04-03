@@ -245,141 +245,134 @@ function QuestionCard({ question, onAnswer, stepIndex }: { question: QuizQuestio
 function ResultCard({ result }: { result: QuizResult }) {
   const proPrice = PLANS.pro.price
   const totalPrice = proPrice * result.recommendedSeats
-  const dailyCost = (totalPrice / result.recommendedSeats / 30).toFixed(2)
+  const dailyCost = (proPrice / 30).toFixed(1)
   const savingsHours = result.savings.replace(/[^0-9]/g, '')
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="max-w-2xl mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-xl mx-auto"
     >
-      {/* Hero result */}
-      <div className="quiz-card rounded-3xl p-8 sm:p-10 mb-8 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.06] to-transparent pointer-events-none" />
-        <div className="relative">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/15 border border-green-500/25 mb-6">
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-sm font-bold text-green-500">Diagnostic termine</span>
-          </div>
-
-          <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary mb-3 leading-tight">
-            {result.headline}
-          </h3>
-          <p className="text-text-secondary max-w-md mx-auto mb-8 leading-relaxed">
-            {result.description}
-          </p>
-
-          {/* Key metrics - dashboard style */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-            <div className="rounded-xl bg-green-500/[0.08] border border-green-500/15 p-3 text-center">
-              <div className="text-2xl sm:text-3xl font-black text-green-500">{savingsHours}h</div>
-              <div className="text-[10px] text-text-secondary font-medium mt-1">recuperees/mois</div>
-            </div>
-            <div className="rounded-xl bg-green-500/[0.08] border border-green-500/15 p-3 text-center">
-              <div className="text-2xl sm:text-3xl font-black text-green-500">60%</div>
-              <div className="text-[10px] text-text-secondary font-medium mt-1">de gain de temps</div>
-            </div>
-            <div className="rounded-xl bg-green-500/[0.08] border border-green-500/15 p-3 text-center">
-              <div className="text-2xl sm:text-3xl font-black text-green-500">{dailyCost}€</div>
-              <div className="text-[10px] text-text-secondary font-medium mt-1">par jour/collab</div>
-            </div>
-            <div className="rounded-xl bg-green-500/[0.08] border border-green-500/15 p-3 text-center">
-              <div className="text-2xl sm:text-3xl font-black text-green-500">100%</div>
-              <div className="text-[10px] text-text-secondary font-medium mt-1">souverain RGPD</div>
-            </div>
-          </div>
-
-          {/* CTA principal */}
-          <Button variant="primary" size="lg" href="#pricing">
-            Demarrer maintenant - {totalPrice}€/mois
-          </Button>
-          <p className="text-xs text-text-muted mt-3">
-            {result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} recommande{result.recommendedSeats > 1 ? 's' : ''} -- Sans engagement
-          </p>
+      {/* ── 1. Le chiffre choc ── */}
+      <div className="text-center mb-10">
+        <p className="text-sm font-medium text-text-muted mb-3">Votre equipe pourrait recuperer</p>
+        <div className="flex items-baseline justify-center gap-2">
+          <motion.span
+            className="text-6xl sm:text-7xl md:text-8xl font-black text-green-500 tracking-tight"
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2, type: 'spring' }}
+          >
+            {savingsHours}h
+          </motion.span>
+          <span className="text-xl text-text-secondary font-medium">/mois</span>
         </div>
+        <p className="text-lg text-text-primary font-semibold mt-2">{result.headline}</p>
       </div>
 
-      {/* Comparatif visuel */}
-      <div className="quiz-card rounded-2xl p-6 mb-6">
-        <h4 className="text-sm font-bold text-text-primary mb-5 uppercase tracking-wider">Proxima vs alternatives</h4>
-        <div className="space-y-4">
-          {[
-            { label: `Proxima (${result.recommendedSeats} poste${result.recommendedSeats > 1 ? 's' : ''})`, value: totalPrice, max: 3500, color: 'bg-green-500', tag: 'Recommande' },
-            { label: 'ChatGPT Team', value: result.recommendedSeats * 25, max: 3500, color: 'bg-text-muted/30', tag: 'Non souverain' },
-            { label: 'Recrutement equivalent', value: 3500, max: 3500, color: 'bg-red-500/60', tag: '' },
-          ].map((item, i) => (
-            <div key={i}>
-              <div className="flex justify-between items-center mb-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-text-primary">{item.label}</span>
-                  {item.tag && (
-                    <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${i === 0 ? 'bg-green-500/15 text-green-500' : 'bg-border-subtle text-text-muted'}`}>
-                      {item.tag}
-                    </span>
-                  )}
-                </div>
-                <span className="text-sm font-bold text-text-primary">{item.value}€/mois</span>
-              </div>
-              <div className="h-3 rounded-full bg-border-subtle overflow-hidden">
-                <motion.div
-                  className={`h-full rounded-full ${item.color}`}
-                  initial={{ width: '0%' }}
-                  animate={{ width: `${(item.value / item.max) * 100}%` }}
-                  transition={{ duration: 0.8, delay: 0.2 + i * 0.15, ease: 'easeOut' }}
-                />
-              </div>
+      {/* ── 2. Avant / Apres ── */}
+      <div className="grid grid-cols-2 gap-4 mb-8">
+        {/* AVANT */}
+        <div className="quiz-card rounded-2xl p-5 border-2 border-red-500/20">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-6 h-6 rounded-full bg-red-500/15 flex items-center justify-center">
+              <svg className="w-3.5 h-3.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </div>
-          ))}
+            <span className="text-sm font-bold text-red-500">Aujourd'hui</span>
+          </div>
+          <ul className="space-y-2.5">
+            {[
+              'Heures perdues sur les taches repetitives',
+              'Donnees sensibles sur des IA americaines',
+              'Pas de cloisonnement client',
+              'Recherches manuelles chronophages',
+            ].map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-text-secondary">
+                <span className="text-red-400 mt-0.5 shrink-0">--</span>
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
 
-      {/* Value Stack compact */}
-      <div className="quiz-card rounded-2xl p-6 mb-6">
-        <h4 className="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider">Tout inclus dans votre abonnement</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {[
-            { icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', label: 'Chat IA illimite' },
-            { icon: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z', label: 'Visio IA chiffree E2E' },
-            { icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', label: 'RAG documentaire' },
-            { icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z', label: 'RGPD & souverain' },
-            { icon: 'M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2', label: 'VM dediee en Europe' },
-            { icon: 'M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z', label: 'Support prioritaire' },
-          ].map((item, i) => (
-            <div key={i} className="flex items-center gap-3 p-2">
-              <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
-                <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+        {/* APRES */}
+        <div className="quiz-card rounded-2xl p-5 border-2 border-green-500/30 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.04] to-transparent pointer-events-none" />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 rounded-full bg-green-500/15 flex items-center justify-center">
+                <svg className="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <span className="text-sm text-text-primary font-medium">{item.label}</span>
+              <span className="text-sm font-bold text-green-500">Avec Proxima</span>
             </div>
-          ))}
+            <ul className="space-y-2.5">
+              {[
+                `${savingsHours}h/mois recuperees par l'IA`,
+                '100% souverain, RGPD, europeen',
+                'Cloisonnement total par dossier',
+                'Reponses en secondes, sourcees',
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-text-primary font-medium">
+                  <svg className="w-4 h-4 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 
-      {/* Prix final */}
-      <div className="quiz-card rounded-2xl p-6 mb-8 text-center border-2 border-green-500/20">
-        <p className="text-sm text-text-muted mb-2">Configuration recommandee</p>
-        <div className="flex items-baseline justify-center gap-1 mb-1">
-          <span className="text-4xl sm:text-5xl font-bold text-text-primary">{totalPrice}€</span>
-          <span className="text-text-muted text-lg">/mois</span>
+      {/* ── 3. Le prix (simple, clair) ── */}
+      <div className="quiz-card rounded-2xl p-6 sm:p-8 mb-8 text-center border-2 border-green-500/25 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-green-500/[0.05] to-transparent pointer-events-none" />
+        <div className="relative">
+          <p className="text-sm text-text-muted mb-1">Tout ca pour</p>
+          <div className="flex items-baseline justify-center gap-1 mb-2">
+            <span className="text-5xl sm:text-6xl font-black text-text-primary">{dailyCost}€</span>
+            <span className="text-lg text-text-muted">/jour</span>
+          </div>
+          <p className="text-sm text-text-secondary mb-1">par collaborateur</p>
+          <p className="text-xs text-text-muted mb-6">
+            soit {proPrice}€/mois/poste -- {result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} = {totalPrice}€/mois
+          </p>
+
+          <Button variant="primary" size="lg" href="#pricing">
+            Demarrer maintenant
+          </Button>
         </div>
-        <p className="text-sm text-text-secondary mb-1">{result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} x {proPrice}€</p>
-        <p className="text-xs text-green-500 font-medium">soit {dailyCost}€/jour par collaborateur</p>
       </div>
 
-      {/* Double CTA */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <Button variant="primary" size="lg" href="#pricing">
-          Demarrer maintenant
-        </Button>
-        <Button variant="secondary" size="lg" href="https://cal.com/paul-lm">
-          Prendre rendez-vous
-        </Button>
+      {/* ── 4. Objection killer ── */}
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-6">
+        {[
+          'Sans engagement',
+          'Annulation en 1 clic',
+          'Deploiement en 30 secondes',
+          'Support inclus',
+        ].map((item, i) => (
+          <span key={i} className="flex items-center gap-1.5 text-sm text-text-secondary">
+            <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {item}
+          </span>
+        ))}
       </div>
-      <p className="text-center text-xs text-text-muted mt-4">Sans engagement -- Annulation en 1 clic -- Paiement securise</p>
+
+      {/* Lien secondaire */}
+      <div className="text-center">
+        <a href="https://cal.com/paul-lm" target="_blank" rel="noopener noreferrer" className="text-sm text-green-500 hover:underline font-medium">
+          Vous preferez en discuter ? Prenez rendez-vous
+        </a>
+      </div>
     </motion.div>
   )
 }
