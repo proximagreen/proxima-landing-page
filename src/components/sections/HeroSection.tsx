@@ -57,8 +57,11 @@ export function HeroSection() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 sm:mb-14"
           initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <Button variant="primary" size="lg" href="#configurateur">
+          <Button variant="primary" size="lg" href="#pricing">
             {content.hero.ctaPrimary}
+          </Button>
+          <Button variant="secondary" size="lg" href="https://cal.com/paul-lm">
+            Prendre rendez-vous
           </Button>
         </motion.div>
 

@@ -17,13 +17,13 @@ const OPENROUTER_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || ''
 const OPENROUTER_MODEL = import.meta.env.VITE_OPENROUTER_MODEL || 'mistralai/voxtral-small-24b-2507'
 const MISTRAL_KEY = import.meta.env.VITE_MISTRAL_API_KEY || ''
 
-const BOOKING_URL = 'https://calendly.com/proxima-green/demo'
+const BOOKING_URL = 'https://cal.com/paul-lm'
 
 const SYSTEM_PROMPT = `Tu es l'assistant commercial IA de Proxima (proxima.green), la plateforme d'IA confidentielle et souveraine pour les professionnels.
 
 FONCTIONNALITES : Chat IA illimite, Proxima Meet (visio chiffree E2E avec transcription), Agents IA automatises, RAG documentaire, cloisonnement total par dossier/client, hebergement 100% europeen conforme RGPD.
 
-PRIX : 9 euros par poste par mois, tout inclus (deploiement, support prioritaire, mises a jour). Essai gratuit disponible.
+PRIX : Proxima Chat a 45 euros par utilisateur par mois (35 euros a partir de 2 licences). Proxima Meet a 15 euros. Bundle Chat + Meet a 45 euros (Chat 35 + Meet 10). Tout inclus (deploiement, support prioritaire, mises a jour).
 
 OBJECTIF : Tu dois orienter chaque conversation vers une ACTION CONCRETE :
 - Si le prospect est pret : oriente vers la souscription. Dis "Vous pouvez souscrire directement ici" et le lien apparaitra automatiquement.

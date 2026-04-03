@@ -28,9 +28,12 @@ export function FinalCTASection() {
             }
           </p>
 
-          <div className="flex items-center justify-center">
-            <Button variant="primary" size="lg" href="#configurateur">
-              Accéder à mon espace
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button variant="primary" size="lg" href="#pricing">
+              Voir les tarifs
+            </Button>
+            <Button variant="secondary" size="lg" href="https://cal.com/paul-lm">
+              Prendre rendez-vous
             </Button>
           </div>
 

@@ -277,10 +277,17 @@ export function resolveHeadline(
   name: string | null,
   company: string | null
 ): string {
-  if (name || company) {
+  if (name && company) {
     return content.hero.headlinePersonalized
-      .replace('{name}', name || 'vous')
-      .replace('{company}', company || 'votre entreprise')
+      .replace('{name}', name)
+      .replace('{company}', company)
+  }
+  if (company) {
+    return content.hero.headlinePersonalized
+      .replace('{name}, bienvenue.\n', '')
+      .replace('{name}, ', '')
+      .replace('{name}', '')
+      .replace('{company}', company)
   }
   return content.hero.headline
 }
