@@ -61,18 +61,22 @@ export function PricingSection() {
   const { segment, name, company } = usePersonalization()
   const content = getContent(segment)
   const [seats, setSeats] = useState(5)
+  const [includeChat, setIncludeChat] = useState(true)
   const [includeMeet, setIncludeMeet] = useState(true)
 
   const [loading, setLoading] = useState(false)
 
-  // Chat : 45€ pour 1 licence, 35€/licence a partir de 2
-  // Bundle Chat + Meet : 45€/licence (Chat 35€ + Meet 10€)
-  const chatPricePerSeat = includeMeet ? PACKAGE.chatPrice : (seats >= 2 ? PRODUCTS[0].priceFrom2! : PRODUCTS[0].price as number)
-  const meetPricePerSeat = includeMeet ? PACKAGE.meetPrice : 0
+  // Calcul des prix selon la selection
+  const isBundle = includeChat && includeMeet
+  const chatPricePerSeat = !includeChat ? 0 : isBundle ? PACKAGE.chatPrice : (seats >= 2 ? PRODUCTS[0].priceFrom2! : PRODUCTS[0].price as number)
+  const meetPricePerSeat = !includeMeet ? 0 : isBundle ? PACKAGE.meetPrice : PRODUCTS[1].price as number
   const pricePerSeat = chatPricePerSeat + meetPricePerSeat
   const totalPrice = pricePerSeat * seats
 
+  const plan = isBundle ? 'pro' : includeChat ? 'chat' : 'meet'
+
   const handleCheckout = useCallback(async () => {
+    if (!includeChat && !includeMeet) return
     setLoading(true)
     try {
       const url = await createCheckoutSession({
@@ -80,8 +84,7 @@ export function PricingSection() {
         company,
         name,
         seats,
-        plan: includeMeet ? 'pro' : 'chat',
-        pricePerSeat,
+        plan,
       })
       window.open(url, '_blank')
     } catch (err) {
@@ -89,7 +92,7 @@ export function PricingSection() {
     } finally {
       setLoading(false)
     }
-  }, [segment, company, name, seats, includeMeet, pricePerSeat])
+  }, [segment, company, name, seats, plan, includeChat, includeMeet])
 
   const handleSeatsChange = (value: string) => {
     const n = parseInt(value, 10)
@@ -192,22 +195,51 @@ export function PricingSection() {
         >
           <h3 className="text-lg font-bold text-text-primary text-center mb-6">Configurez votre accès</h3>
 
-          {/* Option Meet */}
-          <div className="flex items-center justify-between mb-6 p-3 rounded-xl bg-bg-card border border-border-subtle">
-            <div>
-              <p className="text-sm font-medium text-text-primary">Inclure Proxima Meet</p>
-              <p className="text-xs text-text-muted">+{PACKAGE.meetPrice}€/utilisateur/mois (au lieu de {PRODUCTS[1].price}€)</p>
+          {/* Selection produits */}
+          <div className="space-y-3 mb-6">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-bg-card border border-border-subtle">
+              <div>
+                <p className="text-sm font-medium text-text-primary">Proxima Chat</p>
+                <p className="text-xs text-text-muted">
+                  {isBundle ? `${PACKAGE.chatPrice}€` : includeChat && seats >= 2 ? `${PRODUCTS[0].priceFrom2}€` : `${PRODUCTS[0].price}€`}/utilisateur/mois
+                  {includeChat && !isBundle && seats >= 2 && <span className="text-green-500 ml-1">(tarif degressif)</span>}
+                </p>
+              </div>
+              <button
+                onClick={() => setIncludeChat(!includeChat)}
+                className={`relative w-12 h-7 rounded-full transition-colors duration-300 cursor-pointer ${
+                  includeChat ? 'bg-green-500' : 'bg-border-subtle'
+                }`}
+              >
+                <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                  includeChat ? 'left-6' : 'left-1'
+                }`} />
+              </button>
             </div>
-            <button
-              onClick={() => setIncludeMeet(!includeMeet)}
-              className={`relative w-12 h-7 rounded-full transition-colors duration-300 cursor-pointer ${
-                includeMeet ? 'bg-green-500' : 'bg-border-subtle'
-              }`}
-            >
-              <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
-                includeMeet ? 'left-6' : 'left-1'
-              }`} />
-            </button>
+
+            <div className="flex items-center justify-between p-3 rounded-xl bg-bg-card border border-border-subtle">
+              <div>
+                <p className="text-sm font-medium text-text-primary">Proxima Meet</p>
+                <p className="text-xs text-text-muted">
+                  {isBundle ? `${PACKAGE.meetPrice}€` : `${PRODUCTS[1].price}€`}/utilisateur/mois
+                  {isBundle && <span className="text-green-500 ml-1">(tarif bundle)</span>}
+                </p>
+              </div>
+              <button
+                onClick={() => setIncludeMeet(!includeMeet)}
+                className={`relative w-12 h-7 rounded-full transition-colors duration-300 cursor-pointer ${
+                  includeMeet ? 'bg-green-500' : 'bg-border-subtle'
+                }`}
+              >
+                <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                  includeMeet ? 'left-6' : 'left-1'
+                }`} />
+              </button>
+            </div>
+
+            {isBundle && (
+              <p className="text-xs text-green-500 font-medium text-center">Bundle applique : Chat {PACKAGE.chatPrice}€ + Meet {PACKAGE.meetPrice}€ = {PACKAGE.price}€/utilisateur</p>
+            )}
           </div>
 
           {/* Seat input — custom number */}
@@ -240,25 +272,24 @@ export function PricingSection() {
 
           {/* Price summary */}
           <div className="border-t border-border-subtle pt-5">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-sm text-text-secondary">
-                Proxima Chat x {seats} licence{seats > 1 ? 's' : ''}
-              </span>
-              <span className="text-sm text-text-secondary">{chatPricePerSeat}€ x {seats}</span>
-            </div>
+            {includeChat && (
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm text-text-secondary">
+                  Proxima Chat x {seats} licence{seats > 1 ? 's' : ''}
+                </span>
+                <span className="text-sm text-text-secondary">{chatPricePerSeat}€ x {seats} = {chatPricePerSeat * seats}€</span>
+              </div>
+            )}
             {includeMeet && (
               <div className="flex justify-between items-center mb-1">
                 <span className="text-sm text-text-secondary">
                   Proxima Meet x {seats} licence{seats > 1 ? 's' : ''}
                 </span>
-                <span className="text-sm text-text-secondary">{meetPricePerSeat}€ x {seats}</span>
+                <span className="text-sm text-text-secondary">{meetPricePerSeat}€ x {seats} = {meetPricePerSeat * seats}€</span>
               </div>
             )}
-            {!includeMeet && seats >= 2 && (
-              <p className="text-xs text-green-500 mt-1">Tarif degressif applique (35€ au lieu de 45€)</p>
-            )}
-            {includeMeet && (
-              <p className="text-xs text-green-500 mt-1">Tarif bundle applique : Meet a {PACKAGE.meetPrice}€ au lieu de {PRODUCTS[1].price}€</p>
+            {!includeChat && !includeMeet && (
+              <p className="text-sm text-text-muted text-center py-2">Selectionnez au moins un produit</p>
             )}
             <div className="flex justify-between items-center mt-3 pt-3 border-t border-border-subtle">
               <span className="text-lg font-bold text-text-primary">Total</span>
@@ -266,7 +297,7 @@ export function PricingSection() {
             </div>
           </div>
 
-          <Button variant="primary" className="w-full mt-6" onClick={handleCheckout} disabled={loading}>
+          <Button variant="primary" className="w-full mt-6" onClick={handleCheckout} disabled={loading || (!includeChat && !includeMeet)}>
             {loading ? 'Redirection...' : `Accéder à mon espace (${totalPrice}€/mois)`}
           </Button>
         </motion.div>

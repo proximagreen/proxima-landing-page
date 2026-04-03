@@ -72,8 +72,7 @@ interface CheckoutParams {
   name?: string | null
   email?: string | null
   seats?: number
-  plan?: 'chat' | 'pro'
-  pricePerSeat?: number
+  plan?: 'chat' | 'meet' | 'pro'
 }
 
 /**

@@ -50,6 +50,17 @@ app.post('/api/create-checkout', async (req, res) => {
         },
         quantity,
       })
+    } else if (plan === 'meet') {
+      // Meet seul
+      lineItems.push({
+        price_data: {
+          currency: 'eur',
+          product_data: { name: 'Proxima Meet' },
+          unit_amount: PRICES.meet_standalone,
+          recurring: { interval: 'month' },
+        },
+        quantity,
+      })
     } else {
       // Chat seul
       const unitAmount = quantity >= 2 ? PRICES.chat_multi : PRICES.chat_1
