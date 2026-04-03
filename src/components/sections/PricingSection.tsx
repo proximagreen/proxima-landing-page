@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePersonalization } from '../../context/PersonalizationContext'
 import { getContent } from '../../lib/content'
@@ -259,22 +259,21 @@ function SideCart({
   )
   const [loading, setLoading] = useState(false)
 
-  // Sync quand on ouvre avec un produit different
-  const resetFor = useCallback((product: 'chat' | 'meet' | 'bundle') => {
-    if (product === 'bundle') {
+  // Sync a chaque ouverture ou changement de produit
+  useEffect(() => {
+    if (!open) return
+    if (initialProduct === 'bundle') {
       setIncludeChat(true)
       setIncludeMeet(true)
-    } else if (product === 'chat') {
+    } else if (initialProduct === 'chat') {
       setIncludeChat(true)
       setIncludeMeet(false)
     } else {
       setIncludeChat(false)
       setIncludeMeet(true)
     }
-  }, [setIncludeChat, setIncludeMeet])
-
-  // On reset a chaque ouverture
-  useState(() => { resetFor(initialProduct) })
+    setSeats(1)
+  }, [open, initialProduct, setIncludeChat, setIncludeMeet, setSeats])
 
   const handleCheckout = useCallback(async () => {
     if (!includeChat && !includeMeet) return
