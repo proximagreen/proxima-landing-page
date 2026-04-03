@@ -112,7 +112,7 @@ app.post('/api/create-checkout', async (req, res) => {
 app.use(express.static(join(__dirname, '..', 'dist')))
 
 // SPA fallback
-app.get('*', (_req, res) => {
+app.get('{*path}', (_req, res) => {
   res.sendFile(join(__dirname, '..', 'dist', 'index.html'))
 })
 
