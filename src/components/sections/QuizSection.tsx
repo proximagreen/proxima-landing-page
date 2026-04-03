@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/Button'
-import { DonutChart, HBarChart, ScoreGauge } from '../ui/Charts'
+import { HBarChart } from '../ui/Charts'
 import { PLANS } from '../../lib/stripe'
 
 /* ─── Quiz Data ─── */
@@ -251,13 +251,14 @@ function ResultCard({ result }: { result: QuizResult }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
+      {/* Score circle */}
       <div className="text-center mb-8">
-        <ScoreGauge
-          score={result.score}
-          maxScore={12}
-          riskColor={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : '#22c55e'}
-          riskLabel={result.riskLabel}
-        />
+        <div className="inline-flex flex-col items-center">
+          <div className="w-28 h-28 rounded-full bg-green-500/10 border-4 border-green-500 flex flex-col items-center justify-center mb-3">
+            <span className="text-3xl font-bold text-green-500">{result.score}/12</span>
+          </div>
+          <span className="text-sm font-semibold text-green-500 uppercase tracking-wider">Potentiel : {result.riskLabel}</span>
+        </div>
       </div>
 
       <h3 className="text-2xl md:text-3xl font-bold text-text-primary text-center mb-4">
@@ -269,14 +270,20 @@ function ResultCard({ result }: { result: QuizResult }) {
 
       {/* Stat cards row */}
       <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
-        <div className="quiz-card rounded-2xl p-4 text-center">
-          <DonutChart value={scorePercent} label="Risque données" sublabel={result.riskLabel} color={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : '#22c55e'} size={100} />
+        <div className="quiz-card rounded-2xl p-4 text-center flex flex-col items-center justify-center gap-2">
+          <span className="text-3xl sm:text-4xl font-bold text-green-500">{scorePercent}%</span>
+          <span className="text-xs font-semibold text-text-primary">Risque donnees</span>
+          <span className="text-[11px] text-text-secondary">{result.riskLabel}</span>
         </div>
-        <div className="quiz-card rounded-2xl p-4 text-center">
-          <DonutChart value={60} label="Temps récupérable" sublabel={result.savings} color="#22c55e" size={100} />
+        <div className="quiz-card rounded-2xl p-4 text-center flex flex-col items-center justify-center gap-2">
+          <span className="text-3xl sm:text-4xl font-bold text-green-500">60%</span>
+          <span className="text-xs font-semibold text-text-primary">Temps recuperable</span>
+          <span className="text-[11px] text-text-secondary">{result.savings}</span>
         </div>
-        <div className="quiz-card rounded-2xl p-4 text-center">
-          <DonutChart value={Math.round((totalPrice / 3500) * 100)} label="Coût vs recrutement" sublabel={`${totalPrice}€ vs 3 500€`} color="#22c55e" size={100} />
+        <div className="quiz-card rounded-2xl p-4 text-center flex flex-col items-center justify-center gap-2">
+          <span className="text-3xl sm:text-4xl font-bold text-green-500">{totalPrice}€</span>
+          <span className="text-xs font-semibold text-text-primary">Cout vs recrutement</span>
+          <span className="text-[11px] text-text-secondary">{totalPrice}€ vs 3 500€</span>
         </div>
       </div>
 
@@ -297,11 +304,11 @@ function ResultCard({ result }: { result: QuizResult }) {
         <h4 className="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider">Ce que vous obtenez</h4>
         <div className="space-y-3">
           {[
-            { item: 'Chat IA illimité + RAG documentaire', value: '~500€/mois' },
-            { item: 'Visioconférence IA chiffrée', value: '~200€/mois' },
-            { item: 'VM dédiée en Europe', value: '~300€/mois' },
-            { item: `${result.savings} récupérées`, value: 'Inestimable' },
-            { item: 'Conformité RGPD garantie', value: '~4% du CA' },
+            { item: 'Chat IA illimite + RAG documentaire', value: '~500€/mois' },
+            { item: 'Visioconference IA chiffree', value: '~200€/mois' },
+            { item: 'VM dediee en Europe', value: '~300€/mois' },
+            { item: `${result.savings} recuperees`, value: 'Inestimable' },
+            { item: 'Conformite RGPD garantie', value: '~4% du CA' },
           ].map((line, i) => (
             <div key={i} className="flex justify-between items-center">
               <span className="text-sm text-text-secondary flex items-center gap-2">
@@ -327,8 +334,8 @@ function ResultCard({ result }: { result: QuizResult }) {
       </div>
 
       <div className="flex justify-center">
-        <Button variant="primary" size="lg" className="justify-center" href="#configurateur">
-          Configurer mon accès ({totalPrice}€/mois)
+        <Button variant="primary" size="lg" className="justify-center" href="#pricing">
+          Configurer mon acces ({totalPrice}€/mois)
         </Button>
       </div>
       <p className="text-center text-xs text-text-muted mt-4">Sans engagement. Annulation en 1 clic.</p>

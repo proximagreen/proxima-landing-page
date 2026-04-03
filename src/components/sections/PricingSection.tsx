@@ -57,6 +57,183 @@ const PACKAGE = {
   description: 'L\'offre complète pour votre équipe',
 }
 
+/* ─── Shared pricing logic hook ─── */
+
+function usePricingLogic(initialChat: boolean, initialMeet: boolean) {
+  const [includeChat, setIncludeChat] = useState(initialChat)
+  const [includeMeet, setIncludeMeet] = useState(initialMeet)
+  const [seats, setSeats] = useState(1)
+
+  const isBundle = includeChat && includeMeet
+  const chatPricePerSeat = !includeChat ? 0 : isBundle ? PACKAGE.chatPrice : (seats >= 2 ? PRODUCTS[0].priceFrom2! : PRODUCTS[0].price as number)
+  const meetPricePerSeat = !includeMeet ? 0 : isBundle ? PACKAGE.meetPrice : PRODUCTS[1].price as number
+  const pricePerSeat = chatPricePerSeat + meetPricePerSeat
+  const totalPrice = pricePerSeat * seats
+  const plan = (isBundle ? 'pro' : includeChat ? 'chat' : 'meet') as 'pro' | 'chat' | 'meet'
+  const dailyPerUser = (includeChat || includeMeet) ? (totalPrice / seats / 30).toFixed(2) : '0'
+
+  const handleSeatsChange = (value: string) => {
+    const n = parseInt(value, 10)
+    if (!isNaN(n) && n >= 1 && n <= 500) setSeats(n)
+  }
+
+  return {
+    includeChat, setIncludeChat,
+    includeMeet, setIncludeMeet,
+    seats, setSeats,
+    isBundle, chatPricePerSeat, meetPricePerSeat,
+    pricePerSeat, totalPrice, plan, dailyPerUser,
+    handleSeatsChange,
+  }
+}
+
+/* ─── Checkbox toggle component ─── */
+
+function ProductToggle({
+  checked,
+  onChange,
+  label,
+  priceLabel,
+}: {
+  checked: boolean
+  onChange: () => void
+  label: string
+  priceLabel: string
+}) {
+  return (
+    <label className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${checked ? 'border-green-500/50 bg-green-500/[0.04]' : 'border-border-card'}`}>
+      <div className="flex items-center gap-3">
+        <input type="checkbox" checked={checked} onChange={onChange} className="sr-only" />
+        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${checked ? 'bg-green-500 border-green-500' : 'border-border-card'}`}>
+          {checked && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-text-primary">{label}</p>
+          <p className="text-xs text-text-muted">{priceLabel}</p>
+        </div>
+      </div>
+    </label>
+  )
+}
+
+/* ─── Seat selector component ─── */
+
+function SeatSelector({
+  seats,
+  setSeats,
+  handleSeatsChange,
+}: {
+  seats: number
+  setSeats: (n: number) => void
+  handleSeatsChange: (v: string) => void
+}) {
+  return (
+    <div>
+      <p className="text-sm font-semibold text-text-primary mb-3">Nombre de licences</p>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => setSeats(Math.max(1, seats - 1))}
+          className="w-10 h-10 rounded-xl bg-bg-card border border-border-subtle text-text-primary hover:border-green-500/40 transition-colors cursor-pointer flex items-center justify-center text-xl font-bold"
+        >-</button>
+        <input
+          type="number" min={1} max={500} value={seats}
+          onChange={(e) => handleSeatsChange(e.target.value)}
+          className="w-20 h-12 text-center text-2xl font-bold bg-bg-card border border-border-subtle rounded-xl text-text-primary focus:outline-none focus:border-green-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+        <button
+          onClick={() => setSeats(Math.min(500, seats + 1))}
+          className="w-10 h-10 rounded-xl bg-bg-card border border-border-subtle text-text-primary hover:border-green-500/40 transition-colors cursor-pointer flex items-center justify-center text-xl font-bold"
+        >+</button>
+      </div>
+      <p className="text-xs text-text-muted mt-2">1 utilisateur = 1 licence</p>
+    </div>
+  )
+}
+
+/* ─── Upsell banner ─── */
+
+function UpsellBanner({
+  includeChat,
+  includeMeet,
+  onAddChat,
+  onAddMeet,
+}: {
+  includeChat: boolean
+  includeMeet: boolean
+  onAddChat: () => void
+  onAddMeet: () => void
+}) {
+  if (includeChat && includeMeet) return null
+  if (!includeChat && !includeMeet) return null
+
+  const message = includeChat
+    ? `Ajoutez Meet pour seulement +${PACKAGE.meetPrice}\u20AC/licence au lieu de ${PRODUCTS[1].price}\u20AC`
+    : `Ajoutez Chat pour seulement +${PACKAGE.chatPrice}\u20AC/licence`
+
+  const action = includeChat ? onAddMeet : onAddChat
+
+  return (
+    <div className="flex items-center gap-3 p-3 rounded-xl bg-green-500/10 border border-green-500/20">
+      <svg className="w-5 h-5 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div className="flex-1">
+        <p className="text-xs text-green-500 font-medium">{message}</p>
+      </div>
+      <button
+        onClick={action}
+        className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold bg-green-500 text-white hover:bg-green-600 transition-colors cursor-pointer"
+      >
+        Ajouter
+      </button>
+    </div>
+  )
+}
+
+/* ─── Included features list ─── */
+
+function IncludedFeatures({ includeChat, includeMeet }: { includeChat: boolean; includeMeet: boolean }) {
+  const features: string[] = []
+  if (includeChat) {
+    features.push('Chat IA illimité & RAG documentaire')
+    features.push('VM dédiée & dossiers cloisonnés')
+  }
+  if (includeMeet) {
+    features.push('Visio chiffrée + transcription temps réel')
+    features.push('Résumés & plans d\'action automatiques')
+  }
+  if (!includeChat && !includeMeet) return null
+
+  return (
+    <div>
+      <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Ce qui est inclus</p>
+      <ul className="space-y-2">
+        {features.map((f) => (
+          <li key={f} className="flex items-center gap-2 text-sm text-text-secondary">
+            <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            {f}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/* ─── Trust line ─── */
+
+function TrustBadges() {
+  return (
+    <div className="flex items-center justify-center gap-2 text-xs text-text-muted">
+      <svg className="w-3.5 h-3.5 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+      </svg>
+      Sans engagement -- Annulation en 1 clic -- Paiement sécurisé
+    </div>
+  )
+}
+
 /* ─── Side Cart ─── */
 
 function SideCart({
@@ -69,9 +246,14 @@ function SideCart({
   initialProduct: 'chat' | 'meet'
 }) {
   const { segment, name, company } = usePersonalization()
-  const [includeChat, setIncludeChat] = useState(initialProduct === 'chat' || initialProduct === 'meet')
-  const [includeMeet, setIncludeMeet] = useState(initialProduct === 'meet')
-  const [seats, setSeats] = useState(1)
+  const {
+    includeChat, setIncludeChat,
+    includeMeet, setIncludeMeet,
+    seats, setSeats,
+    isBundle, chatPricePerSeat, meetPricePerSeat,
+    totalPrice, plan, dailyPerUser,
+    handleSeatsChange,
+  } = usePricingLogic(initialProduct === 'chat', initialProduct === 'meet')
   const [loading, setLoading] = useState(false)
 
   // Sync quand on ouvre avec un produit different
@@ -83,17 +265,10 @@ function SideCart({
       setIncludeChat(false)
       setIncludeMeet(true)
     }
-  }, [])
+  }, [setIncludeChat, setIncludeMeet])
 
   // On reset a chaque ouverture
   useState(() => { resetFor(initialProduct) })
-
-  const isBundle = includeChat && includeMeet
-  const chatPricePerSeat = !includeChat ? 0 : isBundle ? PACKAGE.chatPrice : (seats >= 2 ? PRODUCTS[0].priceFrom2! : PRODUCTS[0].price as number)
-  const meetPricePerSeat = !includeMeet ? 0 : isBundle ? PACKAGE.meetPrice : PRODUCTS[1].price as number
-  const pricePerSeat = chatPricePerSeat + meetPricePerSeat
-  const totalPrice = pricePerSeat * seats
-  const plan = isBundle ? 'pro' : includeChat ? 'chat' : 'meet'
 
   const handleCheckout = useCallback(async () => {
     if (!includeChat && !includeMeet) return
@@ -107,11 +282,6 @@ function SideCart({
       setLoading(false)
     }
   }, [segment, company, name, seats, plan, includeChat, includeMeet])
-
-  const handleSeatsChange = (value: string) => {
-    const n = parseInt(value, 10)
-    if (!isNaN(n) && n >= 1 && n <= 500) setSeats(n)
-  }
 
   return (
     <AnimatePresence>
@@ -147,35 +317,28 @@ function SideCart({
 
               {/* Product toggles */}
               <div className="space-y-3 mb-6">
-                <label className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${includeChat ? 'border-green-500/50 bg-green-500/[0.04]' : 'border-border-card'}`}>
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" checked={includeChat} onChange={() => setIncludeChat(!includeChat)} className="sr-only" />
-                    <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${includeChat ? 'bg-green-500 border-green-500' : 'border-border-card'}`}>
-                      {includeChat && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-text-primary">Proxima Chat</p>
-                      <p className="text-xs text-text-muted">
-                        {isBundle ? `${PACKAGE.chatPrice}€` : seats >= 2 ? `${PRODUCTS[0].priceFrom2}€` : `${PRODUCTS[0].price}€`}/mois par licence
-                      </p>
-                    </div>
-                  </div>
-                </label>
+                <ProductToggle
+                  checked={includeChat}
+                  onChange={() => setIncludeChat(!includeChat)}
+                  label="Proxima Chat"
+                  priceLabel={`${isBundle ? PACKAGE.chatPrice : seats >= 2 ? PRODUCTS[0].priceFrom2 : PRODUCTS[0].price}\u20AC/mois par licence`}
+                />
+                <ProductToggle
+                  checked={includeMeet}
+                  onChange={() => setIncludeMeet(!includeMeet)}
+                  label="Proxima Meet"
+                  priceLabel={`${isBundle ? PACKAGE.meetPrice : PRODUCTS[1].price}\u20AC/mois par licence`}
+                />
+              </div>
 
-                <label className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${includeMeet ? 'border-green-500/50 bg-green-500/[0.04]' : 'border-border-card'}`}>
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" checked={includeMeet} onChange={() => setIncludeMeet(!includeMeet)} className="sr-only" />
-                    <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${includeMeet ? 'bg-green-500 border-green-500' : 'border-border-card'}`}>
-                      {includeMeet && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-text-primary">Proxima Meet</p>
-                      <p className="text-xs text-text-muted">
-                        {isBundle ? `${PACKAGE.meetPrice}€` : `${PRODUCTS[1].price}€`}/mois par licence
-                      </p>
-                    </div>
-                  </div>
-                </label>
+              {/* Upsell banner */}
+              <div className="mb-6">
+                <UpsellBanner
+                  includeChat={includeChat}
+                  includeMeet={includeMeet}
+                  onAddChat={() => setIncludeChat(true)}
+                  onAddMeet={() => setIncludeMeet(true)}
+                />
               </div>
 
               {/* Bundle badge */}
@@ -184,29 +347,18 @@ function SideCart({
                   <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <p className="text-xs text-green-500 font-medium">Bundle applique : Meet a {PACKAGE.meetPrice}€ au lieu de {PRODUCTS[1].price}€</p>
+                  <p className="text-xs text-green-500 font-medium">Bundle appliqué : Meet à {PACKAGE.meetPrice}\u20AC au lieu de {PRODUCTS[1].price}\u20AC</p>
                 </div>
               )}
 
               {/* Seats */}
               <div className="mb-6">
-                <p className="text-sm font-semibold text-text-primary mb-3">Nombre de licences</p>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setSeats(Math.max(1, seats - 1))}
-                    className="w-10 h-10 rounded-xl bg-bg-card border border-border-subtle text-text-primary hover:border-green-500/40 transition-colors cursor-pointer flex items-center justify-center text-xl font-bold"
-                  >-</button>
-                  <input
-                    type="number" min={1} max={500} value={seats}
-                    onChange={(e) => handleSeatsChange(e.target.value)}
-                    className="w-20 h-12 text-center text-2xl font-bold bg-bg-card border border-border-subtle rounded-xl text-text-primary focus:outline-none focus:border-green-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  />
-                  <button
-                    onClick={() => setSeats(Math.min(500, seats + 1))}
-                    className="w-10 h-10 rounded-xl bg-bg-card border border-border-subtle text-text-primary hover:border-green-500/40 transition-colors cursor-pointer flex items-center justify-center text-xl font-bold"
-                  >+</button>
-                </div>
-                <p className="text-xs text-text-muted mt-2">1 utilisateur = 1 licence</p>
+                <SeatSelector seats={seats} setSeats={setSeats} handleSeatsChange={handleSeatsChange} />
+              </div>
+
+              {/* Included features */}
+              <div className="mb-6">
+                <IncludedFeatures includeChat={includeChat} includeMeet={includeMeet} />
               </div>
 
               {/* Spacer */}
@@ -217,36 +369,153 @@ function SideCart({
                 {includeChat && (
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-sm text-text-secondary">Chat x {seats}</span>
-                    <span className="text-sm text-text-secondary">{chatPricePerSeat * seats}€</span>
+                    <span className="text-sm text-text-secondary">{chatPricePerSeat * seats}\u20AC</span>
                   </div>
                 )}
                 {includeMeet && (
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-sm text-text-secondary">Meet x {seats}</span>
-                    <span className="text-sm text-text-secondary">{meetPricePerSeat * seats}€</span>
+                    <span className="text-sm text-text-secondary">{meetPricePerSeat * seats}\u20AC</span>
                   </div>
                 )}
                 {!includeChat && !includeMeet && (
-                  <p className="text-sm text-text-muted text-center py-2">Selectionnez au moins un produit</p>
+                  <p className="text-sm text-text-muted text-center py-2">Sélectionnez au moins un produit</p>
                 )}
                 <div className="flex justify-between items-center mt-3 pt-3 border-t border-border-subtle">
                   <span className="text-lg font-bold text-text-primary">Total</span>
-                  <span className="text-3xl font-bold text-text-primary">{totalPrice}€<span className="text-sm font-normal text-text-muted">/mois</span></span>
+                  <span className="text-3xl font-bold text-text-primary">{totalPrice}\u20AC<span className="text-sm font-normal text-text-muted">/mois</span></span>
                 </div>
+                {(includeChat || includeMeet) && (
+                  <p className="text-xs text-text-muted text-right mt-1">Soit {dailyPerUser}\u20AC/jour par collaborateur</p>
+                )}
               </div>
 
               <Button variant="primary" className="w-full mt-6" onClick={handleCheckout} disabled={loading || (!includeChat && !includeMeet)}>
-                {loading ? 'Redirection...' : `Payer ${totalPrice}€/mois`}
+                {loading ? 'Redirection...' : `Payer ${totalPrice}\u20AC/mois`}
               </Button>
 
-              <p className="text-center text-xs text-text-muted mt-4">
-                Sans engagement -- Annulation en 1 clic -- Paiement sécurisé
-              </p>
+              <div className="mt-4">
+                <TrustBadges />
+              </div>
             </div>
           </motion.div>
         </>
       )}
     </AnimatePresence>
+  )
+}
+
+/* ─── Inline Configurateur ─── */
+
+function InlineConfigurateur() {
+  const { segment, name, company } = usePersonalization()
+  const {
+    includeChat, setIncludeChat,
+    includeMeet, setIncludeMeet,
+    seats, setSeats,
+    isBundle, chatPricePerSeat, meetPricePerSeat,
+    totalPrice, plan, dailyPerUser,
+    handleSeatsChange,
+  } = usePricingLogic(true, true)
+  const [loading, setLoading] = useState(false)
+
+  const handleCheckout = useCallback(async () => {
+    if (!includeChat && !includeMeet) return
+    setLoading(true)
+    try {
+      const url = await createCheckoutSession({ segment, company, name, seats, plan })
+      window.open(url, '_blank')
+    } catch (err) {
+      console.error('Checkout error:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [segment, company, name, seats, plan, includeChat, includeMeet])
+
+  return (
+    <div id="configurateur" className="glass rounded-2xl p-6 sm:p-8 max-w-2xl mx-auto mb-8 scroll-mt-24">
+      <h3 className="text-xl font-bold text-text-primary mb-1 text-center">Configurez votre accès</h3>
+      <p className="text-sm text-text-muted text-center mb-6">Choisissez vos produits, ajustez le nombre de licences</p>
+
+      {/* Toggles */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+        <ProductToggle
+          checked={includeChat}
+          onChange={() => setIncludeChat(!includeChat)}
+          label="Proxima Chat"
+          priceLabel={`${isBundle ? PACKAGE.chatPrice : seats >= 2 ? PRODUCTS[0].priceFrom2 : PRODUCTS[0].price}\u20AC/mois par licence`}
+        />
+        <ProductToggle
+          checked={includeMeet}
+          onChange={() => setIncludeMeet(!includeMeet)}
+          label="Proxima Meet"
+          priceLabel={`${isBundle ? PACKAGE.meetPrice : PRODUCTS[1].price}\u20AC/mois par licence`}
+        />
+      </div>
+
+      {/* Upsell banner */}
+      <div className="mb-6">
+        <UpsellBanner
+          includeChat={includeChat}
+          includeMeet={includeMeet}
+          onAddChat={() => setIncludeChat(true)}
+          onAddMeet={() => setIncludeMeet(true)}
+        />
+      </div>
+
+      {/* Bundle badge */}
+      {isBundle && (
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-green-500/10 border border-green-500/20 mb-6">
+          <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="text-xs text-green-500 font-medium">Bundle appliqué : Meet à {PACKAGE.meetPrice}\u20AC au lieu de {PRODUCTS[1].price}\u20AC</p>
+        </div>
+      )}
+
+      {/* Seats */}
+      <div className="flex justify-center mb-6">
+        <SeatSelector seats={seats} setSeats={setSeats} handleSeatsChange={handleSeatsChange} />
+      </div>
+
+      {/* Price Summary */}
+      <div className="border-t border-border-subtle pt-5">
+        {includeChat && (
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-sm text-text-secondary">Proxima Chat x {seats}</span>
+            <span className="text-sm text-text-secondary">{chatPricePerSeat * seats}\u20AC/mois</span>
+          </div>
+        )}
+        {includeMeet && (
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-sm text-text-secondary">Proxima Meet x {seats}</span>
+            <span className="text-sm text-text-secondary">{meetPricePerSeat * seats}\u20AC/mois</span>
+          </div>
+        )}
+        {!includeChat && !includeMeet && (
+          <p className="text-sm text-text-muted text-center py-2">Sélectionnez au moins un produit</p>
+        )}
+        <div className="flex justify-between items-center mt-3 pt-3 border-t border-border-subtle">
+          <span className="text-lg font-bold text-text-primary">Total</span>
+          <div className="text-right">
+            <span className="text-3xl font-bold text-text-primary">{totalPrice}\u20AC<span className="text-sm font-normal text-text-muted">/mois</span></span>
+            {(includeChat || includeMeet) && (
+              <p className="text-xs text-text-muted mt-0.5">Soit {dailyPerUser}\u20AC/jour par collaborateur</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <Button variant="primary" className="w-full mt-6" onClick={handleCheckout} disabled={loading || (!includeChat && !includeMeet)}>
+        {loading ? 'Redirection...' : `Démarrer maintenant - ${totalPrice}\u20AC/mois`}
+      </Button>
+
+      {/* Trust */}
+      <div className="mt-4">
+        <TrustBadges />
+      </div>
+    </div>
   )
 }
 
@@ -289,11 +558,11 @@ export function PricingSection() {
                   {product.price !== null ? (
                     <div>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-4xl font-bold text-text-primary">{product.price}€</span>
+                        <span className="text-4xl font-bold text-text-primary">{product.price}\u20AC</span>
                         <span className="text-text-muted">/utilisateur/mois</span>
                       </div>
                       {'priceFrom2' in product && product.priceFrom2 && (
-                        <p className="text-xs text-green-500 font-medium mt-1">{product.priceFrom2}€/utilisateur a partir de 2 licences</p>
+                        <p className="text-xs text-green-500 font-medium mt-1">{product.priceFrom2}\u20AC/utilisateur à partir de 2 licences</p>
                       )}
                     </div>
                   ) : (
@@ -326,21 +595,25 @@ export function PricingSection() {
           </div>
 
           {/* Package highlight */}
-          <div className="glass rounded-2xl p-5 sm:p-6 max-w-md mx-auto mb-8 text-center border-green-500/30 cursor-pointer hover:border-green-500/50 transition-colors" onClick={() => { setCartProduct('chat'); setCartOpen(true) }}>
+          <div className="glass rounded-2xl p-5 sm:p-6 max-w-md mx-auto mb-12 text-center border-green-500/30 cursor-pointer hover:border-green-500/50 transition-colors" onClick={() => { setCartProduct('chat'); setCartOpen(true) }}>
             <div className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white mb-3">
               Offre recommandée
             </div>
             <h3 className="text-xl font-bold text-text-primary mb-1">{PACKAGE.name}</h3>
             <p className="text-sm text-text-muted mb-3">{PACKAGE.description}</p>
             <div className="flex items-baseline justify-center gap-1">
-              <span className="text-4xl font-bold text-text-primary">{PACKAGE.price}€</span>
+              <span className="text-4xl font-bold text-text-primary">{PACKAGE.price}\u20AC</span>
               <span className="text-text-muted">/utilisateur/mois</span>
             </div>
             <p className="text-xs text-green-500 font-medium mt-2">
-              Chat {PACKAGE.chatPrice}€ + Meet {PACKAGE.meetPrice}€ -- Cliquez pour configurer
+              Chat {PACKAGE.chatPrice}\u20AC + Meet {PACKAGE.meetPrice}\u20AC -- Cliquez pour configurer
             </p>
           </div>
 
+          {/* Inline Configurateur */}
+          <InlineConfigurateur />
+
+          {/* Trust line */}
           <p className="text-center text-sm text-text-muted">
             Sans engagement -- Annulation en 1 clic -- Paiement sécurisé
           </p>

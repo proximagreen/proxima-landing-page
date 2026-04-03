@@ -1,5 +1,4 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Icon, type IconName } from '../ui/Icon'
 
 interface UseCase {
@@ -219,114 +218,64 @@ function MobileUseCases() {
   )
 }
 
-/* ─── Desktop : scroll sticky sans fade in/out ─── */
-
-function UseCaseScene({ useCase, index, scrollYProgress }: { useCase: UseCase; index: number; scrollYProgress: ReturnType<typeof useScroll>['scrollYProgress'] }) {
-  const total = USE_CASES.length
-  const sectionSize = 0.85 / total
-  const start = 0.08 + index * sectionSize
-  const mid = start + sectionSize * 0.3
-  const end = start + sectionSize
-
-  // Pas de fade : visible = 1 dans la zone active, 0 sinon (transition nette)
-  const isVisible = useTransform(scrollYProgress, [start, mid, end], [0, 1, 1])
-  // Leger slide up a l'entree seulement
-  const y = useTransform(scrollYProgress, [start, mid], [30, 0])
-  // Z-index pour que la scene active soit au-dessus
-  const zIndex = useTransform(scrollYProgress, [start, mid, end], [0, 10, 0])
-
-  return (
-    <motion.div
-      className="absolute inset-0 flex items-center justify-center px-6"
-      style={{ opacity: isVisible, y, zIndex }}
-    >
-      <div className="w-full max-w-5xl mx-auto grid grid-cols-2 gap-12 items-center">
-        <div className={`${index % 2 === 0 ? 'order-1' : 'order-2'}`}>
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-green-500/10 text-green-500 border border-green-500/20 mb-5">
-            <Icon name={useCase.icon} size={14} className="text-green-500" />
-            {useCase.badge}
-          </span>
-
-          <h3 className="text-3xl md:text-4xl font-bold text-text-primary leading-tight mb-4 whitespace-pre-line">
-            {useCase.title}
-          </h3>
-
-          <p className="text-base text-text-secondary leading-relaxed mb-6">
-            {useCase.description}
-          </p>
-
-          <div className="flex gap-8">
-            {useCase.metrics.map((m, j) => (
-              <div key={j} className="relative px-4 py-3 rounded-xl bg-green-500/[0.05] border border-green-500/10">
-                <div className="text-3xl font-black text-green-500 tracking-tight">{m.value}</div>
-                <div className="text-xs text-text-muted uppercase tracking-wider mt-1">{m.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={`${index % 2 === 0 ? 'order-2' : 'order-1'}`}>
-          <VisualBlock type={useCase.visual} />
-        </div>
-      </div>
-    </motion.div>
-  )
-}
+/* ─── Desktop : simple whileInView sections ─── */
 
 function DesktopScrollSection() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  })
-
-  const progressWidth = useTransform(scrollYProgress, [0.05, 0.9], ['0%', '100%'])
-  const progressOpacity = useTransform(scrollYProgress, [0, 0.05, 0.9, 1], [0, 1, 1, 0])
-
   return (
-    <section ref={containerRef} style={{ height: `${USE_CASES.length * 80 + 40}vh` }} className="relative hidden md:block">
-      <div className="sticky top-0 h-screen">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/[0.03] rounded-full blur-[120px]" />
-        </div>
-      </div>
-      <div className="sticky top-0 h-screen flex flex-col" style={{ marginTop: '-100vh' }}>
+    <section className="hidden md:block py-[var(--section-padding)]">
+      <div className="max-w-5xl mx-auto px-6">
         <motion.div
-          className="text-center pt-24 pb-4"
-          style={{ opacity: useTransform(scrollYProgress, [0, 0.04, 0.06], [0, 1, 1]) }}
+          className="text-center mb-20"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.5 }}
         >
           <span className="inline-block px-3 py-1 rounded-full text-xs font-medium tracking-wider uppercase bg-green-500/10 text-green-500 border border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.15)]">
             Ce que Proxima fait pour vous
           </span>
         </motion.div>
 
-        <div className="flex-1 relative overflow-hidden">
+        <div className="space-y-32">
           {USE_CASES.map((uc, i) => (
-            <UseCaseScene key={i} useCase={uc} index={i} scrollYProgress={scrollYProgress} />
+            <motion.div
+              key={i}
+              className="grid grid-cols-2 gap-12 items-center"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+            >
+              <div className={i % 2 === 0 ? 'order-1' : 'order-2'}>
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-green-500/10 text-green-500 border border-green-500/20 mb-5">
+                  <Icon name={uc.icon} size={14} className="text-green-500" />
+                  {uc.badge}
+                </span>
+
+                <h3 className="text-3xl md:text-4xl font-bold text-text-primary leading-tight mb-4 whitespace-pre-line">
+                  {uc.title}
+                </h3>
+
+                <p className="text-base text-text-secondary leading-relaxed mb-6">
+                  {uc.description}
+                </p>
+
+                <div className="flex gap-8">
+                  {uc.metrics.map((m, j) => (
+                    <div key={j} className="relative px-4 py-3 rounded-xl bg-green-500/[0.05] border border-green-500/10">
+                      <div className="text-3xl font-black text-green-500 tracking-tight">{m.value}</div>
+                      <div className="text-xs text-text-muted uppercase tracking-wider mt-1">{m.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className={i % 2 === 0 ? 'order-2' : 'order-1'}>
+                <VisualBlock type={uc.visual} />
+              </div>
+            </motion.div>
           ))}
         </div>
-
-        <motion.div className="h-1 mx-auto w-full max-w-md bg-border-subtle rounded-full mb-6 overflow-hidden" style={{ opacity: progressOpacity }}>
-          <motion.div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full" style={{ width: progressWidth }} />
-        </motion.div>
-
-        <motion.div className="flex items-center justify-center gap-2 pb-6" style={{ opacity: progressOpacity }}>
-          {USE_CASES.map((_, i) => {
-            const sectionSize = 0.85 / USE_CASES.length
-            const start = 0.08 + i * sectionSize
-            const mid = start + sectionSize * 0.5
-            return (
-              <motion.div
-                key={i}
-                className="w-2 h-2 rounded-full"
-                style={{
-                  backgroundColor: useTransform(scrollYProgress, [start, mid, start + sectionSize], ['var(--color-border-subtle)', 'var(--color-green-500)', 'var(--color-border-subtle)']),
-                  scale: useTransform(scrollYProgress, [start, mid, start + sectionSize], [1, 1.5, 1]),
-                }}
-              />
-            )
-          })}
-        </motion.div>
       </div>
     </section>
   )
