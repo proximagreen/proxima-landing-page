@@ -1,32 +1,23 @@
 /**
- * Stripe Payment Links configuration.
+ * Stripe Checkout integration.
  *
- * IMPORTANT: Ne JAMAIS mettre de clé Stripe (sk_live, rk_live) dans le frontend.
- * Utiliser uniquement des Payment Links (URLs publiques et sécurisées).
- *
- * Pour créer les Payment Links :
- * 1. Aller sur https://dashboard.stripe.com/payment-links
- * 2. Créer un lien pour chaque produit/prix
- * 3. Coller l'URL ci-dessous
- *
- * Les Payment Links supportent :
- * - ?quantity=N pour pré-remplir le nombre de postes
- * - ?client_reference_id=xxx pour le tracking
- * - ?prefilled_email=xxx pour pré-remplir l'email
+ * Le frontend envoie les details de commande au serveur API
+ * qui cree une Stripe Checkout Session et retourne l'URL.
  */
 
 const APP_URL = import.meta.env.VITE_APP_URL || 'https://app.proxima.green'
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 // ─── Plans & Pricing ───
 
 export interface Plan {
   id: string
   name: string
-  price: number          // par poste / mois
+  price: number          // par poste / mois (1 licence)
+  priceFrom2?: number    // par poste / mois (2+ licences)
   description: string
   features: string[]
   recommended?: boolean
-  stripeLink: string     // Payment Link Stripe
 }
 
 export const PLANS: Record<string, Plan> = {
@@ -41,12 +32,12 @@ export const PLANS: Record<string, Plan> = {
       '1 dossier de conversation',
       'Interface complète',
     ],
-    stripeLink: '',
   },
   chat: {
     id: 'chat',
     name: 'Proxima Chat',
-    price: 35,
+    price: 45,
+    priceFrom2: 35,
     description: 'Chat IA souverain pour votre équipe',
     features: [
       'Chat IA illimité',
@@ -55,11 +46,10 @@ export const PLANS: Record<string, Plan> = {
       'VM dédiée & sécurisée',
       'Support prioritaire',
     ],
-    stripeLink: import.meta.env.VITE_STRIPE_CHAT_LINK || '',
   },
   pro: {
     id: 'pro',
-    name: 'Proxima Pro Entreprise',
+    name: 'Proxima Chat + Meet',
     price: 45,
     description: 'Chat + Meet pour votre équipe',
     features: [
@@ -71,11 +61,10 @@ export const PLANS: Record<string, Plan> = {
       'Support prioritaire & accompagnement',
     ],
     recommended: true,
-    stripeLink: import.meta.env.VITE_STRIPE_PRO_LINK || '',
   },
 }
 
-// ─── URL Builders ───
+// ─── Checkout ───
 
 interface CheckoutParams {
   segment: string
@@ -84,40 +73,38 @@ interface CheckoutParams {
   email?: string | null
   seats?: number
   plan?: 'chat' | 'pro'
+  pricePerSeat?: number
 }
 
 /**
- * Génère l'URL de checkout Stripe.
- * Utilise un Payment Link avec paramètres query.
+ * Appelle le serveur API pour creer une Stripe Checkout Session.
+ * Retourne l'URL de checkout.
  */
-export function getCheckoutUrl(params: CheckoutParams): string {
-  const plan = PLANS[params.plan || 'pro']
-  if (!plan.stripeLink) {
-    // Fallback : redirige vers le signup si pas de Payment Link configuré
-    return getSignupUrl(params)
+export async function createCheckoutSession(params: CheckoutParams): Promise<string> {
+  const res = await fetch(`${API_URL}/api/create-checkout`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      plan: params.plan || 'pro',
+      seats: params.seats || 1,
+      segment: params.segment,
+      company: params.company || null,
+      name: params.name || null,
+      email: params.email || null,
+    }),
+  })
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Erreur serveur' }))
+    throw new Error(err.error || 'Erreur lors de la creation du checkout')
   }
 
-  const url = new URL(plan.stripeLink)
-
-  // Pré-remplir la quantité (nombre de postes)
-  if (params.seats && params.seats > 1) {
-    url.searchParams.set('quantity', String(params.seats))
-  }
-
-  // Tracking : segment + company + timestamp
-  const refId = [params.segment, params.company || 'direct', Date.now()].join('_')
-  url.searchParams.set('client_reference_id', refId)
-
-  // Pré-remplir l'email si disponible
-  if (params.email) {
-    url.searchParams.set('prefilled_email', params.email)
-  }
-
-  return url.toString()
+  const data = await res.json()
+  return data.url
 }
 
 /**
- * Génère l'URL de signup gratuit.
+ * Genere l'URL de signup gratuit.
  */
 export function getSignupUrl(params: CheckoutParams): string {
   const url = new URL(`${APP_URL}/signup`)

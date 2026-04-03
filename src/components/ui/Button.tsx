@@ -8,9 +8,10 @@ interface ButtonProps {
   href?: string
   onClick?: () => void
   className?: string
+  disabled?: boolean
 }
 
-export function Button({ children, variant = 'primary', size = 'md', href, onClick, className }: ButtonProps) {
+export function Button({ children, variant = 'primary', size = 'md', href, onClick, className, disabled }: ButtonProps) {
   const classes = clsx(
     'inline-flex items-center justify-center font-semibold rounded-full transition-all duration-300 cursor-pointer relative overflow-hidden group',
     {
@@ -30,7 +31,8 @@ export function Button({ children, variant = 'primary', size = 'md', href, onCli
     <MotionComponent
       className={classes}
       href={href}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      {...(!href && { disabled })}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       target={href?.startsWith('http') ? '_blank' : undefined}

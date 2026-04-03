@@ -8,7 +8,9 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:api": "node api/server.js",
     "build": "tsc -b && vite build",
+    "start": "node api/server.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -16,13 +18,15 @@
     "@gsap/react": "^2.1.2",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
+    "express": "^5.2.1",
     "framer-motion": "^12.38.0",
     "gsap": "^3.14.2",
     "lenis": "^1.3.21",
     "react": "^19.2.4",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.2.4",
-    "serve": "^14.2.6"
+    "serve": "^14.2.6",
+    "stripe": "^18.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

@@ -5,4 +5,4 @@ nixPkgs = ["nodejs_22"]
 cmds = ["npm ci", "npm run build"]
 
 [start]
-cmd = "npx serve dist -s -l 3000"
+cmd = "node api/server.js"
