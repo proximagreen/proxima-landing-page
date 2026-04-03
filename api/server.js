@@ -30,12 +30,12 @@ const PRICES = {
 
 // ─── Helpers ───
 
-function extractSlug(hostname) {
-  // "cabinet-laurent.proxima.green" -> "cabinet-laurent"
-  // "demo.proxima.green" -> "demo"
-  // "localhost" -> "demo"
-  const parts = hostname.split('.')
-  if (parts.length >= 3) return parts[0]
+function extractSlug(req) {
+  // 1. Query param ?client=cabinet-laurent (prioritaire)
+  if (req.query?.client) return req.query.client
+  // 2. Sous-domaine : cabinet-laurent.proxima.green -> "cabinet-laurent"
+  const parts = req.hostname.split('.')
+  if (parts.length >= 3 && parts[0] !== 'go' && parts[0] !== 'www') return parts[0]
   return 'demo'
 }
 
@@ -59,7 +59,7 @@ async function getClientConfig(slug) {
 // ─── API : config client (appele par le frontend) ───
 
 app.get('/api/client-config', async (req, res) => {
-  const slug = extractSlug(req.hostname)
+  const slug = extractSlug(req)
   const client = await getClientConfig(slug)
 
   if (client) {
@@ -123,7 +123,7 @@ app.post('/api/create-checkout', async (req, res) => {
       })
     }
 
-    const slug = extractSlug(req.hostname)
+    const slug = extractSlug(req)
     const refId = [slug, segment || 'general', company || 'direct', Date.now()].join('_')
     const origin = req.headers.origin || req.headers.referer?.replace(/\/[^/]*$/, '') || LANDING_URL
 

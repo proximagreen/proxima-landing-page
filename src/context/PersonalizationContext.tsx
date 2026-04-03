@@ -53,7 +53,11 @@ export function PersonalizationProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL || ''
-    fetch(`${apiUrl}/api/client-config`)
+    const clientParam = new URLSearchParams(window.location.search).get('client')
+    const configUrl = clientParam
+      ? `${apiUrl}/api/client-config?client=${encodeURIComponent(clientParam)}`
+      : `${apiUrl}/api/client-config`
+    fetch(configUrl)
       .then(r => r.ok ? r.json() : null)
       .then(config => {
         if (config) {
