@@ -126,10 +126,10 @@ function MessageWithCTA({ content }: { content: string }) {
       {(hasSubscribe || hasBooking) && (
         <div className="flex flex-wrap gap-2 mt-3">
           {hasSubscribe && (
-            <a href="#configurateur"
+            <a href="#pricing"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-green-500 text-white hover:bg-green-600 transition-colors no-underline">
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" /></svg>
-              Voir les tarifs
+              Souscrire maintenant
             </a>
           )}
           {hasBooking && (

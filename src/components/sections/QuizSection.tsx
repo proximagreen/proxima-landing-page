@@ -390,8 +390,8 @@ function ResultCard({ result }: { result: QuizResult }) {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button variant="primary" size="lg" className="flex-1 justify-center" href="#pricing">
-              Demarrer pour {dailyCost}€/jour ({totalPrice}€/mois)
+            <Button variant="primary" size="lg" className="flex-1 justify-center" href="#configurateur">
+              Souscrire pour {dailyCost}€/jour ({totalPrice}€/mois)
             </Button>
             <Button variant="secondary" size="lg" className="flex-1 justify-center" href="https://cal.com/paul-lm">
               Prendre rendez-vous
