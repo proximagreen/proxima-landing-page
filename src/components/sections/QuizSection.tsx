@@ -426,6 +426,10 @@ export function QuizSection() {
     const question = QUESTIONS[currentStep]
     setAnswers(prev => ({ ...prev, [question.id]: value }))
     setCurrentStep(prev => prev + 1)
+    // Scroll vers le haut de la section quiz
+    setTimeout(() => {
+      document.getElementById('quiz')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
   }
 
   /* ─── Intro : Dashboard-style preview ─── */
@@ -553,7 +557,7 @@ export function QuizSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.8 }}
           >
-            <Button variant="primary" size="lg" onClick={() => setStarted(true)}>
+            <Button variant="primary" size="lg" onClick={() => { setStarted(true); setTimeout(() => document.getElementById('quiz')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100) }}>
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>

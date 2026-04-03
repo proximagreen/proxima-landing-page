@@ -303,13 +303,13 @@ function SideCart({
 
           {/* Panel */}
           <motion.div
-            className="fixed top-0 right-0 z-[70] h-full w-full max-w-md sidecart-bg border-l border-border-card shadow-2xl overflow-y-auto"
+            className="fixed top-0 right-0 z-[70] h-full w-full max-w-md sidecart-bg border-l border-border-card shadow-2xl overflow-y-auto overscroll-contain"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           >
-            <div className="p-6 sm:p-8 flex flex-col h-full">
+            <div className="p-6 sm:p-8 flex flex-col min-h-full">
               {/* Header */}
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-bold text-text-primary">Votre panier</h3>
@@ -366,8 +366,8 @@ function SideCart({
                 <IncludedFeatures includeChat={includeChat} includeMeet={includeMeet} />
               </div>
 
-              {/* Spacer */}
-              <div className="flex-1" />
+              {/* Spacer mobile */}
+              <div className="h-4" />
 
               {/* Summary */}
               <div className="border-t border-border-subtle pt-5 mt-4">
@@ -536,7 +536,13 @@ export function PricingSection() {
     if (productId === 'chat' || productId === 'meet') {
       setCartProduct(productId)
       setCartOpen(true)
+      document.body.style.overflow = 'hidden'
     }
+  }
+
+  const closeCart = () => {
+    setCartOpen(false)
+    document.body.style.overflow = ''
   }
 
   return (
@@ -600,7 +606,7 @@ export function PricingSection() {
           </div>
 
           {/* Package highlight */}
-          <div className="glass rounded-2xl p-5 sm:p-6 max-w-md mx-auto mb-12 text-center border-green-500/30 cursor-pointer hover:border-green-500/50 transition-colors" onClick={() => { setCartProduct('bundle'); setCartOpen(true) }}>
+          <div className="glass rounded-2xl p-5 sm:p-6 max-w-md mx-auto mb-12 text-center border-green-500/30 cursor-pointer hover:border-green-500/50 transition-colors" onClick={() => { setCartProduct('bundle'); setCartOpen(true); document.body.style.overflow = 'hidden' }}>
             <div className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white mb-3">
               Offre recommandée
             </div>
@@ -626,7 +632,7 @@ export function PricingSection() {
       </section>
 
       {/* Side Cart */}
-      <SideCart open={cartOpen} onClose={() => setCartOpen(false)} initialProduct={cartProduct} />
+      <SideCart open={cartOpen} onClose={closeCart} initialProduct={cartProduct} />
     </>
   )
 }
