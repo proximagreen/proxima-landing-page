@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/Button'
-import { HBarChart } from '../ui/Charts'
 import { PLANS } from '../../lib/stripe'
 
 /* ─── Quiz Data ─── */
@@ -97,21 +96,24 @@ function calculateResult(answers: Record<string, number>): QuizResult {
 /* ─── Mini Chart Components for Intro ─── */
 
 function MiniBarChart() {
-  const days = ['L', 'M', 'M', 'J', 'V']
-  const values = [65, 80, 45, 90, 70]
+  const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven']
+  const saved = [2.1, 3.2, 1.8, 3.5, 2.8]
+  const maxVal = 4
   return (
-    <div className="flex items-end gap-2 h-20 justify-center">
+    <div className="space-y-2.5">
       {days.map((d, i) => (
-        <div key={i} className="flex flex-col items-center gap-1.5">
-          <motion.div
-            className="w-5 sm:w-6 rounded-t-md bg-green-500"
-            initial={{ height: 0 }}
-            whileInView={{ height: `${values[i]}%` }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 * i, ease: 'easeOut' }}
-            style={{ maxHeight: '100%', opacity: 0.15 + (values[i] / 100) * 0.85 }}
-          />
-          <span className="text-[10px] text-text-muted font-medium">{d}</span>
+        <div key={i} className="flex items-center gap-3">
+          <span className="text-[11px] text-text-secondary font-medium w-7 shrink-0">{d}</span>
+          <div className="flex-1 h-5 rounded-full bg-border-subtle overflow-hidden">
+            <motion.div
+              className="h-full rounded-full bg-green-500"
+              initial={{ width: '0%' }}
+              whileInView={{ width: `${(saved[i] / maxVal) * 100}%` }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1 * i, ease: 'easeOut' }}
+            />
+          </div>
+          <span className="text-[11px] font-bold text-green-500 w-10 text-right">{saved[i]}h</span>
         </div>
       ))}
     </div>
@@ -243,102 +245,141 @@ function QuestionCard({ question, onAnswer, stepIndex }: { question: QuizQuestio
 function ResultCard({ result }: { result: QuizResult }) {
   const proPrice = PLANS.pro.price
   const totalPrice = proPrice * result.recommendedSeats
-  const scorePercent = Math.round((result.score / 12) * 100)
+  const dailyCost = (totalPrice / result.recommendedSeats / 30).toFixed(2)
+  const savingsHours = result.savings.replace(/[^0-9]/g, '')
 
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="max-w-2xl mx-auto"
     >
-      {/* Score circle */}
-      <div className="text-center mb-8">
-        <div className="inline-flex flex-col items-center">
-          <div className="w-28 h-28 rounded-full bg-green-500/10 border-4 border-green-500 flex flex-col items-center justify-center mb-3">
-            <span className="text-3xl font-bold text-green-500">{result.score}/12</span>
+      {/* Hero result */}
+      <div className="quiz-card rounded-3xl p-8 sm:p-10 mb-8 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.06] to-transparent pointer-events-none" />
+        <div className="relative">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/15 border border-green-500/25 mb-6">
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-sm font-bold text-green-500">Diagnostic termine</span>
           </div>
-          <span className="text-sm font-semibold text-green-500 uppercase tracking-wider">Potentiel : {result.riskLabel}</span>
+
+          <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary mb-3 leading-tight">
+            {result.headline}
+          </h3>
+          <p className="text-text-secondary max-w-md mx-auto mb-8 leading-relaxed">
+            {result.description}
+          </p>
+
+          {/* Key metrics - dashboard style */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+            <div className="rounded-xl bg-green-500/[0.08] border border-green-500/15 p-3 text-center">
+              <div className="text-2xl sm:text-3xl font-black text-green-500">{savingsHours}h</div>
+              <div className="text-[10px] text-text-secondary font-medium mt-1">recuperees/mois</div>
+            </div>
+            <div className="rounded-xl bg-green-500/[0.08] border border-green-500/15 p-3 text-center">
+              <div className="text-2xl sm:text-3xl font-black text-green-500">60%</div>
+              <div className="text-[10px] text-text-secondary font-medium mt-1">de gain de temps</div>
+            </div>
+            <div className="rounded-xl bg-green-500/[0.08] border border-green-500/15 p-3 text-center">
+              <div className="text-2xl sm:text-3xl font-black text-green-500">{dailyCost}€</div>
+              <div className="text-[10px] text-text-secondary font-medium mt-1">par jour/collab</div>
+            </div>
+            <div className="rounded-xl bg-green-500/[0.08] border border-green-500/15 p-3 text-center">
+              <div className="text-2xl sm:text-3xl font-black text-green-500">100%</div>
+              <div className="text-[10px] text-text-secondary font-medium mt-1">souverain RGPD</div>
+            </div>
+          </div>
+
+          {/* CTA principal */}
+          <Button variant="primary" size="lg" href="#pricing">
+            Demarrer maintenant - {totalPrice}€/mois
+          </Button>
+          <p className="text-xs text-text-muted mt-3">
+            {result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} recommande{result.recommendedSeats > 1 ? 's' : ''} -- Sans engagement
+          </p>
         </div>
       </div>
 
-      <h3 className="text-2xl md:text-3xl font-bold text-text-primary text-center mb-4">
-        {result.headline}
-      </h3>
-      <p className="text-text-secondary text-center max-w-lg mx-auto mb-10 leading-relaxed">
-        {result.description}
-      </p>
-
-      {/* Stat cards row */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
-        <div className="quiz-card rounded-2xl p-4 text-center flex flex-col items-center justify-center gap-2">
-          <span className="text-3xl sm:text-4xl font-bold text-green-500">{scorePercent}%</span>
-          <span className="text-xs font-semibold text-text-primary">Risque donnees</span>
-          <span className="text-[11px] text-text-secondary">{result.riskLabel}</span>
-        </div>
-        <div className="quiz-card rounded-2xl p-4 text-center flex flex-col items-center justify-center gap-2">
-          <span className="text-3xl sm:text-4xl font-bold text-green-500">60%</span>
-          <span className="text-xs font-semibold text-text-primary">Temps recuperable</span>
-          <span className="text-[11px] text-text-secondary">{result.savings}</span>
-        </div>
-        <div className="quiz-card rounded-2xl p-4 text-center flex flex-col items-center justify-center gap-2">
-          <span className="text-3xl sm:text-4xl font-bold text-green-500">{totalPrice}€</span>
-          <span className="text-xs font-semibold text-text-primary">Cout vs recrutement</span>
-          <span className="text-[11px] text-text-secondary">{totalPrice}€ vs 3 500€</span>
-        </div>
-      </div>
-
-      {/* Bar chart */}
-      <div className="quiz-card rounded-2xl p-5 md:p-6 mb-8">
-        <HBarChart
-          title="Comparatif de valeur mensuelle"
-          items={[
-            { label: `Proxima (${result.recommendedSeats} poste${result.recommendedSeats > 1 ? 's' : ''})`, value: totalPrice, color: '#22c55e', suffix: '€' },
-            { label: 'ChatGPT Team', value: result.recommendedSeats * 25, color: 'rgba(128,128,128,0.3)', suffix: '€' },
-            { label: 'Recrutement', value: 3500, color: '#ef4444', suffix: '€' },
-          ]}
-        />
-      </div>
-
-      {/* Value Stack */}
-      <div className="quiz-card rounded-2xl p-5 md:p-6 mb-8">
-        <h4 className="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider">Ce que vous obtenez</h4>
-        <div className="space-y-3">
+      {/* Comparatif visuel */}
+      <div className="quiz-card rounded-2xl p-6 mb-6">
+        <h4 className="text-sm font-bold text-text-primary mb-5 uppercase tracking-wider">Proxima vs alternatives</h4>
+        <div className="space-y-4">
           {[
-            { item: 'Chat IA illimite + RAG documentaire', value: '~500€/mois' },
-            { item: 'Visioconference IA chiffree', value: '~200€/mois' },
-            { item: 'VM dediee en Europe', value: '~300€/mois' },
-            { item: `${result.savings} recuperees`, value: 'Inestimable' },
-            { item: 'Conformite RGPD garantie', value: '~4% du CA' },
-          ].map((line, i) => (
-            <div key={i} className="flex justify-between items-center">
-              <span className="text-sm text-text-secondary flex items-center gap-2">
-                <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                {line.item}
-              </span>
-              <span className="text-xs text-text-muted line-through">{line.value}</span>
+            { label: `Proxima (${result.recommendedSeats} poste${result.recommendedSeats > 1 ? 's' : ''})`, value: totalPrice, max: 3500, color: 'bg-green-500', tag: 'Recommande' },
+            { label: 'ChatGPT Team', value: result.recommendedSeats * 25, max: 3500, color: 'bg-text-muted/30', tag: 'Non souverain' },
+            { label: 'Recrutement equivalent', value: 3500, max: 3500, color: 'bg-red-500/60', tag: '' },
+          ].map((item, i) => (
+            <div key={i}>
+              <div className="flex justify-between items-center mb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-text-primary">{item.label}</span>
+                  {item.tag && (
+                    <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${i === 0 ? 'bg-green-500/15 text-green-500' : 'bg-border-subtle text-text-muted'}`}>
+                      {item.tag}
+                    </span>
+                  )}
+                </div>
+                <span className="text-sm font-bold text-text-primary">{item.value}€/mois</span>
+              </div>
+              <div className="h-3 rounded-full bg-border-subtle overflow-hidden">
+                <motion.div
+                  className={`h-full rounded-full ${item.color}`}
+                  initial={{ width: '0%' }}
+                  animate={{ width: `${(item.value / item.max) * 100}%` }}
+                  transition={{ duration: 0.8, delay: 0.2 + i * 0.15, ease: 'easeOut' }}
+                />
+              </div>
             </div>
           ))}
-          <div className="border-t border-border-subtle pt-3 mt-3">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-sm font-bold text-text-primary">Valeur totale</span>
-              <span className="text-sm text-text-muted line-through">1 000€+/mois</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-bold text-green-500">Votre prix</span>
-              <span className="text-xl font-bold text-green-500">{totalPrice}€/mois</span>
-            </div>
-          </div>
         </div>
       </div>
 
-      <div className="flex justify-center">
-        <Button variant="primary" size="lg" className="justify-center" href="#pricing">
-          Configurer mon acces ({totalPrice}€/mois)
+      {/* Value Stack compact */}
+      <div className="quiz-card rounded-2xl p-6 mb-6">
+        <h4 className="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider">Tout inclus dans votre abonnement</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[
+            { icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', label: 'Chat IA illimite' },
+            { icon: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z', label: 'Visio IA chiffree E2E' },
+            { icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', label: 'RAG documentaire' },
+            { icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z', label: 'RGPD & souverain' },
+            { icon: 'M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2', label: 'VM dediee en Europe' },
+            { icon: 'M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z', label: 'Support prioritaire' },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-3 p-2">
+              <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                </svg>
+              </div>
+              <span className="text-sm text-text-primary font-medium">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Prix final */}
+      <div className="quiz-card rounded-2xl p-6 mb-8 text-center border-2 border-green-500/20">
+        <p className="text-sm text-text-muted mb-2">Configuration recommandee</p>
+        <div className="flex items-baseline justify-center gap-1 mb-1">
+          <span className="text-4xl sm:text-5xl font-bold text-text-primary">{totalPrice}€</span>
+          <span className="text-text-muted text-lg">/mois</span>
+        </div>
+        <p className="text-sm text-text-secondary mb-1">{result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} x {proPrice}€</p>
+        <p className="text-xs text-green-500 font-medium">soit {dailyCost}€/jour par collaborateur</p>
+      </div>
+
+      {/* Double CTA */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <Button variant="primary" size="lg" href="#pricing">
+          Demarrer maintenant
+        </Button>
+        <Button variant="secondary" size="lg" href="https://cal.com/paul-lm">
+          Prendre rendez-vous
         </Button>
       </div>
-      <p className="text-center text-xs text-text-muted mt-4">Sans engagement. Annulation en 1 clic.</p>
+      <p className="text-center text-xs text-text-muted mt-4">Sans engagement -- Annulation en 1 clic -- Paiement securise</p>
     </motion.div>
   )
 }
