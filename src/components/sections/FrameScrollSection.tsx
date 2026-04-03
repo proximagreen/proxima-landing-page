@@ -15,10 +15,10 @@ const USE_CASES: UseCase[] = [
     icon: 'chat',
     badge: 'Chat IA',
     title: 'Analysez un contrat\nen 3 minutes',
-    description: 'Votre client vous envoie 200 pages. Proxima les lit, identifie les risques, et redige une synthese. En toute confidentialite.',
+    description: 'Votre client vous envoie 200 pages. Proxima les lit, identifie les risques, et rédige une synthèse. En toute confidentialité.',
     metrics: [
       { value: '3 min', label: 'au lieu de 4h' },
-      { value: '0', label: 'donnees partagees' },
+      { value: '0', label: 'données partagées' },
     ],
     visual: 'chat',
   },
@@ -26,20 +26,20 @@ const USE_CASES: UseCase[] = [
     icon: 'search',
     badge: 'Recherche IA',
     title: 'Trouvez la jurisprudence\nen 10 secondes',
-    description: 'Plus besoin de fouiller Dalloz pendant des heures. Posez votre question, obtenez la reponse sourcee instantanement.',
+    description: 'Plus besoin de fouiller Dalloz pendant des heures. Posez votre question, obtenez la réponse sourcée instantanément.',
     metrics: [
       { value: '10s', label: 'de recherche' },
-      { value: '100%', label: 'sources verifiables' },
+      { value: '100%', label: 'sources vérifiables' },
     ],
     visual: 'search',
   },
   {
     icon: 'folder',
     badge: 'Cloisonnement',
-    title: 'Un dossier par client.\nEtanche.',
-    description: 'Les donnees du client A ne croisent jamais celles du client B. Chaque dossier est un environnement isole.',
+    title: 'Un dossier par client.\nÉtanche.',
+    description: 'Les données du client A ne croisent jamais celles du client B. Chaque dossier est un environnement isolé.',
     metrics: [
-      { value: '0%', label: 'contamination croisee' },
+      { value: '0%', label: 'contamination croisée' },
       { value: '\u221E', label: 'dossiers possibles' },
     ],
     visual: 'folder',
@@ -47,8 +47,8 @@ const USE_CASES: UseCase[] = [
   {
     icon: 'video',
     badge: 'Proxima Meet',
-    title: 'Reunion IA chiffree.\nTranscription automatique.',
-    description: 'Visioconference avec transcription en temps reel, resume auto et plan d\'action. Le tout chiffre de bout en bout.',
+    title: 'Réunion IA chiffrée.\nTranscription automatique.',
+    description: 'Visioconférence avec transcription en temps réel, résumé auto et plan d\'action. Le tout chiffré de bout en bout.',
     metrics: [
       { value: 'E2E', label: 'chiffrement' },
       { value: 'Auto', label: 'compte-rendu' },
@@ -59,9 +59,9 @@ const USE_CASES: UseCase[] = [
     icon: 'sparkles',
     badge: 'Agents IA',
     title: 'Automatisez vos process\nles plus chronophages',
-    description: 'Veille reglementaire, extraction de donnees, relecture de documents. Vos agents IA travaillent 24/7 pour vous.',
+    description: 'Veille réglementaire, extraction de données, relecture de documents. Vos agents IA travaillent 24/7 pour vous.',
     metrics: [
-      { value: '24/7', label: 'disponibilite' },
+      { value: '24/7', label: 'disponibilité' },
       { value: '50x', label: 'plus rapide' },
     ],
     visual: 'agents',
@@ -76,10 +76,10 @@ function VisualBlock({ type }: { type: string }) {
         <div className="flex gap-2 items-start">
           <div className="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 border border-green-500/30"><Icon name="sparkles" size={14} className="text-green-500" /></div>
           <div className="bg-bg-card border border-border-card rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%]">
-            <p className="text-xs text-text-primary font-medium mb-1.5">3 clauses identifiees :</p>
+            <p className="text-xs text-text-primary font-medium mb-1.5">3 clauses identifiées :</p>
             <div className="space-y-1">
-              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-400" /><span className="text-[11px] text-text-secondary">Art. 12 : Non-concurrence 24 mois (risque eleve)</span></div>
-              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-amber-400" /><span className="text-[11px] text-text-secondary">Art. 8 : Exclusivite territoriale</span></div>
+              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-400" /><span className="text-[11px] text-text-secondary">Art. 12 : Non-concurrence 24 mois (risque élevé)</span></div>
+              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-amber-400" /><span className="text-[11px] text-text-secondary">Art. 8 : Exclusivité territoriale</span></div>
               <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-400" /><span className="text-[11px] text-text-secondary">Art. 15 : Clause standard conforme</span></div>
             </div>
           </div>
@@ -92,12 +92,12 @@ function VisualBlock({ type }: { type: string }) {
     ),
     search: (
       <div className="space-y-3">
-        <div className="flex items-center gap-2 bg-bg-card border border-border-card rounded-lg px-3 py-2"><Icon name="search" size={14} className="text-text-muted" /><span className="text-xs text-text-muted">jurisprudence resiliation bail commercial 2024</span></div>
+        <div className="flex items-center gap-2 bg-bg-card border border-border-card rounded-lg px-3 py-2"><Icon name="search" size={14} className="text-text-muted" /><span className="text-xs text-text-muted">jurisprudence résiliation bail commercial 2024</span></div>
         <div className="space-y-2">
           {[
-            { title: 'Cass. com. 15 mars 2024', desc: 'Resiliation anticipee pour manquement grave...', tag: 'Pertinence 98%' },
-            { title: 'CA Paris, 12 janv. 2024', desc: 'Obligation de delivrance et etat des lieux...', tag: 'Pertinence 94%' },
-            { title: 'Cass. civ. 3e, 8 nov. 2023', desc: 'Clause resolutoire et mise en demeure...', tag: 'Pertinence 89%' },
+            { title: 'Cass. com. 15 mars 2024', desc: 'Résiliation anticipée pour manquement grave...', tag: 'Pertinence 98%' },
+            { title: 'CA Paris, 12 janv. 2024', desc: 'Obligation de délivrance et état des lieux...', tag: 'Pertinence 94%' },
+            { title: 'Cass. civ. 3e, 8 nov. 2023', desc: 'Clause résolutoire et mise en demeure...', tag: 'Pertinence 89%' },
           ].map((r, i) => (
             <div key={i} className="bg-bg-card border border-border-card rounded-lg p-3 hover:border-green-500/30 transition-colors">
               <div className="flex justify-between items-start mb-1"><span className="text-xs font-semibold text-text-primary">{r.title}</span><span className="text-[9px] text-green-500 font-bold bg-green-500/10 px-1.5 py-0.5 rounded">{r.tag}</span></div>
@@ -135,15 +135,15 @@ function VisualBlock({ type }: { type: string }) {
           </div>
           <div className="absolute top-2 right-2 bg-green-500/15 border border-green-500/30 rounded px-1.5 py-0.5 flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /><span className="text-[8px] text-green-400 font-bold">E2E</span></div>
         </div>
-        <div className="bg-bg-card border border-border-card rounded-lg p-2.5"><span className="text-[10px] font-semibold text-text-primary block mb-1">Transcription en direct</span><span className="text-[10px] text-text-secondary">"...concernant la clause de non-concurrence, je propose de reduire la duree a 12 mois conformement a..."</span></div>
+        <div className="bg-bg-card border border-border-card rounded-lg p-2.5"><span className="text-[10px] font-semibold text-text-primary block mb-1">Transcription en direct</span><span className="text-[10px] text-text-secondary">"...concernant la clause de non-concurrence, je propose de réduire la durée à 12 mois conformément à..."</span></div>
       </div>
     ),
     agents: (
       <div className="space-y-2">
         {[
-          { name: 'Agent Veille Reglementaire', status: 'Actif', statusColor: 'bg-green-500', desc: 'Scan des nouvelles reglementations RGPD...', progress: 78 },
+          { name: 'Agent Veille Réglementaire', status: 'Actif', statusColor: 'bg-green-500', desc: 'Scan des nouvelles réglementations RGPD...', progress: 78 },
           { name: 'Agent Extraction', status: 'En cours', statusColor: 'bg-amber-400', desc: 'Extraction des clauses de 3 contrats...', progress: 45 },
-          { name: 'Agent Relecture', status: 'Termine', statusColor: 'bg-blue-400', desc: '12 documents relus, 3 alertes signalees', progress: 100 },
+          { name: 'Agent Relecture', status: 'Terminé', statusColor: 'bg-blue-400', desc: '12 documents relus, 3 alertes signalées', progress: 100 },
         ].map((a, i) => (
           <div key={i} className="bg-bg-card border border-border-card rounded-lg p-3">
             <div className="flex justify-between items-center mb-1.5"><span className="text-xs font-semibold text-text-primary">{a.name}</span><span className="flex items-center gap-1"><div className={`w-1.5 h-1.5 rounded-full ${a.statusColor}`} /><span className="text-[9px] text-text-muted">{a.status}</span></span></div>

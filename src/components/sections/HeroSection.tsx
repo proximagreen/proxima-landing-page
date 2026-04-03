@@ -26,7 +26,7 @@ export function HeroSection() {
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-green-500 border border-green-500/30 bg-green-500/10 mb-6 sm:mb-8">
             <span className="relative w-2 h-2 rounded-full bg-green-500 pulse-dot" />
-            Votre espace est pret -- Souverain -- Securise
+            Votre espace est prêt -- Souverain -- Sécurisé
           </span>
         </motion.div>
 
@@ -74,7 +74,7 @@ export function HeroSection() {
             <div key={stat.label} className="text-center relative px-1 sm:px-4">
               {idx > 0 && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-10 bg-border-subtle" />}
               <div className="text-2xl sm:text-3xl md:text-4xl font-black text-text-primary tracking-tight">
-                {stat.label === 'Donnees revendues' ? '0' : <AnimatedCounter target={stat.value} suffix={stat.suffix} />}
+                {stat.label === 'Données revendues' ? '0' : <AnimatedCounter target={stat.value} suffix={stat.suffix} />}
               </div>
               <div className="text-green-500 font-semibold mt-1 uppercase tracking-wider text-[9px] sm:text-[11px]">{stat.label}</div>
             </div>

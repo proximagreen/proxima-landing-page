@@ -23,19 +23,19 @@ export function SuccessSection() {
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-4">
-          Paiement confirme
+          Paiement confirmé
         </h1>
         <p className="text-lg text-text-secondary mb-8">
-          {company ? `L'espace Proxima de ${company} est pret.` : 'Votre espace Proxima est pret.'} Connectez-vous pour commencer.
+          {company ? `L'espace Proxima de ${company} est prêt.` : 'Votre espace Proxima est prêt.'} Connectez-vous pour commencer.
         </p>
 
         <Button variant="primary" size="lg" href={appUrl}>
-          Acceder a mon espace Proxima
+          Accéder à mon espace Proxima
         </Button>
 
         {sessionId && (
           <p className="text-xs text-text-muted mt-6">
-            Reference : {sessionId.slice(0, 20)}...
+            Référence : {sessionId.slice(0, 20)}...
           </p>
         )}
       </div>

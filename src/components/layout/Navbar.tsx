@@ -78,7 +78,7 @@ export function Navbar() {
           <ThemeToggle />
           <div className="hidden sm:block">
             <Button variant="primary" size="sm" href="#pricing" className="whitespace-nowrap">
-              Acceder a mon espace
+              Accéder à mon espace
             </Button>
           </div>
 

@@ -287,21 +287,21 @@ function ResultCard({ result }: { result: QuizResult }) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-xl sm:text-2xl font-bold text-text-primary">Votre diagnostic Proxima</h3>
-          <p className="text-sm text-text-muted">Resultats personnalises</p>
+          <p className="text-sm text-text-muted">Résultats personnalisés</p>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/15 border border-green-500/25">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs font-bold text-green-500">Analyse terminee</span>
+          <span className="text-xs font-bold text-green-500">Analyse terminée</span>
         </div>
       </div>
 
       {/* ── Row 1 : 4 stat cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         {[
-          { value: `${savingsHours}h`, label: 'Temps recupere', sub: 'par mois', color: 'border-l-green-500' },
-          { value: `${result.recommendedSeats}`, label: 'Postes recommandes', sub: 'pour votre equipe', color: 'border-l-green-400' },
-          { value: `${dailyCost}€`, label: 'Cout par jour', sub: 'par collaborateur', color: 'border-l-green-500' },
-          { value: '100%', label: 'Souverainete', sub: 'RGPD europeen', color: 'border-l-green-400' },
+          { value: `${savingsHours}h`, label: 'Temps récupéré', sub: 'par mois', color: 'border-l-green-500' },
+          { value: `${result.recommendedSeats}`, label: 'Postes recommandés', sub: 'pour votre équipe', color: 'border-l-green-400' },
+          { value: `${dailyCost}€`, label: 'Coût par jour', sub: 'par collaborateur', color: 'border-l-green-500' },
+          { value: '100%', label: 'Souveraineté', sub: 'RGPD européen', color: 'border-l-green-400' },
         ].map((card, i) => (
           <motion.div
             key={i}
@@ -327,7 +327,7 @@ function ResultCard({ result }: { result: QuizResult }) {
           transition={{ duration: 0.4, delay: 0.5 }}
         >
           <ResultDonut value={savingsPercent} label="Gain de temps" />
-          <ResultDonut value={100} label="Conformite" />
+          <ResultDonut value={100} label="Conformité" />
         </motion.div>
 
         {/* Adoption prevue */}
@@ -337,12 +337,12 @@ function ResultCard({ result }: { result: QuizResult }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.6 }}
         >
-          <p className="text-xs font-semibold text-text-primary mb-3">Impact prevu par service</p>
+          <p className="text-xs font-semibold text-text-primary mb-3">Impact prévu par service</p>
           <div className="space-y-3">
             {[
-              { label: 'Chat IA', value: 92, desc: 'Recherche, analyse, redaction' },
+              { label: 'Chat IA', value: 92, desc: 'Recherche, analyse, rédaction' },
               { label: 'RAG Docs', value: 78, desc: 'Base documentaire intelligente' },
-              { label: 'Meet IA', value: 65, desc: 'Transcription, resume auto' },
+              { label: 'Meet IA', value: 65, desc: 'Transcription, résumé auto' },
               { label: 'Cloisonnement', value: 100, desc: 'Isolation par dossier/client' },
             ].map((item, i) => (
               <div key={i}>
@@ -376,7 +376,7 @@ function ResultCard({ result }: { result: QuizResult }) {
         <div className="relative">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
             <div>
-              <p className="text-xs text-green-500 font-bold uppercase tracking-wider mb-1">Offre recommandee</p>
+              <p className="text-xs text-green-500 font-bold uppercase tracking-wider mb-1">Offre recommandée</p>
               <p className="text-lg font-bold text-text-primary">{result.headline}</p>
               <p className="text-sm text-text-secondary">{result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} -- Chat + Meet + Support</p>
             </div>
@@ -399,7 +399,7 @@ function ResultCard({ result }: { result: QuizResult }) {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 mt-4">
-            {['Sans engagement', 'Annulation en 1 clic', '30s de deploiement'].map((t, i) => (
+            {['Sans engagement', 'Annulation en 1 clic', '30s de déploiement'].map((t, i) => (
               <span key={i} className="flex items-center gap-1 text-[11px] text-text-muted">
                 <svg className="w-3 h-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                 {t}
