@@ -8,9 +8,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
 app.use(express.json())
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-04-30.basil',
-})
+const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
+let stripe = null
+if (STRIPE_KEY) {
+  stripe = new Stripe(STRIPE_KEY, { apiVersion: '2025-04-30.basil' })
+} else {
+  console.warn('STRIPE_SECRET_KEY non configuree -- le checkout sera desactive')
+}
 
 const LANDING_URL = process.env.LANDING_URL || 'http://localhost:3000'
 
@@ -24,6 +28,10 @@ const PRICES = {
 }
 
 app.post('/api/create-checkout', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Stripe non configure. Ajoutez STRIPE_SECRET_KEY dans les variables d\'environnement.' })
+  }
+
   try {
     const { plan, seats, segment, company, name: customerName } = req.body
     const quantity = Math.max(1, Math.min(500, Number(seats) || 1))
