@@ -313,32 +313,47 @@ export function QuizSection() {
 
   if (!started) {
     return (
-      <section className="py-[var(--section-padding)] px-4 sm:px-6 relative overflow-hidden">
-        <div className="absolute inset-0 spotlight pointer-events-none" />
-        <div className="max-w-2xl mx-auto relative z-10">
+      <section id="quiz" className="py-[var(--section-padding)] px-4 sm:px-6 relative overflow-hidden">
+        {/* Background full-width */}
+        <div className="absolute inset-0 bg-green-500/[0.03] pointer-events-none" />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/[0.08] rounded-full blur-[150px]" />
+        </div>
+
+        <div className="max-w-3xl mx-auto relative z-10">
           <motion.div
-            className="glass rounded-2xl p-8 sm:p-12 text-center border-green-500/20"
+            className="rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden border-2 border-green-500/30 bg-gradient-to-b from-green-500/[0.08] to-transparent"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
             {/* Glow behind */}
-            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 bg-green-500/10 blur-[100px] rounded-full pointer-events-none" />
+            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 bg-green-500/15 blur-[100px] rounded-full pointer-events-none" />
 
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-green-500/15 text-green-400 border border-green-500/30 mb-6">
-              Configurateur, 30 secondes
+            {/* Icon */}
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-green-500/15 border border-green-500/30 mb-6">
+              <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+              </svg>
+            </div>
+
+            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase bg-green-500/20 text-green-500 border border-green-500/30 mb-6">
+              30 secondes -- 4 questions
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary mb-4 tracking-tight">
-              Quel est <span className="text-gradient">votre gain potentiel</span> ?
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary mb-5 tracking-tight leading-tight">
+              Combien de temps votre equipe<br /><span className="text-green-500">peut-elle recuperer</span> ?
             </h2>
-            <p className="text-base sm:text-lg text-text-secondary mb-8 max-w-md mx-auto">
-              4 questions pour estimer le temps récupéré et dimensionner votre espace Proxima.
+            <p className="text-lg sm:text-xl text-text-secondary mb-10 max-w-lg mx-auto leading-relaxed">
+              Estimez votre gain de productivite et le dimensionnement ideal de votre espace Proxima.
             </p>
             <Button variant="primary" size="lg" onClick={() => setStarted(true)}>
-              Estimer mon gain
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+              Estimer mon gain gratuitement
             </Button>
-            <p className="text-xs text-text-muted mt-4">Résultat instantané, sans inscription</p>
+            <p className="text-sm text-text-muted mt-5">Resultat instantane, sans inscription ni email</p>
           </motion.div>
         </div>
       </section>
@@ -346,14 +361,15 @@ export function QuizSection() {
   }
 
   return (
-    <section className="py-[var(--section-padding)] px-6 relative">
+    <section id="quiz" className="py-[var(--section-padding)] px-4 sm:px-6 relative">
+      <div className="absolute inset-0 bg-green-500/[0.02] pointer-events-none" />
       <div className="max-w-2xl mx-auto relative z-10">
         {/* Progress */}
         {!isComplete && (
-          <div className="mb-8">
+          <div className="mb-10">
             <div className="flex justify-between items-center mb-3">
-              <span className="text-sm text-text-muted">Question {currentStep + 1}/{QUESTIONS.length}</span>
-              <span className="text-sm text-text-muted">{Math.round(((currentStep) / QUESTIONS.length) * 100)}%</span>
+              <span className="text-sm font-medium text-text-secondary">Question {currentStep + 1}/{QUESTIONS.length}</span>
+              <span className="text-sm font-bold text-green-500">{Math.round(((currentStep) / QUESTIONS.length) * 100)}%</span>
             </div>
             <ProgressBar current={currentStep} total={QUESTIONS.length} />
           </div>
