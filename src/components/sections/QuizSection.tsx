@@ -382,16 +382,16 @@ function ResultCard({ result }: { result: QuizResult }) {
             </div>
             <div className="text-right shrink-0">
               <div className="flex items-baseline gap-0.5 justify-end sm:justify-start">
-                <span className="text-4xl font-black text-text-primary">{totalPrice}€</span>
-                <span className="text-text-muted">/mois</span>
+                <span className="text-4xl font-black text-green-500">{dailyCost}€</span>
+                <span className="text-text-muted">/jour</span>
               </div>
-              <p className="text-xs text-green-500 font-medium">soit {dailyCost}€/jour par collaborateur</p>
+              <p className="text-xs text-text-muted">par collaborateur -- {totalPrice}€/mois pour {result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''}</p>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Button variant="primary" size="lg" className="flex-1 justify-center" href="#pricing">
-              Demarrer maintenant
+              Demarrer pour {dailyCost}€/jour ({totalPrice}€/mois)
             </Button>
             <Button variant="secondary" size="lg" className="flex-1 justify-center" href="https://cal.com/paul-lm">
               Prendre rendez-vous
