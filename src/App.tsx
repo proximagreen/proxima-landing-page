@@ -21,12 +21,13 @@ function LandingPage() {
     <>
       <Navbar />
       <main>
+        {/* V2 Priestley : Score → Educate → Social Proof → Oversubscribe → CTA */}
         <HeroSection />
+        <QuizSection />
         <ProblemSection />
         <SolutionStepsSection />
         <FrameScrollSection />
         <SocialProofSection />
-        <QuizSection />
         <PricingSection />
         <FinalCTASection />
       </main>

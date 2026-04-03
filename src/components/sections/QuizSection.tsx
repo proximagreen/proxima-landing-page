@@ -267,14 +267,15 @@ function ResultDonut({ value, size = 80, label }: { value: number; size?: number
   )
 }
 
-/* ─── Result Card ─── */
+/* ─── Result Card V2 Priestley ─── */
 
 function ResultCard({ result }: { result: QuizResult }) {
-  const proPrice = PLANS.pro.price
-  const totalPrice = proPrice * result.recommendedSeats
-  const dailyCost = (proPrice / 30).toFixed(1)
+  const bundlePrice = PLANS.pro.price
+  const totalPrice = bundlePrice * result.recommendedSeats
+  const dailyCost = (bundlePrice / 30).toFixed(1)
   const savingsHours = result.savings.replace(/[^0-9]/g, '')
   const savingsPercent = Math.min(95, Math.round(Number(savingsHours) / (result.recommendedSeats * 22 * 8) * 100) || 60)
+  const wastedMoney = Math.round(Number(savingsHours) * 35) // 35€/h cout moyen collaborateur
 
   return (
     <motion.div
@@ -283,79 +284,90 @@ function ResultCard({ result }: { result: QuizResult }) {
       transition={{ duration: 0.4 }}
       className="max-w-2xl mx-auto"
     >
-      {/* ── Header dashboard ── */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-xl sm:text-2xl font-bold text-text-primary">Votre diagnostic Proxima</h3>
-          <p className="text-sm text-text-muted">Resultats personnalises</p>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/15 border border-green-500/25">
+      {/* ── Header ── */}
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/15 border border-green-500/25 mb-4">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs font-bold text-green-500">Analyse terminee</span>
+          <span className="text-xs font-bold text-green-500">Diagnostic termine</span>
         </div>
+        <h3 className="text-2xl sm:text-3xl font-bold text-text-primary">{result.headline}</h3>
       </div>
 
-      {/* ── Row 1 : 4 stat cards ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-        {[
-          { value: `${savingsHours}h`, label: 'Temps recupere', sub: 'par mois', color: 'border-l-green-500' },
-          { value: `${result.recommendedSeats}`, label: 'Postes recommandes', sub: 'pour votre equipe', color: 'border-l-green-400' },
-          { value: `${dailyCost}€`, label: 'Cout par jour', sub: 'par collaborateur', color: 'border-l-green-500' },
-          { value: '100%', label: 'Souverainete', sub: 'RGPD europeen', color: 'border-l-green-400' },
-        ].map((card, i) => (
-          <motion.div
-            key={i}
-            className={`quiz-card rounded-xl p-4 border-l-4 ${card.color}`}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
-          >
-            <span className="text-2xl sm:text-3xl font-black text-text-primary block">{card.value}</span>
-            <span className="text-xs font-semibold text-green-500 block mt-1">{card.label}</span>
-            <span className="text-[10px] text-text-muted">{card.sub}</span>
-          </motion.div>
-        ))}
+      {/* ── Row 1 : Le probleme (rouge) vs la solution (vert) ── */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {/* Ce que vous perdez */}
+        <motion.div
+          className="quiz-card rounded-xl p-5 border-l-4 border-l-red-500"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <p className="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-3">Ce que vous perdez</p>
+          <span className="text-3xl sm:text-4xl font-black text-red-500 block">{savingsHours}h</span>
+          <span className="text-xs text-text-secondary block mt-1">perdues chaque mois</span>
+          <div className="mt-3 pt-3 border-t border-border-subtle">
+            <span className="text-2xl font-black text-red-500">{wastedMoney.toLocaleString()}€</span>
+            <span className="text-[10px] text-text-muted block">gaspilles en productivite</span>
+          </div>
+        </motion.div>
+
+        {/* Ce que vous gagnez */}
+        <motion.div
+          className="quiz-card rounded-xl p-5 border-l-4 border-l-green-500 relative overflow-hidden"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.04] to-transparent pointer-events-none" />
+          <div className="relative">
+            <p className="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-3">Ce que vous gagnez</p>
+            <span className="text-3xl sm:text-4xl font-black text-green-500 block">{savingsHours}h</span>
+            <span className="text-xs text-text-secondary block mt-1">recuperees par l'IA</span>
+            <div className="mt-3 pt-3 border-t border-border-subtle">
+              <span className="text-2xl font-black text-green-500">{dailyCost}€</span>
+              <span className="text-[10px] text-text-muted block">par jour par collaborateur</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* ── Row 2 : Donuts + Progress ── */}
+      {/* ── Row 2 : Donut + Progress bars ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-        {/* Donuts */}
         <motion.div
           className="quiz-card rounded-xl p-5 flex items-center justify-around"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
+          transition={{ duration: 0.4, delay: 0.35 }}
         >
           <ResultDonut value={savingsPercent} label="Gain de temps" />
           <ResultDonut value={100} label="Conformite" />
         </motion.div>
 
-        {/* Adoption prevue */}
         <motion.div
           className="quiz-card rounded-xl p-5 sm:col-span-2"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
+          transition={{ duration: 0.4, delay: 0.45 }}
         >
-          <p className="text-xs font-semibold text-text-primary mb-3">Impact prevu par service</p>
-          <div className="space-y-3">
+          <p className="text-xs font-semibold text-text-primary mb-3">Ce qui est inclus dans votre offre</p>
+          <div className="space-y-2.5">
             {[
-              { label: 'Chat IA', value: 92, desc: 'Recherche, analyse, redaction' },
-              { label: 'RAG Docs', value: 78, desc: 'Base documentaire intelligente' },
-              { label: 'Meet IA', value: 65, desc: 'Transcription, resume auto' },
-              { label: 'Cloisonnement', value: 100, desc: 'Isolation par dossier/client' },
+              { label: 'Chat IA illimite', value: 92 },
+              { label: 'RAG documentaire', value: 78 },
+              { label: 'Visio IA chiffree', value: 65 },
+              { label: 'Cloisonnement par dossier', value: 100 },
             ].map((item, i) => (
               <div key={i}>
                 <div className="flex justify-between text-[11px] mb-1">
-                  <span className="text-text-primary font-medium">{item.label} <span className="text-text-muted font-normal">-- {item.desc}</span></span>
+                  <span className="text-text-primary font-medium">{item.label}</span>
                   <span className="text-green-500 font-bold">{item.value}%</span>
                 </div>
-                <div className="h-2.5 rounded-full bg-border-subtle overflow-hidden">
+                <div className="h-2 rounded-full bg-border-subtle overflow-hidden">
                   <motion.div
                     className="h-full rounded-full bg-green-500"
                     initial={{ width: '0%' }}
                     animate={{ width: `${item.value}%` }}
-                    transition={{ duration: 0.8, delay: 0.7 + i * 0.1 }}
+                    transition={{ duration: 0.8, delay: 0.5 + i * 0.1 }}
                     style={{ opacity: 0.5 + (item.value / 100) * 0.5 }}
                   />
                 </div>
@@ -365,47 +377,53 @@ function ResultCard({ result }: { result: QuizResult }) {
         </motion.div>
       </div>
 
-      {/* ── Row 3 : Offre + CTA ── */}
+      {/* ── Row 3 : Offre unique bundle (Priestley: 1 seul choix) ── */}
       <motion.div
-        className="quiz-card rounded-xl p-6 border-2 border-green-500/25 relative overflow-hidden"
+        className="quiz-card rounded-xl p-6 sm:p-8 border-2 border-green-500/30 relative overflow-hidden"
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.9 }}
+        transition={{ duration: 0.4, delay: 0.7 }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.05] to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.06] to-transparent pointer-events-none" />
         <div className="relative">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
-            <div>
-              <p className="text-xs text-green-500 font-bold uppercase tracking-wider mb-1">Offre recommandee</p>
-              <p className="text-lg font-bold text-text-primary">{result.headline}</p>
-              <p className="text-sm text-text-secondary">{result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} -- Chat + Meet + Support</p>
-            </div>
-            <div className="text-right shrink-0">
-              <div className="flex items-baseline gap-0.5 justify-end sm:justify-start">
-                <span className="text-4xl font-black text-green-500">{dailyCost}€</span>
-                <span className="text-text-muted">/jour</span>
-              </div>
-              <p className="text-xs text-text-muted">par collaborateur -- {totalPrice}€/mois pour {result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''}</p>
-            </div>
+          {/* Urgence + Social proof */}
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-5">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-green-500 text-white">
+              Offre lancement -- 50 places
+            </span>
+            <span className="text-[11px] text-text-muted">127 professionnels utilisent deja Proxima</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button variant="primary" size="lg" className="flex-1 justify-center" href="#configurateur">
-              Souscrire pour {dailyCost}€/jour ({totalPrice}€/mois)
-            </Button>
-            <Button variant="secondary" size="lg" className="flex-1 justify-center" href="https://cal.com/paul-lm">
-              Prendre rendez-vous
-            </Button>
+          {/* Prix */}
+          <div className="text-center mb-6">
+            <p className="text-sm text-text-muted mb-1">Chat + Meet + Support -- {result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''}</p>
+            <div className="flex items-baseline justify-center gap-2">
+              <span className="text-5xl sm:text-6xl font-black text-green-500">{dailyCost}€</span>
+              <span className="text-lg text-text-muted">/jour</span>
+            </div>
+            <p className="text-sm text-text-secondary mt-1">par collaborateur -- soit {totalPrice}€/mois tout inclus</p>
+            <p className="text-xs text-text-muted mt-0.5">ROI : vous recuperez {wastedMoney.toLocaleString()}€ de productivite pour {totalPrice}€</p>
           </div>
+
+          {/* UN SEUL CTA */}
+          <Button variant="primary" size="lg" className="w-full justify-center" href="#configurateur">
+            Souscrire maintenant -- {totalPrice}€/mois
+          </Button>
 
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 mt-4">
-            {['Sans engagement', 'Annulation en 1 clic', '30s de deploiement'].map((t, i) => (
+            {['Sans engagement', 'Annulation en 1 clic', 'Deploiement en 30s', 'Support inclus'].map((t, i) => (
               <span key={i} className="flex items-center gap-1 text-[11px] text-text-muted">
                 <svg className="w-3 h-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                 {t}
               </span>
             ))}
           </div>
+
+          <p className="text-center mt-4">
+            <a href="https://cal.com/paul-lm" target="_blank" rel="noopener noreferrer" className="text-xs text-green-500 hover:underline">
+              Besoin d'en discuter ? Prenez rendez-vous
+            </a>
+          </p>
         </div>
       </motion.div>
     </motion.div>
