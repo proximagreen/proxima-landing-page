@@ -16,16 +16,79 @@ if (STRIPE_KEY) {
   console.warn('STRIPE_SECRET_KEY non configuree -- le checkout sera desactive')
 }
 
+const POCKETBASE_URL = process.env.POCKETBASE_URL || ''
 const LANDING_URL = process.env.LANDING_URL || 'http://localhost:3000'
 
 // ─── Prix unitaires (centimes) ───
 const PRICES = {
-  chat_1: 4500,       // Chat, 1 licence = 45€
-  chat_multi: 3500,   // Chat, 2+ licences = 35€
-  meet_standalone: 1500, // Meet seul = 15€
-  bundle_chat: 3500,  // Bundle : Chat = 35€
-  bundle_meet: 1000,  // Bundle : Meet = 10€
+  chat_1: 4500,
+  chat_multi: 3500,
+  meet_standalone: 1500,
+  bundle_chat: 3500,
+  bundle_meet: 1000,
 }
+
+// ─── Helpers ───
+
+function extractSlug(hostname) {
+  // "cabinet-laurent.proxima.green" -> "cabinet-laurent"
+  // "demo.proxima.green" -> "demo"
+  // "localhost" -> "demo"
+  const parts = hostname.split('.')
+  if (parts.length >= 3) return parts[0]
+  return 'demo'
+}
+
+async function getClientConfig(slug) {
+  if (!POCKETBASE_URL) return null
+
+  try {
+    const res = await fetch(
+      `${POCKETBASE_URL}/api/collections/clients/records?filter=(slug='${slug}')&perPage=1`
+    )
+    if (!res.ok) return null
+    const data = await res.json()
+    if (data.items && data.items.length > 0) return data.items[0]
+    return null
+  } catch (err) {
+    console.error('PocketBase error:', err.message)
+    return null
+  }
+}
+
+// ─── API : config client (appele par le frontend) ───
+
+app.get('/api/client-config', async (req, res) => {
+  const slug = extractSlug(req.hostname)
+  const client = await getClientConfig(slug)
+
+  if (client) {
+    res.json({
+      slug,
+      name: client.company_name || slug,
+      segment: client.segment || 'general',
+      headline: client.headline || null,
+      subheadline: client.subheadline || null,
+      contact_name: client.contact_name || null,
+      logo_url: client.logo_url || null,
+      app_url: client.app_url || `https://${slug}.proxima.green`,
+    })
+  } else {
+    // Fallback : config par defaut avec le slug
+    res.json({
+      slug,
+      name: slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      segment: 'general',
+      headline: null,
+      subheadline: null,
+      contact_name: null,
+      logo_url: null,
+      app_url: `https://${slug}.proxima.green`,
+    })
+  }
+})
+
+// ─── API : Stripe Checkout ───
 
 app.post('/api/create-checkout', async (req, res) => {
   if (!stripe) {
@@ -39,53 +102,29 @@ app.post('/api/create-checkout', async (req, res) => {
     const lineItems = []
 
     if (plan === 'pro') {
-      // Bundle Chat + Meet
       lineItems.push({
-        price_data: {
-          currency: 'eur',
-          product_data: { name: 'Proxima Chat' },
-          unit_amount: PRICES.bundle_chat,
-          recurring: { interval: 'month' },
-        },
+        price_data: { currency: 'eur', product_data: { name: 'Proxima Chat' }, unit_amount: PRICES.bundle_chat, recurring: { interval: 'month' } },
         quantity,
       })
       lineItems.push({
-        price_data: {
-          currency: 'eur',
-          product_data: { name: 'Proxima Meet' },
-          unit_amount: PRICES.bundle_meet,
-          recurring: { interval: 'month' },
-        },
+        price_data: { currency: 'eur', product_data: { name: 'Proxima Meet' }, unit_amount: PRICES.bundle_meet, recurring: { interval: 'month' } },
         quantity,
       })
     } else if (plan === 'meet') {
-      // Meet seul
       lineItems.push({
-        price_data: {
-          currency: 'eur',
-          product_data: { name: 'Proxima Meet' },
-          unit_amount: PRICES.meet_standalone,
-          recurring: { interval: 'month' },
-        },
+        price_data: { currency: 'eur', product_data: { name: 'Proxima Meet' }, unit_amount: PRICES.meet_standalone, recurring: { interval: 'month' } },
         quantity,
       })
     } else {
-      // Chat seul
       const unitAmount = quantity >= 2 ? PRICES.chat_multi : PRICES.chat_1
       lineItems.push({
-        price_data: {
-          currency: 'eur',
-          product_data: { name: 'Proxima Chat' },
-          unit_amount: unitAmount,
-          recurring: { interval: 'month' },
-        },
+        price_data: { currency: 'eur', product_data: { name: 'Proxima Chat' }, unit_amount: unitAmount, recurring: { interval: 'month' } },
         quantity,
       })
     }
 
-    const refId = [segment || 'general', company || 'direct', Date.now()].join('_')
-
-    // Utilise l'origin de la requete pour les redirections (multi-tenant)
+    const slug = extractSlug(req.hostname)
+    const refId = [slug, segment || 'general', company || 'direct', Date.now()].join('_')
     const origin = req.headers.origin || req.headers.referer?.replace(/\/[^/]*$/, '') || LANDING_URL
 
     const session = await stripe.checkout.sessions.create({
@@ -95,6 +134,7 @@ app.post('/api/create-checkout', async (req, res) => {
       cancel_url: `${origin}/welcome#pricing`,
       client_reference_id: refId,
       metadata: {
+        slug,
         segment: segment || 'general',
         company: company || '',
         customer_name: customerName || '',
@@ -111,20 +151,22 @@ app.post('/api/create-checkout', async (req, res) => {
   }
 })
 
-// Redirect / -> /welcome
+// ─── Redirect / -> /welcome ───
 app.get('/', (_req, res) => {
   res.redirect('/welcome')
 })
 
-// Serve static files from dist/
+// ─── Static files ───
 app.use(express.static(join(__dirname, '..', 'dist')))
 
-// SPA fallback
+// ─── SPA fallback ───
 app.get('{*path}', (_req, res) => {
   res.sendFile(join(__dirname, '..', 'dist', 'index.html'))
 })
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
-  console.log(`Proxima server running on port ${PORT}`)
+  console.log(`Proxima LP running on port ${PORT}`)
+  if (POCKETBASE_URL) console.log(`PocketBase: ${POCKETBASE_URL}`)
+  else console.log('PocketBase non configure -- mode fallback')
 })

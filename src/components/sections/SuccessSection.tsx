@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { usePersonalization } from '../../context/PersonalizationContext'
 import { Button } from '../ui/Button'
 
 export function SuccessSection() {
+  const { appUrl: configAppUrl, company } = usePersonalization()
   const [sessionId, setSessionId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -9,8 +11,7 @@ export function SuccessSection() {
     setSessionId(params.get('session_id'))
   }, [])
 
-  // URL de l'app = meme sous-domaine sans /welcome
-  const appUrl = window.location.origin + '/'
+  const appUrl = configAppUrl || window.location.origin + '/'
 
   return (
     <section className="min-h-screen flex items-center justify-center px-4">
@@ -25,7 +26,7 @@ export function SuccessSection() {
           Paiement confirme
         </h1>
         <p className="text-lg text-text-secondary mb-8">
-          Votre espace Proxima est pret. Connectez-vous pour commencer.
+          {company ? `L'espace Proxima de ${company} est pret.` : 'Votre espace Proxima est pret.'} Connectez-vous pour commencer.
         </p>
 
         <Button variant="primary" size="lg" href={appUrl}>

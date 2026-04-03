@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 
 export type Segment = 'legal' | 'health' | 'audit' | 'general'
 
@@ -8,20 +8,35 @@ interface PersonalizationData {
   company: string | null
   plan: 'free' | 'pro'
   seats: number
+  slug: string | null
+  appUrl: string | null
+  headline: string | null
+  subheadline: string | null
+  logoUrl: string | null
+  ready: boolean
 }
 
-const PersonalizationContext = createContext<PersonalizationData>({
+const defaults: PersonalizationData = {
   segment: 'general',
   name: null,
   company: null,
   plan: 'pro',
   seats: 1,
-})
+  slug: null,
+  appUrl: null,
+  headline: null,
+  subheadline: null,
+  logoUrl: null,
+  ready: false,
+}
 
-function parseParams(): PersonalizationData {
+const PersonalizationContext = createContext<PersonalizationData>(defaults)
+
+const validSegments: Segment[] = ['legal', 'health', 'audit', 'general']
+
+function parseParams(): Partial<PersonalizationData> {
   const params = new URLSearchParams(window.location.search)
   const segment = (params.get('segment') as Segment) || 'general'
-  const validSegments: Segment[] = ['legal', 'health', 'audit', 'general']
 
   return {
     segment: validSegments.includes(segment) ? segment : 'general',
@@ -33,7 +48,36 @@ function parseParams(): PersonalizationData {
 }
 
 export function PersonalizationProvider({ children }: { children: ReactNode }) {
-  const data = useMemo(parseParams, [])
+  const urlParams = useMemo(parseParams, [])
+  const [data, setData] = useState<PersonalizationData>({ ...defaults, ...urlParams })
+
+  useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL || ''
+    fetch(`${apiUrl}/api/client-config`)
+      .then(r => r.ok ? r.json() : null)
+      .then(config => {
+        if (config) {
+          setData(prev => ({
+            ...prev,
+            slug: config.slug,
+            company: prev.company || config.name,
+            segment: prev.segment !== 'general' ? prev.segment : (validSegments.includes(config.segment) ? config.segment : 'general'),
+            name: prev.name || config.contact_name,
+            appUrl: config.app_url,
+            headline: config.headline,
+            subheadline: config.subheadline,
+            logoUrl: config.logo_url,
+            ready: true,
+          }))
+        } else {
+          setData(prev => ({ ...prev, ready: true }))
+        }
+      })
+      .catch(() => {
+        setData(prev => ({ ...prev, ready: true }))
+      })
+  }, [])
+
   return (
     <PersonalizationContext.Provider value={data}>
       {children}
