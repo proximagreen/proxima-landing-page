@@ -151,6 +151,83 @@ app.post('/api/create-checkout', async (req, res) => {
   }
 })
 
+// ─── Webhook Stripe : creation auto du client dans PocketBase ───
+
+// IMPORTANT : le body doit etre raw pour la verification de signature
+app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+
+  let event
+  try {
+    if (webhookSecret && stripe) {
+      const sig = req.headers['stripe-signature']
+      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret)
+    } else {
+      event = JSON.parse(req.body.toString())
+    }
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err.message)
+    return res.status(400).json({ error: 'Signature invalide' })
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object
+    const metadata = session.metadata || {}
+    const slug = metadata.slug || 'unknown'
+    const email = session.customer_details?.email || ''
+    const customerName = session.customer_details?.name || metadata.customer_name || ''
+
+    console.log(`Paiement recu : ${slug} / ${email} / ${metadata.plan} / ${metadata.seats} postes`)
+
+    // Creer ou mettre a jour le client dans PocketBase
+    if (POCKETBASE_URL && slug !== 'unknown') {
+      try {
+        // Verifier si le client existe deja
+        const existing = await fetch(
+          `${POCKETBASE_URL}/api/collections/clients/records?filter=(slug='${slug}')&perPage=1`
+        )
+        const data = await existing.json()
+
+        const clientData = {
+          slug,
+          company_name: metadata.company || slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+          segment: metadata.segment || 'general',
+          contact_name: customerName,
+          contact_email: email,
+          plan: metadata.plan || 'pro',
+          seats: Number(metadata.seats) || 1,
+          app_url: `https://${slug}.proxima.green`,
+          stripe_customer_id: session.customer || '',
+          stripe_subscription_id: session.subscription || '',
+          status: 'active',
+        }
+
+        if (data.items && data.items.length > 0) {
+          // Update
+          await fetch(`${POCKETBASE_URL}/api/collections/clients/records/${data.items[0].id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(clientData),
+          })
+          console.log(`Client ${slug} mis a jour dans PocketBase`)
+        } else {
+          // Create
+          await fetch(`${POCKETBASE_URL}/api/collections/clients/records`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(clientData),
+          })
+          console.log(`Client ${slug} cree dans PocketBase`)
+        }
+      } catch (err) {
+        console.error('PocketBase write error:', err.message)
+      }
+    }
+  }
+
+  res.json({ received: true })
+})
+
 // ─── Redirect / -> /welcome ───
 app.get('/', (_req, res) => {
   res.redirect('/welcome')
