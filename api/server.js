@@ -85,11 +85,14 @@ app.post('/api/create-checkout', async (req, res) => {
 
     const refId = [segment || 'general', company || 'direct', Date.now()].join('_')
 
+    // Utilise l'origin de la requete pour les redirections (multi-tenant)
+    const origin = req.headers.origin || req.headers.referer?.replace(/\/[^/]*$/, '') || LANDING_URL
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       line_items: lineItems,
-      success_url: `${LANDING_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${LANDING_URL}/#pricing`,
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/welcome#pricing`,
       client_reference_id: refId,
       metadata: {
         segment: segment || 'general',
@@ -106,6 +109,11 @@ app.post('/api/create-checkout', async (req, res) => {
     console.error('Stripe checkout error:', err)
     res.status(500).json({ error: err.message })
   }
+})
+
+// Redirect / -> /welcome
+app.get('/', (_req, res) => {
+  res.redirect('/welcome')
 })
 
 // Serve static files from dist/

@@ -12,32 +12,13 @@ import { SocialProofSection } from './components/sections/SocialProofSection'
 import { QuizSection } from './components/sections/QuizSection'
 import { PricingSection } from './components/sections/PricingSection'
 import { FinalCTASection } from './components/sections/FinalCTASection'
+import { SuccessSection } from './components/sections/SuccessSection'
 
-/**
- * Structure optimale 2026 (data-backed) :
- *
- * Relevance → Mechanism → Confidence → Action
- *
- * 1. Hero         — Dream outcome + vidéo background
- * 2. Pain         — Agiter le problème (PAS)
- * 3. Solution     — 3 étapes + démo produit
- * 4. Social proof — Témoignages + certifs
- * 5. Quiz         — Qualifier + engager (40% conv vs 6.6% static)
- * 6. Pricing      — Hormozi value stack + Stripe checkout
- * 7. CTA Final    — Risk reversal + future pacing
- *
- * Single-focus CTA = +371% conversion
- * Short pages with clear CTAs = +13.5% performance
- * Quiz funnels = 40.1% average conversion
- */
-
-function App() {
+function LandingPage() {
   useLenis()
 
   return (
-    <ThemeProvider>
-    <PersonalizationProvider>
-      <div className="scroll-progress" />
+    <>
       <Navbar />
       <main>
         <HeroSection />
@@ -51,7 +32,26 @@ function App() {
       </main>
       <Footer />
       <ChatBot />
-    </PersonalizationProvider>
+    </>
+  )
+}
+
+function App() {
+  const path = window.location.pathname
+
+  return (
+    <ThemeProvider>
+      <PersonalizationProvider>
+        <div className="scroll-progress" />
+        {path === '/success' ? (
+          <>
+            <Navbar />
+            <SuccessSection />
+          </>
+        ) : (
+          <LandingPage />
+        )}
+      </PersonalizationProvider>
     </ThemeProvider>
   )
 }
