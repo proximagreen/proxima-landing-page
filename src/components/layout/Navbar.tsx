@@ -69,9 +69,8 @@ export function Navbar() {
     >
       <div className="max-w-[var(--container-max)] mx-auto flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5 text-xl font-bold text-text-primary z-50">
-          <img src="/favicon-proxima.png" alt="Proxima" width={28} height={28} className="w-7 h-7" />
-          <span>Proxima</span>
+        <a href="/" className="flex items-center z-50">
+          <img src="/logo-proxima.svg" alt="Proxima" className="h-7 sm:h-8 logo-adaptive" />
         </a>
 
         {/* Desktop CTA + Theme toggle + Hamburger */}

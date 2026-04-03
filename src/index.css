@@ -193,6 +193,15 @@
       0 1px 3px rgba(0, 0, 0, 0.06);
   }
 
+  /* Logo adaptatif dark/light */
+  .logo-adaptive {
+    filter: none;
+  }
+
+  [data-theme="dark"] .logo-adaptive {
+    filter: brightness(0) invert(1);
+  }
+
   /* Side cart background */
   .sidecart-bg {
     background: var(--color-bg-primary);
