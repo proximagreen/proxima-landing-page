@@ -8,7 +8,7 @@ import { PLANS } from '../../lib/stripe'
 
 interface QuizOption {
   label: string
-  value: number // 0-3 severity
+  value: number
   detail: string
 }
 
@@ -69,7 +69,7 @@ const QUESTIONS: QuizQuestion[] = [
 /* ─── Score Calculation ─── */
 
 interface QuizResult {
-  score: number          // 0-12
+  score: number
   riskLevel: 'low' | 'medium' | 'high' | 'critical'
   riskLabel: string
   riskColor: string
@@ -82,68 +82,114 @@ interface QuizResult {
 function calculateResult(answers: Record<string, number>): QuizResult {
   const score = Object.values(answers).reduce((a, b) => a + b, 0)
   const teamAnswer = answers.team || 1
-
   const seatMap: Record<number, number> = { 1: 1, 2: 5, 3: 10 }
   const recommendedSeats = seatMap[teamAnswer] || 5
-
   const timeAnswer = answers.time || 1
   const hoursPerDay = timeAnswer === 0 ? 0.5 : timeAnswer === 2 ? 2 : timeAnswer === 3 ? 4 : 1
   const monthlySavingsHours = Math.round(hoursPerDay * 0.6 * 22 * recommendedSeats)
 
-  if (score >= 9) {
-    return {
-      score, riskLevel: 'critical', riskLabel: 'Maximal', riskColor: 'text-green-400',
-      headline: 'Proxima est fait pour vous.',
-      description: `Votre équipe peut récupérer environ ${monthlySavingsHours} heures/mois. Avec vos données sensibles, le cloisonnement souverain de Proxima est exactement ce qu'il vous faut.`,
-      savings: `${monthlySavingsHours}h/mois récupérables`,
-      recommendedSeats,
-    }
-  }
-  if (score >= 6) {
-    return {
-      score, riskLevel: 'high', riskLabel: 'Élevé', riskColor: 'text-green-400',
-      headline: 'Un impact immédiat pour votre équipe.',
-      description: `Environ ${monthlySavingsHours} heures/mois récupérables. Proxima sécurise vos données et accélère vos livrables dès le premier jour.`,
-      savings: `${monthlySavingsHours}h/mois récupérables`,
-      recommendedSeats,
-    }
-  }
-  if (score >= 3) {
-    return {
-      score, riskLevel: 'medium', riskLabel: 'Modéré', riskColor: 'text-green-400',
-      headline: 'Proxima va amplifier votre productivité.',
-      description: `Votre équipe gagnerait environ ${monthlySavingsHours} heures/mois avec l'IA souveraine. Le déploiement prend 30 secondes.`,
-      savings: `${monthlySavingsHours}h/mois récupérables`,
-      recommendedSeats,
-    }
-  }
-  return {
-    score, riskLevel: 'low', riskLabel: 'Optimisé', riskColor: 'text-green-400',
-    headline: 'Vous êtes déjà bien équipé.',
-    description: `Proxima peut quand même vous faire gagner ${monthlySavingsHours} heures/mois et renforcer votre conformité.`,
-    savings: `${monthlySavingsHours}h/mois récupérables`,
-    recommendedSeats,
-  }
+  if (score >= 9) return { score, riskLevel: 'critical', riskLabel: 'Maximal', riskColor: 'text-green-400', headline: 'Proxima est fait pour vous.', description: `Votre équipe peut récupérer environ ${monthlySavingsHours} heures/mois. Avec vos données sensibles, le cloisonnement souverain de Proxima est exactement ce qu'il vous faut.`, savings: `${monthlySavingsHours}h/mois récupérables`, recommendedSeats }
+  if (score >= 6) return { score, riskLevel: 'high', riskLabel: 'Élevé', riskColor: 'text-green-400', headline: 'Un impact immédiat pour votre équipe.', description: `Environ ${monthlySavingsHours} heures/mois récupérables. Proxima sécurise vos données et accélère vos livrables dès le premier jour.`, savings: `${monthlySavingsHours}h/mois récupérables`, recommendedSeats }
+  if (score >= 3) return { score, riskLevel: 'medium', riskLabel: 'Modéré', riskColor: 'text-green-400', headline: 'Proxima va amplifier votre productivité.', description: `Votre équipe gagnerait environ ${monthlySavingsHours} heures/mois avec l'IA souveraine. Le déploiement prend 30 secondes.`, savings: `${monthlySavingsHours}h/mois récupérables`, recommendedSeats }
+  return { score, riskLevel: 'low', riskLabel: 'Optimisé', riskColor: 'text-green-400', headline: 'Vous êtes déjà bien équipé.', description: `Proxima peut quand même vous faire gagner ${monthlySavingsHours} heures/mois et renforcer votre conformité.`, savings: `${monthlySavingsHours}h/mois récupérables`, recommendedSeats }
 }
 
-/* ─── Components ─── */
+/* ─── Mini Chart Components for Intro ─── */
 
-function ProgressBar({ current, total }: { current: number; total: number }) {
+function MiniBarChart() {
+  const days = ['L', 'M', 'M', 'J', 'V']
+  const values = [65, 80, 45, 90, 70]
   return (
-    <div className="flex gap-1.5">
-      {Array.from({ length: total }, (_, i) => (
-        <div
-          key={i}
-          className={`h-1 rounded-full flex-1 transition-all duration-500 ${
-            i < current ? 'bg-green-500' : i === current ? 'bg-green-500/50' : 'bg-border-subtle'
-          }`}
-        />
+    <div className="flex items-end gap-2 h-20 justify-center">
+      {days.map((d, i) => (
+        <div key={i} className="flex flex-col items-center gap-1.5">
+          <motion.div
+            className="w-5 sm:w-6 rounded-t-md bg-green-500"
+            initial={{ height: 0 }}
+            whileInView={{ height: `${values[i]}%` }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 * i, ease: 'easeOut' }}
+            style={{ maxHeight: '100%', opacity: 0.15 + (values[i] / 100) * 0.85 }}
+          />
+          <span className="text-[10px] text-text-muted font-medium">{d}</span>
+        </div>
       ))}
     </div>
   )
 }
 
-function QuestionCard({ question, onAnswer }: { question: QuizQuestion; onAnswer: (value: number) => void }) {
+function MiniDonut({ value, label }: { value: number; label: string }) {
+  const circumference = 2 * Math.PI * 30
+  const offset = circumference - (value / 100) * circumference
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r="30" fill="none" stroke="currentColor" strokeWidth="6" className="text-border-subtle" />
+        <motion.circle
+          cx="36" cy="36" r="30" fill="none" stroke="currentColor" strokeWidth="6"
+          className="text-green-500"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          whileInView={{ strokeDashoffset: offset }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
+          transform="rotate(-90 36 36)"
+        />
+        <text x="36" y="36" textAnchor="middle" dominantBaseline="central" className="fill-text-primary text-sm font-bold">{value}%</text>
+      </svg>
+      <span className="text-[11px] text-text-muted font-medium">{label}</span>
+    </div>
+  )
+}
+
+/* ─── Stat Card ─── */
+
+function StatCard({ value, label, sublabel, icon, delay }: { value: string; label: string; sublabel: string; icon: React.ReactNode; delay: number }) {
+  return (
+    <motion.div
+      className="quiz-card rounded-2xl p-4 sm:p-5 flex flex-col gap-2"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay }}
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-green-500 uppercase tracking-wider">{label}</span>
+        <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+          {icon}
+        </div>
+      </div>
+      <span className="text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">{value}</span>
+      <span className="text-xs text-green-500 font-medium">{sublabel}</span>
+    </motion.div>
+  )
+}
+
+/* ─── Progress Bar ─── */
+
+function ProgressBar({ current, total }: { current: number; total: number }) {
+  return (
+    <div className="flex gap-2">
+      {Array.from({ length: total }, (_, i) => (
+        <div key={i} className="h-1.5 rounded-full flex-1 transition-all duration-500 overflow-hidden bg-border-subtle">
+          {i <= current && (
+            <motion.div
+              className="h-full rounded-full bg-green-500"
+              initial={{ width: '0%' }}
+              animate={{ width: i < current ? '100%' : '50%' }}
+              transition={{ duration: 0.4 }}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* ─── Question Card ─── */
+
+function QuestionCard({ question, onAnswer, stepIndex }: { question: QuizQuestion; onAnswer: (value: number) => void; stepIndex: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 40 }}
@@ -151,25 +197,37 @@ function QuestionCard({ question, onAnswer }: { question: QuizQuestion; onAnswer
       exit={{ opacity: 0, x: -40 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
-      <h3 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">
-        {question.question}
-      </h3>
-      <p className="text-text-secondary mb-8">{question.subtext}</p>
+      <div className="text-center mb-10">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 mb-4">
+          <span className="text-lg font-bold text-green-500">{stepIndex + 1}</span>
+        </div>
+        <h3 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">
+          {question.question}
+        </h3>
+        <p className="text-text-secondary">{question.subtext}</p>
+      </div>
 
       <div className="space-y-3">
         {question.options.map((option, i) => (
           <motion.button
             key={i}
-            className="w-full text-left p-4 md:p-5 rounded-xl border border-border-card bg-bg-card hover:border-green-500/40 hover:bg-green-500/[0.04] transition-all duration-300 cursor-pointer group"
+            className="w-full text-left p-4 md:p-5 rounded-2xl border-2 border-border-card bg-bg-card hover:border-green-500/50 hover:shadow-[0_0_20px_rgba(0,60,28,0.08)] transition-all duration-300 cursor-pointer group"
             onClick={() => onAnswer(option.value)}
-            whileHover={{ x: 4 }}
+            whileHover={{ x: 6, scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="flex items-center justify-between">
-              <span className="text-text-primary font-medium group-hover:text-green-400 transition-colors">
-                {option.label}
-              </span>
-              <svg className="w-5 h-5 text-text-muted group-hover:text-green-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg border-2 border-border-card group-hover:border-green-500/50 group-hover:bg-green-500/10 flex items-center justify-center transition-all shrink-0">
+                  <svg className="w-4 h-4 text-transparent group-hover:text-green-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className="text-text-primary font-medium group-hover:text-green-500 transition-colors">
+                  {option.label}
+                </span>
+              </div>
+              <svg className="w-5 h-5 text-text-muted group-hover:text-green-500 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </div>
@@ -180,10 +238,11 @@ function QuestionCard({ question, onAnswer }: { question: QuizQuestion; onAnswer
   )
 }
 
+/* ─── Result Card ─── */
+
 function ResultCard({ result }: { result: QuizResult }) {
   const proPrice = PLANS.pro.price
   const totalPrice = proPrice * result.recommendedSeats
-
   const scorePercent = Math.round((result.score / 12) * 100)
 
   return (
@@ -192,7 +251,6 @@ function ResultCard({ result }: { result: QuizResult }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Score gauge (Chart.js Doughnut) */}
       <div className="text-center mb-8">
         <ScoreGauge
           score={result.score}
@@ -202,53 +260,40 @@ function ResultCard({ result }: { result: QuizResult }) {
         />
       </div>
 
-      {/* Headline */}
       <h3 className="text-2xl md:text-3xl font-bold text-text-primary text-center mb-4">
         {result.headline}
       </h3>
-      <p className="text-text-secondary text-center max-w-lg mx-auto mb-8 leading-relaxed">
+      <p className="text-text-secondary text-center max-w-lg mx-auto mb-10 leading-relaxed">
         {result.description}
       </p>
 
-      {/* Visual donut charts (Chart.js) */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <DonutChart
-          value={scorePercent}
-          label="Risque données"
-          sublabel={result.riskLabel}
-          color={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : '#22c55e'}
-          size={100}
-        />
-        <DonutChart
-          value={60}
-          label="Temps récupérable"
-          sublabel={result.savings}
-          color="#22c55e"
-          size={100}
-        />
-        <DonutChart
-          value={Math.round((totalPrice / 3500) * 100)}
-          label="Coût vs recrutement"
-          sublabel={`${totalPrice}€ vs 3 500€`}
-          color="#22c55e"
-          size={100}
-        />
+      {/* Stat cards row */}
+      <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
+        <div className="quiz-card rounded-2xl p-4 text-center">
+          <DonutChart value={scorePercent} label="Risque données" sublabel={result.riskLabel} color={result.riskLevel === 'critical' ? '#ef4444' : result.riskLevel === 'high' ? '#f97316' : result.riskLevel === 'medium' ? '#f59e0b' : '#22c55e'} size={100} />
+        </div>
+        <div className="quiz-card rounded-2xl p-4 text-center">
+          <DonutChart value={60} label="Temps récupérable" sublabel={result.savings} color="#22c55e" size={100} />
+        </div>
+        <div className="quiz-card rounded-2xl p-4 text-center">
+          <DonutChart value={Math.round((totalPrice / 3500) * 100)} label="Coût vs recrutement" sublabel={`${totalPrice}€ vs 3 500€`} color="#22c55e" size={100} />
+        </div>
       </div>
 
-      {/* Bar chart — valeur comparée */}
-      <div className="glass rounded-xl p-5 md:p-6 mb-8">
+      {/* Bar chart */}
+      <div className="quiz-card rounded-2xl p-5 md:p-6 mb-8">
         <HBarChart
           title="Comparatif de valeur mensuelle"
           items={[
             { label: `Proxima (${result.recommendedSeats} poste${result.recommendedSeats > 1 ? 's' : ''})`, value: totalPrice, color: '#22c55e', suffix: '€' },
-            { label: 'ChatGPT Team', value: result.recommendedSeats * 25, color: 'rgba(255,255,255,0.2)', suffix: '€' },
+            { label: 'ChatGPT Team', value: result.recommendedSeats * 25, color: 'rgba(128,128,128,0.3)', suffix: '€' },
             { label: 'Recrutement', value: 3500, color: '#ef4444', suffix: '€' },
           ]}
         />
       </div>
 
-      {/* Hormozi Value Stack */}
-      <div className="glass rounded-xl p-5 md:p-6 mb-8">
+      {/* Value Stack */}
+      <div className="quiz-card rounded-2xl p-5 md:p-6 mb-8">
         <h4 className="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider">Ce que vous obtenez</h4>
         <div className="space-y-3">
           {[
@@ -274,23 +319,19 @@ function ResultCard({ result }: { result: QuizResult }) {
               <span className="text-sm text-text-muted line-through">1 000€+/mois</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm font-bold text-green-400">Votre prix</span>
-              <span className="text-xl font-bold text-green-400">{totalPrice}€/mois</span>
+              <span className="text-sm font-bold text-green-500">Votre prix</span>
+              <span className="text-xl font-bold text-green-500">{totalPrice}€/mois</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* CTA */}
       <div className="flex justify-center">
         <Button variant="primary" size="lg" className="justify-center" href="#configurateur">
           Configurer mon accès ({totalPrice}€/mois)
         </Button>
       </div>
-
-      <p className="text-center text-xs text-text-muted mt-4">
-        Sans engagement. Annulation en 1 clic.
-      </p>
+      <p className="text-center text-xs text-text-muted mt-4">Sans engagement. Annulation en 1 clic.</p>
     </motion.div>
   )
 }
@@ -311,71 +352,158 @@ export function QuizSection() {
     setCurrentStep(prev => prev + 1)
   }
 
+  /* ─── Intro : Dashboard-style preview ─── */
   if (!started) {
     return (
       <section id="quiz" className="py-[var(--section-padding)] px-4 sm:px-6 relative overflow-hidden">
-        {/* Background full-width */}
-        <div className="absolute inset-0 bg-green-500/[0.03] pointer-events-none" />
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/[0.08] rounded-full blur-[150px]" />
-        </div>
-
-        <div className="max-w-3xl mx-auto relative z-10">
+        <div className="max-w-4xl mx-auto relative z-10">
+          {/* Header */}
           <motion.div
-            className="rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden border-2 border-green-500/30 bg-gradient-to-b from-green-500/[0.08] to-transparent"
-            initial={{ opacity: 0, y: 30 }}
+            className="text-center mb-10"
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
           >
-            {/* Glow behind */}
-            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 bg-green-500/15 blur-[100px] rounded-full pointer-events-none" />
-
-            {/* Icon */}
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-green-500/15 border border-green-500/30 mb-6">
-              <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-              </svg>
-            </div>
-
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase bg-green-500/20 text-green-500 border border-green-500/30 mb-6">
-              30 secondes -- 4 questions
+            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase bg-green-500/15 text-green-500 border border-green-500/25 mb-5">
+              Diagnostic gratuit -- 30 secondes
             </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary mb-5 tracking-tight leading-tight">
-              Combien de temps votre equipe<br /><span className="text-green-500">peut-elle recuperer</span> ?
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary mb-4 tracking-tight leading-tight">
+              Quel est le <span className="text-green-500">potentiel IA</span><br />de votre équipe ?
             </h2>
-            <p className="text-lg sm:text-xl text-text-secondary mb-10 max-w-lg mx-auto leading-relaxed">
-              Estimez votre gain de productivite et le dimensionnement ideal de votre espace Proxima.
+            <p className="text-lg text-text-secondary max-w-xl mx-auto">
+              4 questions pour estimer vos gains de productivité et dimensionner votre espace.
             </p>
+          </motion.div>
+
+          {/* Dashboard Preview Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
+            <StatCard
+              value="3-4h"
+              label="Temps récupéré"
+              sublabel="par collaborateur / jour"
+              delay={0.1}
+              icon={<svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+            />
+            <StatCard
+              value="100%"
+              label="Souveraineté"
+              sublabel="données en Europe"
+              delay={0.2}
+              icon={<svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>}
+            />
+            <StatCard
+              value="30s"
+              label="Déploiement"
+              sublabel="prêt en un clic"
+              delay={0.3}
+              icon={<svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>}
+            />
+            <StatCard
+              value="60%"
+              label="Gain moyen"
+              sublabel="sur les tâches répétitives"
+              delay={0.4}
+              icon={<svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" /></svg>}
+            />
+          </div>
+
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-10">
+            {/* Mini bar chart card */}
+            <motion.div
+              className="quiz-card rounded-2xl p-5"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <p className="text-xs font-semibold text-text-primary mb-1">Productivité hebdo</p>
+              <p className="text-[10px] text-text-muted mb-4">Gain moyen par jour</p>
+              <MiniBarChart />
+            </motion.div>
+
+            {/* Donut card */}
+            <motion.div
+              className="quiz-card rounded-2xl p-5 flex flex-col items-center justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              <MiniDonut value={87} label="Taux de conformité RGPD" />
+            </motion.div>
+
+            {/* Team progress card */}
+            <motion.div
+              className="quiz-card rounded-2xl p-5"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+            >
+              <p className="text-xs font-semibold text-text-primary mb-4">Adoption équipe</p>
+              <div className="space-y-3">
+                {[
+                  { label: 'Chat IA', value: 92 },
+                  { label: 'RAG docs', value: 78 },
+                  { label: 'Meet IA', value: 65 },
+                ].map((item, i) => (
+                  <div key={i}>
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-text-secondary font-medium">{item.label}</span>
+                      <span className="text-text-muted">{item.value}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-border-subtle overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full bg-green-500"
+                        initial={{ width: '0%' }}
+                        whileInView={{ width: `${item.value}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.8 + i * 0.1 }}
+                        style={{ opacity: 0.4 + (item.value / 100) * 0.6 }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* CTA */}
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
             <Button variant="primary" size="lg" onClick={() => setStarted(true)}>
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
-              Estimer mon gain gratuitement
+              Lancer mon diagnostic gratuit
             </Button>
-            <p className="text-sm text-text-muted mt-5">Resultat instantane, sans inscription ni email</p>
+            <p className="text-sm text-text-muted mt-4">Résultat instantané, sans inscription ni email</p>
           </motion.div>
         </div>
       </section>
     )
   }
 
+  /* ─── Questions / Result ─── */
   return (
     <section id="quiz" className="py-[var(--section-padding)] px-4 sm:px-6 relative">
-      <div className="absolute inset-0 bg-green-500/[0.02] pointer-events-none" />
       <div className="max-w-2xl mx-auto relative z-10">
-        {/* Progress */}
         {!isComplete && (
           <div className="mb-10">
             <div className="flex justify-between items-center mb-3">
-              <span className="text-sm font-medium text-text-secondary">Question {currentStep + 1}/{QUESTIONS.length}</span>
+              <span className="text-sm font-medium text-text-secondary">Question {currentStep + 1} sur {QUESTIONS.length}</span>
               <span className="text-sm font-bold text-green-500">{Math.round(((currentStep) / QUESTIONS.length) * 100)}%</span>
             </div>
             <ProgressBar current={currentStep} total={QUESTIONS.length} />
           </div>
         )}
 
-        {/* Question or Result */}
         <AnimatePresence mode="wait">
           {isComplete && result ? (
             <ResultCard key="result" result={result} />
@@ -384,6 +512,7 @@ export function QuizSection() {
               key={QUESTIONS[currentStep].id}
               question={QUESTIONS[currentStep]}
               onAnswer={handleAnswer}
+              stepIndex={currentStep}
             />
           )}
         </AnimatePresence>
