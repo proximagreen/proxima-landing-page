@@ -240,6 +240,33 @@ function QuestionCard({ question, onAnswer, stepIndex }: { question: QuizQuestio
   )
 }
 
+/* ─── Animated Donut for Result ─── */
+
+function ResultDonut({ value, size = 80, label }: { value: number; size?: number; label: string }) {
+  const r = (size - 10) / 2
+  const circumference = 2 * Math.PI * r
+  const offset = circumference - (value / 100) * circumference
+  return (
+    <div className="flex flex-col items-center">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeWidth="5" className="text-border-subtle" />
+        <motion.circle
+          cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeWidth="5"
+          className="text-green-500"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+        <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central" className="fill-text-primary font-bold" style={{ fontSize: size * 0.22 }}>{value}%</text>
+      </svg>
+      <span className="text-[11px] text-text-secondary font-medium mt-1.5">{label}</span>
+    </div>
+  )
+}
+
 /* ─── Result Card ─── */
 
 function ResultCard({ result }: { result: QuizResult }) {
@@ -247,132 +274,140 @@ function ResultCard({ result }: { result: QuizResult }) {
   const totalPrice = proPrice * result.recommendedSeats
   const dailyCost = (proPrice / 30).toFixed(1)
   const savingsHours = result.savings.replace(/[^0-9]/g, '')
+  const savingsPercent = Math.min(95, Math.round(Number(savingsHours) / (result.recommendedSeats * 22 * 8) * 100) || 60)
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="max-w-xl mx-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="max-w-2xl mx-auto"
     >
-      {/* ── 1. Le chiffre choc ── */}
-      <div className="text-center mb-10">
-        <p className="text-sm font-medium text-text-muted mb-3">Votre equipe pourrait recuperer</p>
-        <div className="flex items-baseline justify-center gap-2">
-          <motion.span
-            className="text-6xl sm:text-7xl md:text-8xl font-black text-green-500 tracking-tight"
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2, type: 'spring' }}
-          >
-            {savingsHours}h
-          </motion.span>
-          <span className="text-xl text-text-secondary font-medium">/mois</span>
+      {/* ── Header dashboard ── */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-xl sm:text-2xl font-bold text-text-primary">Votre diagnostic Proxima</h3>
+          <p className="text-sm text-text-muted">Resultats personnalises</p>
         </div>
-        <p className="text-lg text-text-primary font-semibold mt-2">{result.headline}</p>
-      </div>
-
-      {/* ── 2. Avant / Apres ── */}
-      <div className="grid grid-cols-2 gap-4 mb-8">
-        {/* AVANT */}
-        <div className="quiz-card rounded-2xl p-5 border-2 border-red-500/20">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-6 h-6 rounded-full bg-red-500/15 flex items-center justify-center">
-              <svg className="w-3.5 h-3.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-            <span className="text-sm font-bold text-red-500">Aujourd'hui</span>
-          </div>
-          <ul className="space-y-2.5">
-            {[
-              'Heures perdues sur les taches repetitives',
-              'Donnees sensibles sur des IA americaines',
-              'Pas de cloisonnement client',
-              'Recherches manuelles chronophages',
-            ].map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-text-secondary">
-                <span className="text-red-400 mt-0.5 shrink-0">--</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* APRES */}
-        <div className="quiz-card rounded-2xl p-5 border-2 border-green-500/30 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.04] to-transparent pointer-events-none" />
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 rounded-full bg-green-500/15 flex items-center justify-center">
-                <svg className="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <span className="text-sm font-bold text-green-500">Avec Proxima</span>
-            </div>
-            <ul className="space-y-2.5">
-              {[
-                `${savingsHours}h/mois recuperees par l'IA`,
-                '100% souverain, RGPD, europeen',
-                'Cloisonnement total par dossier',
-                'Reponses en secondes, sourcees',
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-text-primary font-medium">
-                  <svg className="w-4 h-4 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/15 border border-green-500/25">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-xs font-bold text-green-500">Analyse terminee</span>
         </div>
       </div>
 
-      {/* ── 3. Le prix (simple, clair) ── */}
-      <div className="quiz-card rounded-2xl p-6 sm:p-8 mb-8 text-center border-2 border-green-500/25 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-green-500/[0.05] to-transparent pointer-events-none" />
-        <div className="relative">
-          <p className="text-sm text-text-muted mb-1">Tout ca pour</p>
-          <div className="flex items-baseline justify-center gap-1 mb-2">
-            <span className="text-5xl sm:text-6xl font-black text-text-primary">{dailyCost}€</span>
-            <span className="text-lg text-text-muted">/jour</span>
-          </div>
-          <p className="text-sm text-text-secondary mb-1">par collaborateur</p>
-          <p className="text-xs text-text-muted mb-6">
-            soit {proPrice}€/mois/poste -- {result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} = {totalPrice}€/mois
-          </p>
-
-          <Button variant="primary" size="lg" href="#pricing">
-            Demarrer maintenant
-          </Button>
-        </div>
-      </div>
-
-      {/* ── 4. Objection killer ── */}
-      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-6">
+      {/* ── Row 1 : 4 stat cards ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         {[
-          'Sans engagement',
-          'Annulation en 1 clic',
-          'Deploiement en 30 secondes',
-          'Support inclus',
-        ].map((item, i) => (
-          <span key={i} className="flex items-center gap-1.5 text-sm text-text-secondary">
-            <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {item}
-          </span>
+          { value: `${savingsHours}h`, label: 'Temps recupere', sub: 'par mois', color: 'border-l-green-500' },
+          { value: `${result.recommendedSeats}`, label: 'Postes recommandes', sub: 'pour votre equipe', color: 'border-l-green-400' },
+          { value: `${dailyCost}€`, label: 'Cout par jour', sub: 'par collaborateur', color: 'border-l-green-500' },
+          { value: '100%', label: 'Souverainete', sub: 'RGPD europeen', color: 'border-l-green-400' },
+        ].map((card, i) => (
+          <motion.div
+            key={i}
+            className={`quiz-card rounded-xl p-4 border-l-4 ${card.color}`}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
+          >
+            <span className="text-2xl sm:text-3xl font-black text-text-primary block">{card.value}</span>
+            <span className="text-xs font-semibold text-green-500 block mt-1">{card.label}</span>
+            <span className="text-[10px] text-text-muted">{card.sub}</span>
+          </motion.div>
         ))}
       </div>
 
-      {/* Lien secondaire */}
-      <div className="text-center">
-        <a href="https://cal.com/paul-lm" target="_blank" rel="noopener noreferrer" className="text-sm text-green-500 hover:underline font-medium">
-          Vous preferez en discuter ? Prenez rendez-vous
-        </a>
+      {/* ── Row 2 : Donuts + Progress ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        {/* Donuts */}
+        <motion.div
+          className="quiz-card rounded-xl p-5 flex items-center justify-around"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+        >
+          <ResultDonut value={savingsPercent} label="Gain de temps" />
+          <ResultDonut value={100} label="Conformite" />
+        </motion.div>
+
+        {/* Adoption prevue */}
+        <motion.div
+          className="quiz-card rounded-xl p-5 sm:col-span-2"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.6 }}
+        >
+          <p className="text-xs font-semibold text-text-primary mb-3">Impact prevu par service</p>
+          <div className="space-y-3">
+            {[
+              { label: 'Chat IA', value: 92, desc: 'Recherche, analyse, redaction' },
+              { label: 'RAG Docs', value: 78, desc: 'Base documentaire intelligente' },
+              { label: 'Meet IA', value: 65, desc: 'Transcription, resume auto' },
+              { label: 'Cloisonnement', value: 100, desc: 'Isolation par dossier/client' },
+            ].map((item, i) => (
+              <div key={i}>
+                <div className="flex justify-between text-[11px] mb-1">
+                  <span className="text-text-primary font-medium">{item.label} <span className="text-text-muted font-normal">-- {item.desc}</span></span>
+                  <span className="text-green-500 font-bold">{item.value}%</span>
+                </div>
+                <div className="h-2.5 rounded-full bg-border-subtle overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-green-500"
+                    initial={{ width: '0%' }}
+                    animate={{ width: `${item.value}%` }}
+                    transition={{ duration: 0.8, delay: 0.7 + i * 0.1 }}
+                    style={{ opacity: 0.5 + (item.value / 100) * 0.5 }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </div>
+
+      {/* ── Row 3 : Offre + CTA ── */}
+      <motion.div
+        className="quiz-card rounded-xl p-6 border-2 border-green-500/25 relative overflow-hidden"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.9 }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.05] to-transparent pointer-events-none" />
+        <div className="relative">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+            <div>
+              <p className="text-xs text-green-500 font-bold uppercase tracking-wider mb-1">Offre recommandee</p>
+              <p className="text-lg font-bold text-text-primary">{result.headline}</p>
+              <p className="text-sm text-text-secondary">{result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} -- Chat + Meet + Support</p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="flex items-baseline gap-0.5 justify-end sm:justify-start">
+                <span className="text-4xl font-black text-text-primary">{totalPrice}€</span>
+                <span className="text-text-muted">/mois</span>
+              </div>
+              <p className="text-xs text-green-500 font-medium">soit {dailyCost}€/jour par collaborateur</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button variant="primary" size="lg" className="flex-1 justify-center" href="#pricing">
+              Demarrer maintenant
+            </Button>
+            <Button variant="secondary" size="lg" className="flex-1 justify-center" href="https://cal.com/paul-lm">
+              Prendre rendez-vous
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 mt-4">
+            {['Sans engagement', 'Annulation en 1 clic', '30s de deploiement'].map((t, i) => (
+              <span key={i} className="flex items-center gap-1 text-[11px] text-text-muted">
+                <svg className="w-3 h-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
     </motion.div>
   )
 }
