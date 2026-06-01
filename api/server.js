@@ -233,6 +233,11 @@ app.get('/', (_req, res) => {
   res.redirect('/welcome')
 })
 
+// ─── Page produits statique (Meet + Chat) ───
+app.get('/products', (_req, res) => {
+  res.sendFile(join(__dirname, '..', 'dist', 'products.html'))
+})
+
 // ─── Static files ───
 app.use(express.static(join(__dirname, '..', 'dist')))
 
