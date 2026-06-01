@@ -467,19 +467,19 @@ footer{padding:42px 6%;border-top:1px solid rgba(237,245,239,.07);display:flex;a
       <div class="success-banner"><svg class="ic"><use href="#i-check"/></svg>Accès débloqué — bienvenue chez Proxima.</div>
       <div class="dl-grid">
         <div class="dl-head"><svg class="ic"><use href="#i-mic"/></svg>Proxima Meet <span style="background:var(--gb);color:var(--g);padding:2px 8px;border-radius:4px;font-size:11px">v0.5.8</span></div>
-        <a href="https://kdrive.infomaniak.com/app/share/1837274/77487276-fcff-4444-b472-0354da43773e" target="_blank" rel="noopener" class="dl-card">
+        <a href="#" data-dl="mac-arm" class="dl-card">
           <div class="dl-ico"><svg class="ic"><use href="#i-apple"/></svg></div>
           <div><div class="dl-name">Mac Apple Silicon</div><div class="dl-ver">M1 / M2 / M3 · .dmg</div></div>
         </a>
-        <a href="https://kdrive.infomaniak.com/app/share/1837274/eedb3352-171a-41f4-8566-0435e8f39470" target="_blank" rel="noopener" class="dl-card">
+        <a href="#" data-dl="mac-intel" class="dl-card">
           <div class="dl-ico"><svg class="ic"><use href="#i-laptop"/></svg></div>
           <div><div class="dl-name">Mac Intel</div><div class="dl-ver">x86_64 · .dmg</div></div>
         </a>
-        <a href="https://kdrive.infomaniak.com/app/share/1837274/c7929baf-a580-4e9d-8c1e-da89ea7763f2" target="_blank" rel="noopener" class="dl-card">
+        <a href="#" data-dl="win-fr" class="dl-card">
           <div class="dl-ico"><svg class="ic"><use href="#i-windows"/></svg></div>
           <div><div class="dl-name">Windows FR</div><div class="dl-ver">Version française · .exe</div></div>
         </a>
-        <a href="https://kdrive.infomaniak.com/app/share/1837274/167cea1a-2170-469f-a29d-ffa602b9e076" target="_blank" rel="noopener" class="dl-card">
+        <a href="#" data-dl="win-en" class="dl-card">
           <div class="dl-ico"><svg class="ic"><use href="#i-windows"/></svg></div>
           <div><div class="dl-name">Windows EN</div><div class="dl-ver">English version · .exe</div></div>
         </a>
@@ -598,7 +598,8 @@ document.getElementById('plegend').innerHTML=`
   <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:#00E87A"></span>Français</span>
   <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:2px;background:#7FC8F8;margin-top:4px"></span>English</span>`;
 
-// === AUTH ===
+// === AUTH (code temporaire par email + token de telechargement) ===
+let userEmail='';
 function setPanel(n){
   [1,2,3].forEach(i=>{
     document.getElementById('p'+i).classList.toggle('active',i===n);
@@ -608,18 +609,46 @@ function setPanel(n){
     else if(i<n)s.classList.add('done');
   });
 }
-function goStep2(){
-  const v=document.getElementById('emailIn').value.trim();
-  if(!v||!v.includes('@')){document.getElementById('emailIn').style.borderColor='#FF6B6B';return;}
-  document.getElementById('emailIn').style.borderColor='';
-  document.getElementById('emailShow').textContent=v;
-  setPanel(2);
+function showErr(id,msg){
+  const err=document.getElementById(id);
+  err.textContent=msg;err.style.display='block';
+  setTimeout(()=>{err.style.display='none';},4000);
 }
-function goStep3(){
-  const c=document.getElementById('codeIn').value.trim();
-  const err=document.getElementById('codeErr');
-  if(c==='ProximaGreen2026'){err.style.display='none';setPanel(3);document.getElementById('download').scrollIntoView({behavior:'smooth'});}
-  else{err.style.display='block';document.getElementById('codeIn').style.borderColor='#FF6B6B';setTimeout(()=>{err.style.display='none';document.getElementById('codeIn').style.borderColor='';},3200);}
+async function goStep2(){
+  const inp=document.getElementById('emailIn');
+  const btn=document.querySelector('#p1 .btn-primary');
+  const v=inp.value.trim();
+  if(!v||!v.includes('@')){inp.style.borderColor='#FF6B6B';return;}
+  inp.style.borderColor='';
+  btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='Envoi…';
+  try{
+    const r=await fetch('/api/access/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||'Erreur lors de l\'envoi.');
+    userEmail=v;
+    document.getElementById('emailShow').textContent=v;
+    setPanel(2);
+  }catch(e){inp.style.borderColor='#FF6B6B';showErr('codeErr',e.message);}
+  finally{btn.disabled=false;btn.innerHTML=old;}
+}
+async function goStep3(){
+  const inp=document.getElementById('codeIn');
+  const btn=document.querySelector('#p2 .btn-primary');
+  const c=inp.value.trim();
+  if(!c){inp.style.borderColor='#FF6B6B';return;}
+  btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='Vérification…';
+  try{
+    const r=await fetch('/api/access/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,code:c})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok||!d.token)throw new Error(d.error||'Code incorrect.');
+    inp.style.borderColor='';
+    document.querySelectorAll('[data-dl]').forEach(a=>{
+      a.href='/api/download/'+a.dataset.dl+'?token='+encodeURIComponent(d.token);
+    });
+    setPanel(3);
+    document.getElementById('download').scrollIntoView({behavior:'smooth'});
+  }catch(e){inp.style.borderColor='#FF6B6B';showErr('codeErr',e.message);}
+  finally{btn.disabled=false;btn.innerHTML=old;}
 }
 document.getElementById('emailIn').addEventListener('keydown',e=>{if(e.key==='Enter')goStep2();});
 document.getElementById('codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')goStep3();});

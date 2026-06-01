@@ -25,3 +25,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Binaires Proxima Meet (servis via volume persistant Coolify, jamais commites)
+downloads/
