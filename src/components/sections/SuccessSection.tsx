@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react'
-import { usePersonalization } from '../../context/PersonalizationContext'
 import { Button } from '../ui/Button'
 
 export function SuccessSection() {
-  const { appUrl: configAppUrl, company } = usePersonalization()
   const [sessionId, setSessionId] = useState<string | null>(null)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     setSessionId(params.get('session_id'))
   }, [])
-
-  const appUrl = configAppUrl || window.location.origin + '/'
 
   return (
     <section className="min-h-screen flex items-center justify-center px-4">
@@ -23,14 +19,18 @@ export function SuccessSection() {
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-4">
-          Paiement confirmé
+          Merci pour votre confiance
         </h1>
         <p className="text-lg text-text-secondary mb-8">
-          {company ? `L'espace Proxima de ${company} est prêt.` : 'Votre espace Proxima est prêt.'} Connectez-vous pour commencer.
+          Votre instance Proxima Chat est en cours de création. Votre serveur dédié est en cours de provisionnement.
+          Vos accès Meet vous seront envoyés par email. Merci.
+          <br /><br />
+          Pour toute question, contactez{' '}
+          <a href="mailto:support@proxima.green" className="text-green-500 hover:underline">support@proxima.green</a>.
         </p>
 
-        <Button variant="primary" size="lg" href={appUrl}>
-          Accéder à mon espace Proxima
+        <Button variant="primary" size="lg" href="mailto:support@proxima.green">
+          Contacter le support
         </Button>
 
         {sessionId && (

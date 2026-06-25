@@ -1,31 +1,24 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, type ReactNode } from 'react'
 
-type Theme = 'dark' | 'light'
+type Theme = 'light'
 
 interface ThemeContextType {
   theme: Theme
   toggleTheme: () => void
 }
 
-const ThemeContext = createContext<ThemeContextType>({ theme: 'dark', toggleTheme: () => {} })
+const ThemeContext = createContext<ThemeContextType>({ theme: 'light', toggleTheme: () => {} })
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('proxima-theme') as Theme | null
-      if (stored) return stored
-      return 'light'
-    }
-    return 'light'
-  })
+  const theme: Theme = 'light'
 
   useEffect(() => {
     const root = document.documentElement
-    root.setAttribute('data-theme', theme)
-    localStorage.setItem('proxima-theme', theme)
-  }, [theme])
+    root.setAttribute('data-theme', 'light')
+    localStorage.setItem('proxima-theme', 'light')
+  }, [])
 
-  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+  const toggleTheme = () => {}
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

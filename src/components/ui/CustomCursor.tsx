@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
 import { motion, useSpring, useMotionValue } from 'framer-motion'
-import { useTheme } from '../../context/ThemeContext'
 
 export function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
-  const { theme } = useTheme()
 
   const cursorX = useMotionValue(-100)
   const cursorY = useMotionValue(-100)
@@ -55,7 +53,7 @@ export function CustomCursor() {
     return null
   }
 
-  const isDark = theme === 'dark'
+  const isDark = false
 
   return (
     <>

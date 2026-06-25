@@ -23,12 +23,21 @@ const POCKETBASE_URL = process.env.POCKETBASE_URL || ''
 const LANDING_URL = process.env.LANDING_URL || 'http://localhost:3000'
 
 // ─── Prix unitaires (centimes) ───
-const PRICES = {
-  chat_1: 4500,
-  chat_multi: 3500,
-  meet_standalone: 1500,
-  bundle_chat: 3500,
-  bundle_meet: 1000,
+// Tarification dégressive en centimes, par palier de volume : [1-19, 20-99, 100+]
+const PRICING = {
+  pro: [4900, 2900, 1900],
+  chat: [3500, 2300, 1500],
+  meet: [2000, 1500, 900],
+}
+
+function tierIndex(seats) {
+  if (seats >= 100) return 2
+  if (seats >= 20) return 1
+  return 0
+}
+
+function tierUnitAmount(plan, seats) {
+  return (PRICING[plan] || PRICING.pro)[tierIndex(seats)]
 }
 
 // ─── Helpers ───
@@ -99,32 +108,23 @@ app.post('/api/create-checkout', async (req, res) => {
   }
 
   try {
-    const { plan, seats, segment, company, name: customerName } = req.body
+    const { plan, seats, segment, company, name: customerName, email: customerEmail } = req.body
     const quantity = Math.max(1, Math.min(500, Number(seats) || 1))
 
-    const lineItems = []
+    const planKey = plan === 'meet' ? 'meet' : plan === 'chat' ? 'chat' : 'pro'
+    const productName = planKey === 'pro'
+      ? 'Proxima Chat + Meet'
+      : planKey === 'chat' ? 'Proxima Chat' : 'Proxima Meet'
 
-    if (plan === 'pro') {
-      lineItems.push({
-        price_data: { currency: 'eur', product_data: { name: 'Proxima Chat' }, unit_amount: PRICES.bundle_chat, recurring: { interval: 'month' } },
-        quantity,
-      })
-      lineItems.push({
-        price_data: { currency: 'eur', product_data: { name: 'Proxima Meet' }, unit_amount: PRICES.bundle_meet, recurring: { interval: 'month' } },
-        quantity,
-      })
-    } else if (plan === 'meet') {
-      lineItems.push({
-        price_data: { currency: 'eur', product_data: { name: 'Proxima Meet' }, unit_amount: PRICES.meet_standalone, recurring: { interval: 'month' } },
-        quantity,
-      })
-    } else {
-      const unitAmount = quantity >= 2 ? PRICES.chat_multi : PRICES.chat_1
-      lineItems.push({
-        price_data: { currency: 'eur', product_data: { name: 'Proxima Chat' }, unit_amount: unitAmount, recurring: { interval: 'month' } },
-        quantity,
-      })
-    }
+    const lineItems = [{
+      price_data: {
+        currency: 'eur',
+        product_data: { name: productName },
+        unit_amount: tierUnitAmount(planKey, quantity),
+        recurring: { interval: 'month' },
+      },
+      quantity,
+    }]
 
     const slug = extractSlug(req)
     const refId = [slug, segment || 'general', company || 'direct', Date.now()].join('_')
@@ -145,6 +145,10 @@ app.post('/api/create-checkout', async (req, res) => {
         plan: plan || 'pro',
       },
       allow_promotion_codes: true,
+      // Email obligatoire : Stripe Checkout exige l'email en mode subscription,
+      // et on force la création d'un Customer pour le récupérer au webhook.
+      customer_creation: 'always',
+      ...(customerEmail ? { customer_email: customerEmail } : {}),
     })
 
     res.json({ url: session.url })
