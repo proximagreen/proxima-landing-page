@@ -285,7 +285,7 @@ function InlineConfigurateur() {
 
       {/* CTA */}
       <Button variant="primary" className="w-full mt-6" onClick={handleCheckout} disabled={loading || !active}>
-        {loading ? 'Redirection...' : `Démarrer maintenant - ${totalPrice}€/mois`}
+        {loading ? 'Redirection...' : `Créer votre espace - ${totalPrice}€/mois`}
       </Button>
 
       {/* Trust */}
@@ -310,7 +310,7 @@ function OfferCard({
   highlighted?: boolean
 }) {
   return (
-    <div className={`glass card-glow rounded-2xl p-6 flex flex-col ${highlighted ? 'border-green-500/40' : ''}`}>
+    <div className={`glass card-glow rounded-2xl p-6 flex flex-col ${highlighted ? 'border-green-500/40 relative z-10 order-first md:order-none md:scale-105 md:shadow-2xl md:shadow-green-500/10' : ''}`}>
       {highlighted && (
         <div className="inline-block self-start px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white mb-3">
           Offre recommandée
@@ -370,8 +370,19 @@ export function PricingSection() {
           subtitle={content.pricing.subheadline}
         />
 
-        {/* Package mis en avant */}
-        <div className="max-w-md mx-auto mb-8">
+        {/* Cartes tarifaires : Chat | Package (recommandé) | Meet */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 items-center max-w-5xl mx-auto mb-12">
+          <OfferCard
+            plan="chat"
+            description="Chat IA souverain pour votre équipe."
+            features={[
+              'Chat IA illimité',
+              'RAG documentaire',
+              'Dossiers cloisonnés',
+              'VM dédiée & sécurisée',
+              'Support prioritaire',
+            ]}
+          />
           <OfferCard
             plan="pro"
             description="L'offre complète : Chat IA souverain + visioconférence chiffrée."
@@ -383,21 +394,6 @@ export function PricingSection() {
               'Support prioritaire',
             ]}
             highlighted
-          />
-        </div>
-
-        {/* Offres unitaires */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-12">
-          <OfferCard
-            plan="chat"
-            description="Chat IA souverain pour votre équipe."
-            features={[
-              'Chat IA illimité',
-              'RAG documentaire',
-              'Dossiers cloisonnés',
-              'VM dédiée & sécurisée',
-              'Support prioritaire',
-            ]}
           />
           <OfferCard
             plan="meet"
