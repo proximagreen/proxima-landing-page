@@ -22,8 +22,7 @@ export function SuccessSection() {
           Merci pour votre confiance
         </h1>
         <p className="text-lg text-text-secondary mb-8">
-          Votre instance Proxima Chat est en cours de création. Votre serveur dédié est en cours de provisionnement.
-          Vos accès Meet vous seront envoyés par email. Merci.
+          Vos espaces et vos services dédiés sont en cours de création. Vos accès vous seront envoyés par email. Merci.
           <br /><br />
           Pour toute question, contactez{' '}
           <a href="mailto:support@proxima.green" className="text-green-500 hover:underline">support@proxima.green</a>.

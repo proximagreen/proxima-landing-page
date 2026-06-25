@@ -129,7 +129,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
       subheadline: 'Chat IA, recherche juridique, visio chiffrée, cloisonnement par dossier. Tout est déployé, souverain, et prêt pour votre équipe.',
-      ctaPrimary: 'Accéder à mon espace',
+      ctaPrimary: 'Voir les tarifs',
       ctaSecondary: '',
     },
     problems: [
@@ -167,7 +167,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       headline: 'Votre IA souveraine\nest prête.\nAccélérez votre pratique.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
       subheadline: 'Chat IA confidentiel, analyse documentaire, visio chiffrée. Compatible HDS, déployé en Europe, prêt pour votre équipe.',
-      ctaPrimary: 'Accéder à mon espace',
+      ctaPrimary: 'Voir les tarifs',
       ctaSecondary: '',
     },
     problems: [
@@ -204,7 +204,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       headline: 'Votre IA cloisonnée\nest prête.\nLivrez plus vite.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
       subheadline: 'Chat IA, analyse de documents, visio chiffrée. Chaque mission cloisonnée, chaque donnée souveraine. Prêt pour votre équipe.',
-      ctaPrimary: 'Accéder à mon espace',
+      ctaPrimary: 'Voir les tarifs',
       ctaSecondary: '',
     },
     problems: [
@@ -239,7 +239,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
       headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
       headlinePersonalized: '{name}, bienvenue.\nVotre espace Proxima\nest prêt',
       subheadline: 'Chat IA, recherche web, visio chiffrée, cloisonnement par client. Tout est déployé sur un cloud souverain européen, prêt pour votre équipe.',
-      ctaPrimary: 'Accéder à mon espace',
+      ctaPrimary: 'Voir les tarifs',
       ctaSecondary: '',
     },
     problems: [

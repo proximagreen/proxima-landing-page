@@ -44,8 +44,8 @@ export function Footer() {
             <p className="text-sm text-text-muted leading-relaxed mb-6 max-w-xs">
               L'IA confidentielle, souveraine et responsable pour les professionnels qui gèrent des données sensibles.
             </p>
-            <Button variant="primary" size="sm" href="#pricing">
-              Accéder à mon espace
+            <Button variant="primary" size="sm" href="#configurateur">
+              Configurer mon accès
             </Button>
           </div>
 

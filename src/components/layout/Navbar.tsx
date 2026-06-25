@@ -27,8 +27,8 @@ export function Navbar() {
         {/* Desktop CTA */}
         <div className="flex items-center gap-3 z-50">
           <div className="hidden sm:block">
-            <Button variant="primary" size="sm" href="#pricing" className="whitespace-nowrap">
-              Accéder à mon espace
+            <Button variant="primary" size="sm" href="#configurateur" className="whitespace-nowrap">
+              Configurer mon accès
             </Button>
           </div>
 

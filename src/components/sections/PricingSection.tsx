@@ -414,11 +414,6 @@ export function PricingSection() {
 
         {/* Inline Configurateur */}
         <InlineConfigurateur />
-
-        {/* Trust line */}
-        <p className="text-center text-sm text-text-muted">
-          Sans engagement -- Annulation en 1 clic -- Paiement sécurisé
-        </p>
       </div>
     </section>
   )
