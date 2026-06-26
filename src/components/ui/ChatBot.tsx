@@ -14,7 +14,7 @@ type Mode = 'text' | 'voice'
 /* ─── Config ─── */
 
 const OPENROUTER_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || ''
-const OPENROUTER_MODEL = import.meta.env.VITE_OPENROUTER_MODEL || 'mistralai/voxtral-small-24b-2507'
+const OPENROUTER_MODEL = import.meta.env.VITE_OPENROUTER_MODEL || 'gpt-oss-120b'
 const MISTRAL_KEY = import.meta.env.VITE_MISTRAL_API_KEY || ''
 
 const BOOKING_URL = 'https://cal.com/paul-lm'
@@ -27,7 +27,7 @@ PROXIMA MEET (app desktop v0.5.8, Mac Apple Silicon/Intel + Windows FR/EN) : tra
 
 PROXIMA CHAT (web, go.proxima.green) : interface unifiee donnant acces a 26+ modeles open source servis en Europe. Phares : Qwen3.5 397B, Mistral Medium 3.5, GPT-OSS 120B, Gemma 4, Meta Llama 3.3 70B, Qwen2.5 VL 72B (vision), Qwen3 Coder 30B (code), Mistral Small 3.2. Embeddings BGE-M3 et Qwen3, transcription Whisper V3, TTS NVIDIA. RAG documentaire, agents, tool-calling, vision. Prix transparents au token (ex : Qwen3 32B 0.08/0.23 EUR/M tokens, Mistral Medium 3.5 1.50/7.50 EUR/M), grille complete sur console.proxima.green/models. Infrastructure souveraine EU (OVHcloud, Scaleway, IONOS...), hors Cloud Act, conforme RGPD et HDS, aucune retention.
 
-PRIX (licences pro) : Proxima Chat a 45 euros par utilisateur par mois (35 euros a partir de 2 licences). Proxima Meet a 15 euros. Bundle Chat + Meet a 45 euros (Chat 35 + Meet 10). Tout inclus (deploiement, support prioritaire, mises a jour). Pour decouvrir Meet et Chat ou telecharger l'app : go.proxima.green/products.
+PRIX : Proxima Chat, Proxima Meet et le pack Chat + Meet sont a 49 euros par utilisateur par mois, degressif selon le volume (29 euros a partir de 20 utilisateurs, 19 euros a partir de 100). Tout inclus (deploiement, support prioritaire, mises a jour). Pour decouvrir Meet et Chat ou telecharger l'app : go.proxima.green/products.
 
 OBJECTIF : Tu dois orienter chaque conversation vers une ACTION CONCRETE :
 - Si le prospect est pret : oriente vers la souscription. Dis "Vous pouvez souscrire directement ici" et le lien apparaitra automatiquement.
@@ -40,12 +40,12 @@ REGLES :
 - Ne dis jamais "je suis une IA" ou "je ne peux pas". Tu es l'assistant Proxima.
 - Utilise des formulations comme "votre equipe", "vos clients", "votre cabinet" pour personnaliser.`
 
-/* ─── OpenRouter Chat API ─── */
+/* ─── Proxima Chat API (proxy OpenAI-compatible) ─── */
 
 async function chatCompletion(messages: Message[]): Promise<string> {
   if (!OPENROUTER_KEY) return 'Le service de chat est temporairement indisponible. Contactez-nous a contact@proxima.green.'
 
-  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const res = await fetch('https://api.proxima.green/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${OPENROUTER_KEY}`,

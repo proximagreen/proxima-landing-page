@@ -36,8 +36,8 @@ export const PLANS: Record<string, Plan> = {
   chat: {
     id: 'chat',
     name: 'Proxima Chat',
-    price: 45,
-    priceFrom2: 35,
+    price: 49,
+    priceFrom2: 29,
     description: 'Chat IA souverain pour votre équipe',
     features: [
       'Chat IA illimité',
@@ -50,7 +50,7 @@ export const PLANS: Record<string, Plan> = {
   pro: {
     id: 'pro',
     name: 'Proxima Chat + Meet',
-    price: 45,
+    price: 49,
     description: 'Chat + Meet pour votre équipe',
     features: [
       'Chat IA illimité',
@@ -62,6 +62,17 @@ export const PLANS: Record<string, Plan> = {
     ],
     recommended: true,
   },
+}
+
+// ─── Grille par paliers de volume (€ HT/licence/mois) : [1-19, 20-99, 100+] ───
+// Source d'affichage unique. La facturation reelle (et la TVA) est geree par
+// les prix a paliers cote Stripe (voir scripts/setup-stripe.js).
+export const VOLUME_PRICING: [number, number, number] = [49, 29, 19]
+
+export function tierPriceForSeats(seats: number): number {
+  if (seats >= 100) return VOLUME_PRICING[2]
+  if (seats >= 20) return VOLUME_PRICING[1]
+  return VOLUME_PRICING[0]
 }
 
 // ─── Checkout ───

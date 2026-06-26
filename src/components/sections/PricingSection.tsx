@@ -12,8 +12,8 @@ type Plan = 'pro' | 'chat' | 'meet'
 // Prix €/utilisateur/mois selon le palier : [1-19, 20-99, 100+]
 const PRICING: Record<Plan, [number, number, number]> = {
   pro: [49, 29, 19],
-  chat: [35, 23, 15],
-  meet: [20, 15, 9],
+  chat: [49, 29, 19],
+  meet: [49, 29, 19],
 }
 
 const TIERS = [
@@ -183,7 +183,7 @@ function TrustBadges() {
       <svg className="w-3.5 h-3.5 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
       </svg>
-      Sans engagement -- Annulation en 1 clic -- Paiement sécurisé
+      Sans engagement · Annulation en 1 clic · Paiement sécurisé
     </div>
   )
 }
