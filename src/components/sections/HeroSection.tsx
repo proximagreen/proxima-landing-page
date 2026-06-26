@@ -26,7 +26,7 @@ export function HeroSection() {
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-green-500 border border-green-500/30 bg-green-500/10 mb-6 sm:mb-8">
             <span className="relative w-2 h-2 rounded-full bg-green-500 pulse-dot" />
-            Souverain -- Chiffré -- Sécurisé
+            Souverain · Chiffré · Sécurisé
           </span>
         </motion.div>
 
@@ -64,7 +64,7 @@ export function HeroSection() {
 
         {/* Stats */}
         <motion.div
-          className="grid grid-cols-3 glass rounded-2xl py-5 sm:py-6 px-3 sm:px-6"
+          className="grid grid-cols-3 glass [animation:none] rounded-2xl py-5 sm:py-6 px-3 sm:px-6"
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.5 }}
         >
           {STATS.map((stat, idx) => (

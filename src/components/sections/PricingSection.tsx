@@ -12,8 +12,8 @@ type Plan = 'pro' | 'chat' | 'meet'
 // Prix €/utilisateur/mois selon le palier : [1-19, 20-99, 100+]
 const PRICING: Record<Plan, [number, number, number]> = {
   pro: [49, 29, 19],
-  chat: [49, 29, 19],
-  meet: [49, 29, 19],
+  chat: [35, 23, 15],
+  meet: [20, 15, 9],
 }
 
 const TIERS = [

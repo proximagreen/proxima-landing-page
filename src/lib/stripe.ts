@@ -36,8 +36,8 @@ export const PLANS: Record<string, Plan> = {
   chat: {
     id: 'chat',
     name: 'Proxima Chat',
-    price: 49,
-    priceFrom2: 29,
+    price: 35,
+    priceFrom2: 23,
     description: 'Chat IA souverain pour votre équipe',
     features: [
       'Chat IA illimité',
