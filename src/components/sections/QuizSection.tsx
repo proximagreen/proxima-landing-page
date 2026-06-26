@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/Button'
-import { PLANS } from '../../lib/stripe'
+import { tierPriceForSeats } from '../../lib/stripe'
 
 /* ─── Quiz Data ─── */
 
@@ -270,7 +270,7 @@ function ResultDonut({ value, size = 80, label }: { value: number; size?: number
 /* ─── Result Card ─── */
 
 function ResultCard({ result }: { result: QuizResult }) {
-  const proPrice = PLANS.pro.price
+  const proPrice = tierPriceForSeats(result.recommendedSeats)
   const totalPrice = proPrice * result.recommendedSeats
   const dailyCost = (proPrice / 30).toFixed(1)
   const savingsHours = result.savings.replace(/[^0-9]/g, '')
@@ -378,14 +378,14 @@ function ResultCard({ result }: { result: QuizResult }) {
             <div>
               <p className="text-xs text-green-500 font-bold uppercase tracking-wider mb-1">Offre recommandée</p>
               <p className="text-lg font-bold text-text-primary">{result.headline}</p>
-              <p className="text-sm text-text-secondary">{result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} -- Chat + Meet + Support</p>
+              <p className="text-sm text-text-secondary">{result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''} · Chat + Meet + Support</p>
             </div>
             <div className="text-right shrink-0">
               <div className="flex items-baseline gap-0.5 justify-end sm:justify-start">
                 <span className="text-4xl font-black text-green-500">{dailyCost}€</span>
                 <span className="text-text-muted">/jour</span>
               </div>
-              <p className="text-xs text-text-muted">par collaborateur -- {totalPrice}€/mois pour {result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''}</p>
+              <p className="text-xs text-text-muted">par collaborateur · {totalPrice}€/mois pour {result.recommendedSeats} poste{result.recommendedSeats > 1 ? 's' : ''}</p>
             </div>
           </div>
 

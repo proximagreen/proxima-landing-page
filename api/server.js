@@ -22,22 +22,13 @@ if (STRIPE_KEY) {
 const POCKETBASE_URL = process.env.POCKETBASE_URL || ''
 const LANDING_URL = process.env.LANDING_URL || 'http://localhost:3000'
 
-// ─── Prix unitaires (centimes) ───
-// Tarification dégressive en centimes, par palier de volume : [1-19, 20-99, 100+]
-const PRICING = {
-  pro: [4900, 2900, 1900],
-  chat: [3500, 2300, 1500],
-  meet: [2000, 1500, 900],
-}
-
-function tierIndex(seats) {
-  if (seats >= 100) return 2
-  if (seats >= 20) return 1
-  return 0
-}
-
-function tierUnitAmount(plan, seats) {
-  return (PRICING[plan] || PRICING.pro)[tierIndex(seats)]
+// ─── Produits Stripe (catalogue) ───
+// Prix a paliers de volume (49/29/19) et TVA geres directement dans Stripe.
+// IDs crees par scripts/setup-stripe.js, a renseigner dans l'environnement.
+const STRIPE_PRICES = {
+  chat: process.env.STRIPE_PRICE_CHAT || '',
+  meet: process.env.STRIPE_PRICE_MEET || '',
+  pro:  process.env.STRIPE_PRICE_PRO  || '',
 }
 
 // ─── Helpers ───
@@ -112,19 +103,12 @@ app.post('/api/create-checkout', async (req, res) => {
     const quantity = Math.max(1, Math.min(500, Number(seats) || 1))
 
     const planKey = plan === 'meet' ? 'meet' : plan === 'chat' ? 'chat' : 'pro'
-    const productName = planKey === 'pro'
-      ? 'Proxima Chat + Meet'
-      : planKey === 'chat' ? 'Proxima Chat' : 'Proxima Meet'
+    const priceId = STRIPE_PRICES[planKey]
+    if (!priceId) {
+      return res.status(503).json({ error: `Produit Stripe non configure pour le plan ${planKey} (renseignez STRIPE_PRICE_${planKey.toUpperCase()}).` })
+    }
 
-    const lineItems = [{
-      price_data: {
-        currency: 'eur',
-        product_data: { name: productName },
-        unit_amount: tierUnitAmount(planKey, quantity),
-        recurring: { interval: 'month' },
-      },
-      quantity,
-    }]
+    const lineItems = [{ price: priceId, quantity }]
 
     const slug = extractSlug(req)
     const refId = [slug, segment || 'general', company || 'direct', Date.now()].join('_')
@@ -145,9 +129,9 @@ app.post('/api/create-checkout', async (req, res) => {
         plan: plan || 'pro',
       },
       allow_promotion_codes: true,
-      // Email obligatoire : Stripe Checkout exige l'email en mode subscription,
-      // et on force la création d'un Customer pour le récupérer au webhook.
-      customer_creation: 'always',
+      // TVA calculee automatiquement par Stripe Tax selon l'adresse du client
+      // (Checkout collecte l'adresse de facturation requise).
+      automatic_tax: { enabled: true },
       ...(customerEmail ? { customer_email: customerEmail } : {}),
     })
 

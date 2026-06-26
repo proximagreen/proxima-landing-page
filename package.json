@@ -12,6 +12,7 @@
     "build": "tsc -b && vite build",
     "start": "node api/server.js",
     "lint": "eslint .",
+    "setup:stripe": "node scripts/setup-stripe.js",
     "preview": "vite preview"
   },
   "dependencies": {
