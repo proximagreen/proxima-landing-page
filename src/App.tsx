@@ -3,7 +3,6 @@ import { ThemeProvider } from './context/ThemeContext'
 import { useLenis } from './hooks/useLenis'
 import { Navbar } from './components/layout/Navbar'
 import { Footer } from './components/layout/Footer'
-import { ChatBot } from './components/ui/ChatBot'
 import { HeroSection } from './components/sections/HeroSection'
 import { SolutionStepsSection } from './components/sections/SolutionStepsSection'
 import { PricingSection } from './components/sections/PricingSection'
@@ -23,7 +22,6 @@ function LandingPage() {
         <FinalCTASection />
       </main>
       <Footer />
-      <ChatBot />
     </>
   )
 }
