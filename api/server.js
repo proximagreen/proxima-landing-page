@@ -132,6 +132,10 @@ app.post('/api/create-checkout', async (req, res) => {
       // TVA calculee automatiquement par Stripe Tax selon l'adresse du client
       // (Checkout collecte l'adresse de facturation requise).
       automatic_tax: { enabled: true },
+      // Facture complete : nom + adresse de facturation obligatoires,
+      // + nom de societe & n TVA (B2B, reverse charge) renseignes par le client.
+      billing_address_collection: 'required',
+      tax_id_collection: { enabled: true },
       ...(customerEmail ? { customer_email: customerEmail } : {}),
     })
 
