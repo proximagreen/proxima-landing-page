@@ -9,7 +9,12 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const app = express()
-app.use(express.json())
+// Le webhook Stripe exige le body brut pour la verification de signature :
+// on exclut sa route du parsing JSON global.
+app.use((req, res, next) => {
+  if (req.path === '/api/stripe-webhook') return next()
+  express.json()(req, res, next)
+})
 
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
 let stripe = null
@@ -165,6 +170,10 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
     return res.status(400).json({ error: 'Signature invalide' })
   }
 
+  // Repondre immediatement a Stripe (evite les timeouts webhook),
+  // le traitement PocketBase continue en arriere-plan.
+  res.json({ received: true })
+
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object
     const metadata = session.metadata || {}
@@ -219,8 +228,6 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
       }
     }
   }
-
-  res.json({ received: true })
 })
 
 // ═══════════════════════════════════════════════════════════════
