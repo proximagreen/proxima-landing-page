@@ -77,7 +77,7 @@ const SHARED_FEATURES: Feature[] = [
   { icon: 'search', title: 'Recherche Web IA', description: 'Veille concurrentielle, recherche réglementaire, benchmarks. L\'IA cherche pour vous, sans tracking ni fuite.' },
   { icon: 'folder', title: 'Dossiers cloisonnés', description: 'Un dossier par client, par mission, par projet. Cloisonnement total. Aucune contamination croisée.' },
   { icon: 'document', title: 'RAG documentaire', description: 'Interrogez vos documents internes en langage naturel. L\'IA trouve la réponse dans vos fichiers en secondes.' },
-  { icon: 'video', title: 'Proxima Meet', description: 'Visioconférence IA intégrée. Transcription, résumé et actions, dans un environnement chiffré de bout en bout.' },
+  { icon: 'video', title: 'Proxima Meet', description: 'L\'assistant de réunion qui tourne sur votre poste. Transcription en temps réel, résumé et plan d\'action. L\'audio ne quitte jamais votre machine.' },
 ]
 
 const SHARED_WHY_GREEN: WhyPoint[] = [
@@ -96,7 +96,7 @@ const SHARED_WHY_PRIVATE: WhyPoint[] = [
 
 const SHARED_SOLUTION_STEPS: SolutionStep[] = [
   { step: 1, title: 'On configure votre espace', description: 'Votre instance Proxima est déployée sur un cloud souverain dédié. Vos équipes sont invitées en quelques clics.', icon: 'sparkles' },
-  { step: 2, title: 'Votre équipe est opérationnelle', description: 'Chat IA, analyse de documents, visio chiffrée. Tout fonctionne dans un environnement cloisonné par client.', icon: 'shield' },
+  { step: 2, title: 'Votre équipe est opérationnelle', description: 'Chat IA, analyse de documents, comptes rendus de réunion. Tout fonctionne dans un environnement cloisonné par client.', icon: 'shield' },
   { step: 3, title: 'On vous accompagne', description: 'Support prioritaire, formations, optimisation continue. Votre succès est notre métrique.', icon: 'chart-bar' },
 ]
 
@@ -111,7 +111,7 @@ const SHARED_FAQS: FAQ[] = [
   },
   {
     question: 'Est-ce conforme au RGPD ?',
-    answer: 'Oui. Proxima est conçu dès l\'origine pour la conformité RGPD. Nous sommes hébergés en Europe, avec chiffrement de bout en bout et DPA disponible sur demande.',
+    answer: 'Oui. Proxima est conçu dès l\'origine pour la conformité RGPD. Hébergement exclusivement européen, chiffrement des données en transit et au repos, DPA disponible sur demande.',
   },
   {
     question: 'Combien de temps faut-il pour démarrer ?',
@@ -128,7 +128,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
-      subheadline: 'Chat IA, recherche juridique, visio chiffrée, cloisonnement par dossier. Tout est déployé, souverain, et prêt pour votre équipe.',
+      subheadline: 'Chat IA, recherche juridique, comptes rendus de réunion, cloisonnement par dossier. Tout est déployé, souverain, et prêt pour votre équipe.',
       ctaPrimary: 'Voir les tarifs',
       ctaSecondary: '',
     },
@@ -166,7 +166,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Votre IA souveraine\nest prête.\nAccélérez votre pratique.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
-      subheadline: 'Chat IA confidentiel, analyse documentaire, visio chiffrée. Compatible HDS, déployé en Europe, prêt pour votre équipe.',
+      subheadline: 'Chat IA confidentiel, analyse documentaire, comptes rendus de réunion. Compatible HDS, déployé en Europe, prêt pour votre équipe.',
       ctaPrimary: 'Voir les tarifs',
       ctaSecondary: '',
     },
@@ -203,7 +203,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Votre IA cloisonnée\nest prête.\nLivrez plus vite.',
       headlinePersonalized: '{name}, l\'espace IA\nde {company} est prêt',
-      subheadline: 'Chat IA, analyse de documents, visio chiffrée. Chaque mission cloisonnée, chaque donnée souveraine. Prêt pour votre équipe.',
+      subheadline: 'Chat IA, analyse de documents, comptes rendus de réunion. Chaque mission cloisonnée, chaque donnée souveraine. Prêt pour votre équipe.',
       ctaPrimary: 'Voir les tarifs',
       ctaSecondary: '',
     },
@@ -238,7 +238,7 @@ export const CONTENT: Record<Segment, SegmentContent> = {
     hero: {
       headline: 'Votre IA confidentielle\nest prête.\nPassez à l\'action.',
       headlinePersonalized: '{name}, bienvenue.\nVotre espace Proxima\nest prêt',
-      subheadline: 'Chat IA, recherche web, visio chiffrée, cloisonnement par client. Tout est déployé sur un cloud souverain européen, prêt pour votre équipe.',
+      subheadline: 'Chat IA, recherche web, comptes rendus de réunion, cloisonnement par client. Tout est déployé sur un cloud souverain européen, prêt pour votre équipe.',
       ctaPrimary: 'Voir les tarifs',
       ctaSecondary: '',
     },

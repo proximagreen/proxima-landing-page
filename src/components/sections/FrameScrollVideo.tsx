@@ -6,7 +6,7 @@ const FRAME_PATH = (i: number) => `/frames/frame_${String(i + 1).padStart(4, '0'
 
 const SCROLL_TEXTS = [
   { progress: 0.1, text: 'Votre espace de travail IA, prêt en 30 secondes' },
-  { progress: 0.3, text: 'Chat intelligent, recherche documentaire, visioconférence' },
+  { progress: 0.3, text: 'Chat intelligent, recherche documentaire, comptes rendus de réunion' },
   { progress: 0.5, text: 'Vos données ne quittent jamais votre cloud souverain' },
   { progress: 0.7, text: 'Une interface pensée pour la productivité extrême' },
   { progress: 0.9, text: 'Proxima Chat + Meet + Agents, tout en un' },

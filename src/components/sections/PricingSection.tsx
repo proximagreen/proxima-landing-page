@@ -385,11 +385,11 @@ export function PricingSection() {
           />
           <OfferCard
             plan="pro"
-            description="L'offre complète : Chat IA souverain + visioconférence chiffrée."
+            description="L'offre complète : Chat IA souverain + assistant de réunion."
             features={[
               'Chat IA illimité & RAG documentaire',
               'VM dédiée & dossiers cloisonnés',
-              'Visio chiffrée + transcription temps réel',
+              'Assistant de réunion : transcription locale en temps réel',
               'Résumés & plans d\'action automatiques',
               'Support prioritaire',
             ]}
@@ -397,13 +397,13 @@ export function PricingSection() {
           />
           <OfferCard
             plan="meet"
-            description="Visioconférence IA chiffrée."
+            description="L'assistant de réunion IA, en local sur votre poste."
             features={[
-              'Visio chiffrée de bout en bout',
-              'Transcription en temps réel',
-              'Résumé & plan d\'action auto',
-              'Enregistrement sécurisé',
-              'Intégration Proxima Chat',
+              'Transcription en temps réel, 90+ langues',
+              'Traitement 100% local, zéro télémétrie',
+              'Résumé & plan d\'action automatiques',
+              'Application macOS & Windows',
+              'Export Notion, Slack, Markdown, PDF',
             ]}
           />
         </div>

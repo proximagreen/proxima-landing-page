@@ -54,7 +54,7 @@ export const PLANS: Record<string, Plan> = {
     description: 'Chat + Meet pour votre équipe',
     features: [
       'Chat IA illimité',
-      'Proxima Meet (visio IA)',
+      'Proxima Meet (assistant de réunion IA)',
       'RAG documentaire',
       'Dossiers illimités',
       'VM dédiée & sécurisée',

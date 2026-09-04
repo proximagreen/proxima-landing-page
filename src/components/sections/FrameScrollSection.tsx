@@ -47,10 +47,10 @@ const USE_CASES: UseCase[] = [
   {
     icon: 'video',
     badge: 'Proxima Meet',
-    title: 'Réunion IA chiffrée.\nTranscription automatique.',
-    description: 'Visioconférence avec transcription en temps réel, résumé auto et plan d\'action. Le tout chiffré de bout en bout.',
+    title: 'Vos réunions,\nrésumées automatiquement.',
+    description: 'Transcription en temps réel pendant la réunion, puis résumé et plan d\'action. Tout le traitement audio se fait sur votre poste : rien n\'est envoyé sur un serveur.',
     metrics: [
-      { value: 'E2E', label: 'chiffrement' },
+      { value: 'Local', label: 'traitement audio' },
       { value: 'Auto', label: 'compte-rendu' },
     ],
     visual: 'meet',
@@ -124,18 +124,24 @@ function VisualBlock({ type }: { type: string }) {
       </div>
     ),
     meet: (
-      <div className="space-y-3">
-        <div className="bg-bg-inset rounded-lg aspect-video flex items-center justify-center relative border border-border-card">
-          <div className="grid grid-cols-2 gap-1 p-2 w-full h-full">
-            {[1, 2, 3, 4].map(i => (<div key={i} className="bg-bg-card rounded border border-border-card flex items-center justify-center"><div className="w-6 h-6 rounded-full bg-text-muted/20" /></div>))}
+      <div className="space-y-2">
+        <div className="bg-bg-inset rounded-lg p-3 border border-border-card">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /><span className="text-[10px] font-semibold text-text-primary">Enregistrement en cours</span></div>
+            <span className="text-[10px] text-text-muted tabular-nums">32:14</span>
           </div>
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-            <div className="w-6 h-6 rounded-full bg-bg-card border border-border-card flex items-center justify-center"><Icon name="video" size={10} className="text-green-500" /></div>
-            <div className="w-6 h-6 rounded-full bg-red-500/80 flex items-center justify-center"><svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></div>
+          <div className="flex items-end justify-between gap-[2px] h-10 mb-3">
+            {[35, 62, 28, 80, 45, 95, 52, 70, 38, 88, 60, 42, 75, 30, 66, 48, 84, 26, 58, 72, 40, 90, 34, 64].map((h, i) => (
+              <div key={i} className="flex-1 rounded-sm bg-green-500/60" style={{ height: `${h}%` }} />
+            ))}
           </div>
-          <div className="absolute top-2 right-2 bg-green-500/15 border border-green-500/30 rounded px-1.5 py-0.5 flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /><span className="text-[8px] text-green-400 font-bold">E2E</span></div>
+          <div className="flex items-center gap-1.5 bg-green-500/5 border border-green-500/20 rounded px-2 py-1.5">
+            <Icon name="lock" size={11} className="text-green-500 shrink-0" />
+            <span className="text-[9px] text-green-500 font-medium">Traitement sur votre poste, aucun audio envoyé</span>
+          </div>
         </div>
         <div className="bg-bg-card border border-border-card rounded-lg p-2.5"><span className="text-[10px] font-semibold text-text-primary block mb-1">Transcription en direct</span><span className="text-[10px] text-text-secondary">"...concernant la clause de non-concurrence, je propose de réduire la durée à 12 mois conformément à..."</span></div>
+        <div className="bg-bg-card border border-border-card rounded-lg p-2.5"><span className="text-[10px] font-semibold text-text-primary block mb-1.5">Actions extraites</span><div className="space-y-1">{['Rédiger l\'avenant clause 4.2 — Me Laurent', 'Confirmer la durée de 12 mois — client'].map((a, i) => (<div key={i} className="flex items-start gap-1.5"><Icon name="check-badge" size={10} className="text-green-500 shrink-0 mt-px" /><span className="text-[9px] text-text-secondary">{a}</span></div>))}</div></div>
       </div>
     ),
     agents: (
